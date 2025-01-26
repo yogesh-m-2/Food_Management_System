@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+  backend:
+    image: my-springboot-app
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: production
+    networks:
+      - my-network
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+
+  mongodb:
+    image: mongo:latest  # Directly use the official MongoDB image
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
+
+networks:
+  my-network:
+    driver: bridge

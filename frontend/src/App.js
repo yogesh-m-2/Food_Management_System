@@ -1,16 +1,17 @@
-import React from "react";
-import { AuthProvider } from "./context/AuthContext"; // Provide authentication state
-import AppRoutes from "./routes/AppRoutes"; // Import routes for navigation
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import LoginPage from './components/LoginPage';
+import DashboardPage from './components/DashboardPage';
 
 const App = () => {
   return (
-    <AuthProvider>
-      <div className="App">
-        <AppRoutes /> {/* Handle routing for Login and Dashboard */}
-      </div>
-    </AuthProvider>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+      </Routes>
+    </Router>
   );
 };
 
 export default App;
-
