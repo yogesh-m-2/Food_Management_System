@@ -1,17 +1,16 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { AuthProvider } from "./context/AuthContext"; // Provide authentication state
+import AppRoutes from "./routes/AppRoutes"; // Import routes for navigation
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <body>Learn node js</body>
-      
-          
-       
-      </header>
-    </div>
+    <AuthProvider>
+      <div className="App">
+        <AppRoutes /> {/* Handle routing for Login and Dashboard */}
+      </div>
+    </AuthProvider>
   );
-}
+};
 
 export default App;
+
