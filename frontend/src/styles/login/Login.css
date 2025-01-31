@@ -1,0 +1,101 @@
+/* General Styles */
+body {
+    background-color: #f0f4f8;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f4f8;
+    padding: 20px; /* Add padding to prevent edge clipping on mobile */
+  }
+  
+  .login-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Default: 3 columns */
+    gap: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    width: 100%;
+  }
+  
+  /* Buttons */
+  .login-option {
+    background-color: #2e7d32;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .login-option:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Admin Special Styling */
+  .admin {
+    background-color: white !important;
+    color: black !important;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+  }
+  
+  .admin:hover {
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.4);
+  }
+  
+  /* Icons */
+  .icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+  }
+  
+  span {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  /* ---- Responsive Styles ---- */
+  
+  /* Tablet View (2 Columns) */
+  @media (max-width: 768px) {
+    .login-grid {
+      grid-template-columns: repeat(2, 1fr); /* 2 columns */
+      gap: 15px;
+      max-width: 450px;
+    }
+  }
+  
+  /* Mobile View (1 Column) */
+  @media (max-width: 480px) {
+    .login-grid {
+      grid-template-columns: repeat(1, 1fr); /* 1 column */
+      max-width: 300px;
+    }
+  
+    .login-option {
+      padding: 15px;
+    }
+  
+    .icon {
+      font-size: 35px;
+    }
+  
+    span {
+      font-size: 14px;
+    }
+  }
+  
