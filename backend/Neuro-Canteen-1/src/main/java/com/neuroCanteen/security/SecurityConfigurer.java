@@ -1,6 +1,9 @@
 package com.neuroCanteen.security;
 
 import jakarta.servlet.http.HttpServletResponse;
+
+
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,14 +17,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.neuroCanteen.filters.JwtRequestFilter;
 import com.neuroCanteen.service.MyUserDetailsService;
+import com.neuroCanteen.service.StaffDetailsService;
+
+import java.util.Arrays;
 
 @Configuration
 public class SecurityConfigurer {
-
+    private final StaffDetailsService staffDetailService;
     private final MyUserDetailsService myUserDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
-    public SecurityConfigurer(MyUserDetailsService myUserDetailsService,JwtRequestFilter jwtRequestFilter) {
+    public SecurityConfigurer(MyUserDetailsService myUserDetailsService,StaffDetailsService staffDetailService,JwtRequestFilter jwtRequestFilter) {
         this.myUserDetailsService = myUserDetailsService;
+        this.staffDetailService = staffDetailService;
         this.jwtRequestFilter = jwtRequestFilter;
     }
 
@@ -30,7 +37,7 @@ public class SecurityConfigurer {
         http
             .csrf(csrf -> csrf.disable())  // Disable CSRF for APIs
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/authenticate").permitAll()
+                .requestMatchers("/authenticate/*").permitAll()
                 .anyRequest().authenticated()
             )
             .exceptionHandling(ex -> ex
@@ -45,10 +52,15 @@ public class SecurityConfigurer {
 
     @Bean
     public AuthenticationManager authenticationManager(PasswordEncoder passwordEncoder) {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(myUserDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder);
-        return new ProviderManager(authProvider);
+        DaoAuthenticationProvider adminAuthProvider = new DaoAuthenticationProvider();
+    adminAuthProvider.setUserDetailsService(myUserDetailsService); // Admin service
+    adminAuthProvider.setPasswordEncoder(passwordEncoder);
+
+    DaoAuthenticationProvider staffAuthProvider = new DaoAuthenticationProvider();
+    staffAuthProvider.setUserDetailsService(staffDetailService); // Staff service
+    staffAuthProvider.setPasswordEncoder(passwordEncoder);
+
+    return new ProviderManager(Arrays.asList(adminAuthProvider, staffAuthProvider));
     }
 
     @Bean
