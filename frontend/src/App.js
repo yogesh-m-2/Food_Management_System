@@ -1,17 +1,16 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
 
-function App() {
+import Navigation from './components/navigation/Navigation';
+import AppRoutes from "./AppRoutes";
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <body>Learn node js</body>
-      
-          
-       
-      </header>
-    </div>
+    <Router>
+      <Navigation />
+      <AppRoutes />
+    </Router>
   );
-}
+};
 
 export default App;

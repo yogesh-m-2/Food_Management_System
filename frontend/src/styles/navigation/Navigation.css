@@ -1,0 +1,62 @@
+/* Full Navigation */
+.navigation {
+    background-color: #2e7d32;
+    color: white;
+    padding: 15px;
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    transition: width 0.3s ease-in-out;
+  }
+  
+  /* Collapsed State */
+  .navigation.collapsed {
+    width: 5px;
+  }
+  
+  /* Navigation Items */
+  .navigation ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .navigation li {
+    padding: 15px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+  
+  /* Hide Text in Collapsed Mode */
+  .navigation.collapsed li {
+    justify-content: center;
+  }
+  
+  .navigation.collapsed .icon {
+    margin-right: 0;
+  }
+  
+  /* Toggle Button */
+  .toggle-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    align-self: center;
+}
+  
+  /* Smooth Hover Effect */
+  .navigation li:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
