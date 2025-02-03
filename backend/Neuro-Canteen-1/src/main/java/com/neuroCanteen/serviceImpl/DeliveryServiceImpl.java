@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.neuroCanteen.exceptions.ResourceNotFoundException;
 import com.neuroCanteen.model.delivery.Delivery;
-import com.neuroCanteen.respository.DeliveryRepository;
+import com.neuroCanteen.repository.DeliveryRepository;
 import com.neuroCanteen.service.DeliveryService;
 @Service
 public class DeliveryServiceImpl  implements DeliveryService{

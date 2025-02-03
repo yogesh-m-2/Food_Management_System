@@ -19,6 +19,7 @@ public class MenuItem {
     private String name;
     private String category; // "Breakfast", "Beverages"
     private double price;
+    private String picture;
     private String description;
     private boolean isAvailable; // For kitchen control
 }

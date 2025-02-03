@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.neuroCanteen.exceptions.ResourceNotFoundException;
 import com.neuroCanteen.model.patient.Patient;
-import com.neuroCanteen.respository.PatientRepository;
+import com.neuroCanteen.repository.PatientRepository;
 import com.neuroCanteen.service.PatientService;
 
 @Service

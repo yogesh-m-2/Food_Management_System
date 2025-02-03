@@ -3,7 +3,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.neuroCanteen.model.admin.Admin;
-import com.neuroCanteen.respository.AdminRepository;
+import com.neuroCanteen.repository.AdminRepository;
 import com.neuroCanteen.service.AdminService;
 
 import java.util.List;

@@ -1,59 +1,82 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../styles/admin/AdminControl.css";
+import api from "../../services/api"; // Import the api.js file
 
 const sections = ["Menu", "Patient", "Staff", "Dietitian", "Delivery"];
 
-const initialMenuItems = [
-  { id: 1, name: "Idly", price: "10rs", category: "Breakfast" },
-  { id: 2, name: "Vada", price: "12rs", category: "Breakfast" },
-  { id: 3, name: "Dosa", price: "40rs", category: "North" },
-  { id: 4, name: "Poori", price: "10rs", category: "South" },
-  { id: 5, name: "Tea", price: "12rs", category: "Beverages" },
-  { id: 6, name: "Coffee", price: "40rs", category: "Beverages" },
-];
-
 const AdminControl = () => {
   const [activeSection, setActiveSection] = useState("Menu");
-  const [menuItems, setMenuItems] = useState(initialMenuItems);
+  const [menuItems, setMenuItems] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [showEditForm, setShowEditForm] = useState(false);  // Track if the edit modal is shown
-  const [newItem, setNewItem] = useState({ name: "", price: "", category: "" });
-  const [currentItem, setCurrentItem] = useState(null);  // Store the item being edited
+  const [newItem, setNewItem] = useState({ name: "", price: "", category: "", picture: "", description: "", isAvailable: true });
+  const [editItem, setEditItem] = useState(null);
 
-  const handleAdd = () => {
+  useEffect(() => {
+    fetchMenuItems();
+  }, []);
+
+  const fetchMenuItems = async () => {
+    try {
+      const response = await api.get("/menu-items");
+      setMenuItems(response.data);
+    } catch (error) {
+      console.error("Error fetching menu items:", error);
+    }
+  };
+
+  const handleAdd = async () => {
     if (newItem.name && newItem.price && newItem.category) {
-      setMenuItems([...menuItems, { id: Date.now(), ...newItem }]);
-      setNewItem({ name: "", price: "", category: "" });
-      setShowAddForm(false);
+      try {
+        const response = await api.post("/menu-items", newItem);
+        setMenuItems([...menuItems, response.data]);
+        setNewItem({ name: "", price: "", category: "", picture: "", description: "", isAvailable: true });
+        setShowAddForm(false);
+      } catch (error) {
+        console.error("Error adding menu item:", error);
+      }
     }
   };
 
-  const handleEdit = (id) => {
-    const itemToEdit = menuItems.find(item => item.id === id);
-    setCurrentItem(itemToEdit);  // Set the item to be edited
-    setShowEditForm(true);  // Show the edit modal
-  };
-
-  const handleSaveEdit = () => {
-    if (currentItem.name && currentItem.price && currentItem.category) {
-      setMenuItems(menuItems.map(item =>
-        item.id === currentItem.id ? currentItem : item
-      ));
-      setShowEditForm(false);  // Close the modal
-      setCurrentItem(null);  // Clear the current item
+  const handleEdit = async (id) => {
+    const updatedItem = { ...editItem };
+    try {
+      const response = await api.put(`/menu-items/${id}`, updatedItem);
+      setMenuItems(menuItems.map(item => item.id === id ? response.data : item));
+      setEditItem(null);
+    } catch (error) {
+      console.error("Error updating menu item:", error);
     }
   };
 
-  const handleRemove = (id) => {
-    setMenuItems(menuItems.filter(item => item.id !== id));
+  const handleRemove = async (id) => {
+    try {
+      await api.delete(`/menu-items/${id}`);
+      setMenuItems(menuItems.filter(item => item.id !== id));
+    } catch (error) {
+      console.error("Error deleting menu item:", error);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (editItem) {
+      setEditItem({ ...editItem, [name]: value });
+    } else {
+      setNewItem({ ...newItem, [name]: value });
+    }
+  };
+
+  const openEditModal = (item) => {
+    setEditItem(item);
+    setShowAddForm(true);
   };
 
   return (
     <div className="admin-dashboard">
       <div className="sidebar">
         {sections.map((section) => (
-          <button 
-            key={section} 
+          <button
+            key={section}
             className={activeSection === section ? "active" : ""}
             onClick={() => setActiveSection(section)}
           >
@@ -66,7 +89,7 @@ const AdminControl = () => {
         <h2>{activeSection} Management</h2>
         {activeSection === "Menu" && (
           <>
-            <button className="add-btn" onClick={() => setShowAddForm(true)}>Add</button>
+            <button className="add-btn" onClick={() => setShowAddForm(true)}>Add Item</button>
             <table>
               <thead>
                 <tr>
@@ -82,11 +105,19 @@ const AdminControl = () => {
                 {menuItems.map((item) => (
                   <tr key={item.id}>
                     <td>{item.name}</td>
-                    <td><button className="upload-btn">Upload Pic</button></td>
+                    <td>{item.picture ? (
+          <img
+            src={item.picture}
+            alt={item.name}
+            style={{ width: "50px", height: "50px", objectFit: "cover" }}
+          />
+        ) : (
+          "No Image"
+        )}</td>
                     <td>{item.price}</td>
                     <td>{item.category}</td>
                     <td>
-                      <button className="edit-btn" onClick={() => handleEdit(item.id)}>✏️</button>
+                      <button className="edit-btn" onClick={() => openEditModal(item)}>✏️</button>
                     </td>
                     <td>
                       <button className="remove-btn" onClick={() => handleRemove(item.id)}>🗑️</button>
@@ -98,45 +129,60 @@ const AdminControl = () => {
           </>
         )}
 
-        {/* Add Item Popup Form */}
         {showAddForm && (
           <div className="modal">
             <div className="modal-content">
-              <h3>Add New Item</h3>
-              <input type="text" placeholder="Item name" value={newItem.name} onChange={(e) => setNewItem({ ...newItem, name: e.target.value })} />
-              <input type="text" placeholder="Price" value={newItem.price} onChange={(e) => setNewItem({ ...newItem, price: e.target.value })} />
-              <input type="text" placeholder="Category" value={newItem.category} onChange={(e) => setNewItem({ ...newItem, category: e.target.value })} />
-              <button className="save-btn" onClick={handleAdd}>Save</button>
-              <button className="close-btn" onClick={() => setShowAddForm(false)}>Cancel</button>
-            </div>
-          </div>
-        )}
-
-        {/* Edit Item Popup Form */}
-        {showEditForm && currentItem && (
-          <div className="modal">
-            <div className="modal-content">
-              <h3>Edit Item</h3>
-              <input 
-                type="text" 
-                placeholder="Item name" 
-                value={currentItem.name} 
-                onChange={(e) => setCurrentItem({ ...currentItem, name: e.target.value })} 
+              <h3>{editItem ? "Edit Item" : "Add New Item"}</h3>
+              <input
+                type="text"
+                name="name"
+                placeholder="Item name"
+                value={editItem ? editItem.name : newItem.name}
+                onChange={handleChange}
               />
-              <input 
-                type="text" 
-                placeholder="Price" 
-                value={currentItem.price} 
-                onChange={(e) => setCurrentItem({ ...currentItem, price: e.target.value })} 
+              <input
+                type="text"
+                name="price"
+                placeholder="Price"
+                value={editItem ? editItem.price : newItem.price}
+                onChange={handleChange}
               />
-              <input 
-                type="text" 
-                placeholder="Category" 
-                value={currentItem.category} 
-                onChange={(e) => setCurrentItem({ ...currentItem, category: e.target.value })} 
+              <input
+                type="text"
+                name="category"
+                placeholder="Category"
+                value={editItem ? editItem.category : newItem.category}
+                onChange={handleChange}
               />
-              <button className="save-btn" onClick={handleSaveEdit}>Save</button>
-              <button className="close-btn" onClick={() => setShowEditForm(false)}>Cancel</button>
+              <input
+                type="text"
+                name="description"
+                placeholder="Description"
+                value={editItem ? editItem.description : newItem.description}
+                onChange={handleChange}
+              />
+              <input
+                type="file"
+                name="picture"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    if (editItem) {
+                      setEditItem({ ...editItem, picture: reader.result });
+                    } else {
+                      setNewItem({ ...newItem, picture: reader.result });
+                    }
+                  };
+                  if (file) reader.readAsDataURL(file);
+                }}
+              />
+              <button className="save-btn" onClick={() => (editItem ? handleEdit(editItem.id) : handleAdd())}>
+                Save
+              </button>
+              <button className="close-btn" onClick={() => setShowAddForm(false)}>
+                Cancel
+              </button>
             </div>
           </div>
         )}
