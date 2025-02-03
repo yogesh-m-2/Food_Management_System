@@ -16,7 +16,7 @@ import com.neuroCanteen.model.patient.Patient;
 import com.neuroCanteen.service.PatientService;
 
 @RestController
-@RequestMapping("/api/patient")
+@RequestMapping("/patient")
 public class PatientController {
     
      @Autowired
