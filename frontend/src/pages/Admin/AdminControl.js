@@ -5,7 +5,9 @@ import StaffManagement from "./StaffManagement"; // Import the StaffManagement c
 import PatientManagement from "./PatientManagement";
 import DietitianManagement from "./DietitianManagement";
 import DeliveryManagement from "./DeliveryManagement";
-const sections = ["Menu", "Staff","Patient","Dietitian", "Delivery"];
+import KitchenManagement from "./KitchenManagement";
+
+const sections = ["Menu", "Staff","Patient","Dietitian", "Delivery","Kitchen"];
 
 const AdminControl = () => {
   const [activeSection, setActiveSection] = useState("Menu");
@@ -31,6 +33,7 @@ const AdminControl = () => {
         {activeSection === "Patient" && <PatientManagement />}
         {activeSection === "Dietitian" && <DietitianManagement/>}
         {activeSection === "Delivery" && <DeliveryManagement/>}
+        {activeSection === "Kitchen" && <KitchenManagement/>}
       </div>
     </div>
   );
