@@ -1,63 +1,102 @@
 /* Center the login container */
 .admin-login-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: #f4f8fb;
-  }
-  
-  /* Login Box */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f4f8fb;
+  padding: 20px; /* Add some padding to avoid the content being stuck to edges on small screens */
+}
+
+/* Login Box */
+.login-box {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%; /* Allow the box to take up full width on smaller devices */
+  max-width: 400px; /* Limit the width to 400px for larger screens */
+  box-sizing: border-box;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+h3 {
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+/* Labels */
+label {
+  display: block;
+  text-align: left;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+/* Input Fields */
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #e0e0e0;
+  box-sizing: border-box;
+}
+
+/* Submit Button */
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #256629;
+}
+
+/* Responsive Design (Mobile-first approach) */
+@media (max-width: 600px) {
   .login-box {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 400px;
+    padding: 20px; /* Reduce padding for mobile */
+    width: 90%; /* Make the login box wider on small screens */
+    max-width: 90%; /* Allow the box to take up more space */
   }
-  
+
   h2 {
-    margin-bottom: 20px;
+    font-size: 18px; /* Make the title font smaller */
+    margin-bottom: 15px; /* Reduce margin to fit better on mobile */
   }
-  
+
   h3 {
-    font-size: 22px;
-    margin-bottom: 15px;
+    font-size: 20px; /* Adjust subheading size */
   }
-  
-  /* Labels */
-  label {
-    display: block;
-    text-align: left;
-    font-size: 14px;
-    margin-bottom: 5px;
-  }
-  
-  /* Input Fields */
+
   input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #e0e0e0;
+    padding: 12px; /* Increase input field size for easier touch input */
+    margin-bottom: 10px; /* Reduce margin between input fields */
   }
-  
-  /* Submit Button */
+
   button {
-    width: 100%;
-    padding: 10px;
-    background-color: #2e7d32;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
+    padding: 12px; /* Make button easier to click on mobile */
+    font-size: 18px; /* Larger font size for button on mobile */
   }
-  
-  button:hover {
-    background-color: #256629;
+}
+
+/* Optional: Media Query for Larger Screens (tablets and desktops) */
+@media (min-width: 600px) {
+  /* You can customize additional styles here for tablet or desktop screens */
+  .login-box {
+    padding: 30px; /* You can revert the padding for larger screens */
   }
-  
+}
