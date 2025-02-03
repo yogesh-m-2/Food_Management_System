@@ -12,6 +12,7 @@
     flex-direction: column;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
     transition: width 0.3s ease-in-out;
+    z-index: 1000;
   }
   
   /* Collapsed State */
@@ -59,4 +60,11 @@
   .navigation li:hover {
     background: rgba(255, 255, 255, 0.2);
   }
+
+  .logout-btn.collapsed {
+    display: none; /* Hide the logout button when collapsed */
+  }
   
+  .navigation.collapsed .logout-btn {
+    display: none; /* Hide logout button in collapsed mode */
+  }

@@ -28,7 +28,10 @@ const Navigation = () => {
         <li><FaCog className="icon" /> {!isCollapsed && 'Settings'}</li>
         {isAuthenticated && (
           <li>
-            <button onClick={handleLogout} className="logout-btn">
+            <button
+              onClick={handleLogout}
+              className={`logout-btn ${isCollapsed ? 'collapsed' : ''}`} // Add collapsed class to logout button
+            >
               <FaSignOutAlt className="icon" /> {!isCollapsed && 'Logout'}
             </button>
           </li>

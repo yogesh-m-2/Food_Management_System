@@ -18,7 +18,7 @@ const AdminLogin = () => {
         localStorage.setItem("jwtToken", response.data.jwt); // Save token
         
         await login();
-        await navigate("/dashboard");
+        await navigate("/admin/control");
       }
     } catch (error) {
       console.error("Login error:", error);
