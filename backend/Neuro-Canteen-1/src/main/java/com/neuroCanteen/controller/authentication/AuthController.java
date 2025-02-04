@@ -45,7 +45,7 @@ public class AuthController {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 
         // Generate JWT token
-        final String jwt = jwtTokenUtil.generateToken(userDetails);
+        final String jwt = jwtTokenUtil.generateToken(userDetails,"Admin");
 
         // Return the authentication response
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
@@ -68,7 +68,7 @@ public class AuthController {
         final UserDetails userDetails = staffDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 
         // Generate JWT token
-        final String jwt = jwtTokenUtil.generateToken(userDetails);
+        final String jwt = jwtTokenUtil.generateToken(userDetails,"Staff");
 
         // Return the authentication response
         return ResponseEntity.ok(new AuthenticationResponse(jwt));

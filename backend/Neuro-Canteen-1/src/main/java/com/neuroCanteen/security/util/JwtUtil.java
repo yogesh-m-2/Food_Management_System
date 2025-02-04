@@ -17,9 +17,10 @@ public class JwtUtil {
     private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     // Generate JWT token
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, String Role) {
     return Jwts.builder()
             .setSubject(userDetails.getUsername()) // Extract the username from UserDetails
+            .claim("Role", Role)
             .setIssuedAt(new Date())
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour expiration time
             .signWith(SECRET_KEY) // Use the Key object for signing
@@ -29,6 +30,11 @@ public class JwtUtil {
     // Extract username from JWT token
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+       // Extract role from JWT token
+       public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("Role", String.class)); // Extract "Role" claim
     }
 
     // Extract expiration date from JWT token

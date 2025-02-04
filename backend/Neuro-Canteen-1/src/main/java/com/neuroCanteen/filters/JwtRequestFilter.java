@@ -9,6 +9,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.neuroCanteen.security.util.JwtUtil;
 import com.neuroCanteen.service.MyUserDetailsService;
+import com.neuroCanteen.service.StaffDetailsService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -26,6 +27,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private MyUserDetailsService userDetailsService;
 
     @Autowired
+    private StaffDetailsService staffDetailsService;
+
+    @Autowired
     private JwtUtil jwtUtil;
 
     @Override
@@ -37,18 +41,31 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String username = null;
         String jwt = null;
+        String role = null;
 
         // Check if the request contains the "Authorization" header with "Bearer " prefix
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);  // Extract the JWT token from the header
             username = jwtUtil.extractUsername(jwt);  // Extract the username from the JWT
+            role =  jwtUtil.extractRole(jwt);
         }
 
         // If the username is not null and no authentication exists in the security context
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            // Load the user details using the extracted username
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = null; // Declare outside to use later
+
+            switch (role) {
+                case "Admin":
+                    userDetails = userDetailsService.loadUserByUsername(username);
+                    break;
+                case "Staff":
+                    userDetails = staffDetailsService.loadUserByUsername(username);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid role: " + role); // Handle unexpected roles
+            }
+            
 
             // Validate the JWT token
             if (jwtUtil.validateToken(jwt, username)) {  // Pass the username, not UserDetails

@@ -11,7 +11,7 @@ const Navigation = () => {
 
   const handleLogout = () => {
     logout(); // Call logout from context
-    navigate('/admin'); // Redirect to login page
+    navigate('/'); // Redirect to login page
   };
 
   return (

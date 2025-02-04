@@ -1,20 +1,27 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/staff/StaffLogin.css"; // Import the CSS file
+import "../../styles/staff/StaffLogin.css";
+import api from "../../services/api";
+import { useAuth } from "../../context/AuthContext";
 
 const StaffLogin = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-
-    if (username.trim() && password.trim()) {
-      // Simulating successful login for staff
-      navigate("/staff-dashboard");
-    } else {
-      alert("Please enter both username and password");
+    try {
+      const response = await api.post("/authenticate/staff", { username, password });
+      if (response.data.jwt) {
+        localStorage.setItem("jwtToken", response.data.jwt);
+        await login();
+        await navigate("/staff/order");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Failed to login. Check your credentials.");
     }
   };
 
@@ -22,10 +29,7 @@ const StaffLogin = () => {
     <div className="staff-login-container">
       <h2>Staff Login</h2>
       <div className="login-box">
-        <div className="tabs">
-          <span className="active-tab">Login</span>
-          <span className="inactive-tab">Signup</span>
-        </div>
+        <h3>Login</h3>
         <form onSubmit={handleLogin}>
           <label>Username</label>
           <input
