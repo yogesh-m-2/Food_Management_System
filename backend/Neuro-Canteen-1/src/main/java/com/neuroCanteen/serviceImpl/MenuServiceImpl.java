@@ -1,11 +1,11 @@
 package com.neuroCanteen.serviceImpl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.neuroCanteen.model.menuitem.MenuItem;
+import com.neuroCanteen.model.menuitem.*;
+import com.neuroCanteen.model.menuitem.Role;
 import com.neuroCanteen.repository.MenuRepository;
 import com.neuroCanteen.service.MenuService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +26,7 @@ public class MenuServiceImpl implements MenuService {
         return menuRepository.findById(id);
     }
 
+  
     @Override
     public MenuItem createMenuItem(MenuItem menuItem) {
         return menuRepository.save(menuItem);
@@ -36,9 +37,12 @@ public class MenuServiceImpl implements MenuService {
         return menuRepository.findById(id)
                 .map(menuItem -> {
                     menuItem.setName(updatedMenuItem.getName());
-                    menuItem.setPicture(updatedMenuItem.getPicture());
-                    menuItem.setPrice(updatedMenuItem.getPrice());
                     menuItem.setCategory(updatedMenuItem.getCategory());
+                    menuItem.setPrice(updatedMenuItem.getPrice());
+                    menuItem.setRole(updatedMenuItem.getRole());
+                    menuItem.setPicture(updatedMenuItem.getPicture());
+                    menuItem.setDescription(updatedMenuItem.getDescription());
+                    menuItem.setAvailable(updatedMenuItem.isAvailable()); // Fix for availability update
                     return menuRepository.save(menuItem);
                 })
                 .orElseThrow(() -> new RuntimeException("Menu item not found with id: " + id));
@@ -48,4 +52,11 @@ public class MenuServiceImpl implements MenuService {
     public void deleteMenuItem(int id) {
         menuRepository.deleteById(id);
     }
+
+    @Override
+    public List<MenuItem> getMenuItemsByRole(Role role) {
+        return menuRepository.findByRole(role);
+    }
+
+   
 }
