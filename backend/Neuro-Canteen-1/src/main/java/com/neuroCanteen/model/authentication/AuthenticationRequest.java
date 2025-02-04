@@ -4,6 +4,7 @@ public class AuthenticationRequest {
 
     private String username;
     private String password;
+    private String uhid;
 
     // Constructor
     public AuthenticationRequest() {}
@@ -31,5 +32,13 @@ public class AuthenticationRequest {
     // Setter for password
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getUhid() {
+        return uhid;
+    }
+
+    public void setUhid(String uhid) {
+        this.uhid = uhid;
     }
 }

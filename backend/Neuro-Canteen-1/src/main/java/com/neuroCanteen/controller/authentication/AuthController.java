@@ -6,13 +6,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import com.neuroCanteen.model.authentication.AuthenticationRequest;
 import com.neuroCanteen.model.authentication.AuthenticationResponse;
 import com.neuroCanteen.security.util.JwtUtil;
-import com.neuroCanteen.service.MyUserDetailsService;
-import com.neuroCanteen.service.StaffDetailsService;
+import com.neuroCanteen.service.*;
+
 @RestController
 @RequestMapping("/authenticate")
 public class AuthController {
@@ -27,50 +28,79 @@ public class AuthController {
     private StaffDetailsService staffDetailsService;
 
     @Autowired
+    private DietitianDetailsService dietitianDetailsService;
+
+    @Autowired
+    private DeliveryUserDetailsService deliveryUserDetailsService;
+
+    @Autowired
+    private KitchenUserDetailsService kitchenUserDetailsService;
+
+    @Autowired
+    private PatientDetailsService patientDetailsService;
+
+    @Autowired
     private JwtUtil jwtTokenUtil;
 
-    @PostMapping("/admin")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
+    /**
+     * Generic method to authenticate users based on role.
+     */
+    private ResponseEntity<?> authenticateUser(AuthenticationRequest authenticationRequest, 
+                                               UserDetailsService userDetailsService, 
+                                               String role) {
         try {
-            // Authenticate the user
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
+                    new UsernamePasswordAuthenticationToken(
+                            authenticationRequest.getUsername(), 
+                            authenticationRequest.getPassword()
+                    )
             );
         } catch (BadCredentialsException e) {
-            // Throwing a more specific exception with a custom message
             return ResponseEntity.status(401).body("Invalid username or password");
         }
 
-        // Load user details
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        String jwt = jwtTokenUtil.generateToken(userDetails, role);
 
-        // Generate JWT token
-        final String jwt = jwtTokenUtil.generateToken(userDetails,"Admin");
-
-        // Return the authentication response
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
+
+    @PostMapping("/admin")
+    public ResponseEntity<?> authenticateAdmin(@RequestBody AuthenticationRequest authenticationRequest) {
+        return authenticateUser(authenticationRequest, userDetailsService, "Admin");
+    }
+
     @PostMapping("/staff")
-    public ResponseEntity<?> createAuthenticationTokenForStaff(@RequestBody AuthenticationRequest authenticationRequest) {
+    public ResponseEntity<?> authenticateStaff(@RequestBody AuthenticationRequest authenticationRequest) {
+        return authenticateUser(authenticationRequest, staffDetailsService, "Staff");
+    }
+
+    @PostMapping("/dietitian")
+    public ResponseEntity<?> authenticateDietitian(@RequestBody AuthenticationRequest authenticationRequest) {
+        return authenticateUser(authenticationRequest, dietitianDetailsService, "Dietitian");
+    }
+
+    @PostMapping("/deliveryuser")
+    public ResponseEntity<?> authenticateDeliveryUser(@RequestBody AuthenticationRequest authenticationRequest) {
+        return authenticateUser(authenticationRequest, deliveryUserDetailsService, "Delivery");
+    }
+
+    @PostMapping("/kitchenuser")
+    public ResponseEntity<?> authenticateKitchenUser(@RequestBody AuthenticationRequest authenticationRequest) {
+        return authenticateUser(authenticationRequest, kitchenUserDetailsService, "Kitchen");
+    }
+    @PostMapping("/patient")
+    public ResponseEntity<?> authenticatePatient(@RequestBody AuthenticationRequest authenticationRequest) {
         try {
-            // Authenticate the user
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
-            );
-        } catch (BadCredentialsException e) {
-            // Throwing a more specific exception with a custom message
-            return ResponseEntity.status(401).body("Invalid username or password");
+            // Load user details based on UHID
+            UserDetails userDetails = patientDetailsService.loadUserByUsername(authenticationRequest.getUhid());
+
+            // Generate JWT token
+            String jwt = jwtTokenUtil.generateToken(userDetails, "Patient");
+
+            return ResponseEntity.ok(new AuthenticationResponse(jwt));
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Invalid UHID");
         }
-
-        
-
-        // Load user details
-        final UserDetails userDetails = staffDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-
-        // Generate JWT token
-        final String jwt = jwtTokenUtil.generateToken(userDetails,"Staff");
-
-        // Return the authentication response
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 }
