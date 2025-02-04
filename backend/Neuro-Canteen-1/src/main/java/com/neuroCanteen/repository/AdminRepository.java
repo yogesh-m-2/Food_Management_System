@@ -1,4 +1,4 @@
-package com.neuroCanteen.respository;
+package com.neuroCanteen.repository;
 
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;

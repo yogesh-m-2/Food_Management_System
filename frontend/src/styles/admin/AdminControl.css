@@ -1,0 +1,133 @@
+.admin-dashboard {
+    display: flex;
+  }
+  
+  .sidebar {
+    width: 200px;
+    background: #2e7d32;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    position: relative;
+    margin-left: 50px; /* Adjust this value to move it further right */
+    margin-top: 100px;
+  }
+  
+  
+  .sidebar button {
+    padding: 15px;
+    background: none;
+    color: white;
+    border: none;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+  
+  .sidebar .active {
+    background: #ffcc80;
+    color: black;
+    font-weight: bold;
+  }
+  
+  .content {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #f4f8fb;
+  }
+  
+  h2 {
+    text-align: center;
+    color: #2e7d32;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+  
+  th, td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  th {
+    background-color: #ddd;
+    font-weight: bold;
+  }
+  
+  button {
+    cursor: pointer;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  .add-btn {
+    background-color: #2e7d32;
+    color: white;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .upload-btn {
+    background-color: #ff9800;
+    color: white;
+  }
+  
+  .edit-btn {
+    background-color: #2196f3;
+    color: white;
+  }
+  
+  .remove-btn {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  /* Modal Popup */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+  }
+  
+  .modal input {
+    display: block;
+    width: 80%;
+    margin: 10px auto;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .save-btn {
+    background-color: #2e7d32;
+    color: white;
+    margin-right: 10px;
+  }
+  
+  .close-btn {
+    background-color: #f44336;
+    color: white;
+  }
+  
