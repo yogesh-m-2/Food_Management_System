@@ -8,7 +8,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.neuroCanteen.security.util.JwtUtil;
+import com.neuroCanteen.service.DeliverUserService;
+import com.neuroCanteen.service.DeliveryUserDetailsService;
+import com.neuroCanteen.service.DietitianDetailsService;
+import com.neuroCanteen.service.KitchenUserDetailsService;
 import com.neuroCanteen.service.MyUserDetailsService;
+import com.neuroCanteen.service.PatientDetailsService;
 import com.neuroCanteen.service.StaffDetailsService;
 
 import jakarta.servlet.FilterChain;
@@ -28,6 +33,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Autowired
     private StaffDetailsService staffDetailsService;
+
+    @Autowired
+    private PatientDetailsService patientDetailsService;
+
+    @Autowired
+    private DietitianDetailsService dietitianDetailsService;
+
+    @Autowired
+    private DeliveryUserDetailsService deliveryUserDetailsService;
+
+    @Autowired
+    private KitchenUserDetailsService kitchenUserDetailsService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -62,6 +79,19 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 case "Staff":
                     userDetails = staffDetailsService.loadUserByUsername(username);
                     break;
+                case "Patient":
+                    userDetails = patientDetailsService.loadUserByUsername(username);
+                    break;
+                case "Dietitian":
+                    userDetails = dietitianDetailsService.loadUserByUsername(username);
+                    break;
+                case "Delivery":
+                    userDetails = deliveryUserDetailsService.loadUserByUsername(username);
+                    break;
+                case "Kitchen":
+                    userDetails = kitchenUserDetailsService.loadUserByUsername(username);
+                    break;
+
                 default:
                     throw new IllegalArgumentException("Invalid role: " + role); // Handle unexpected roles
             }

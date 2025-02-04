@@ -1,0 +1,152 @@
+.order-checkout-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 30px;
+    flex-wrap: wrap;
+    background-color: #f9f9f9; /* Light background for the whole container */
+    max-width: 1200px;
+    margin: 0 auto;
+    border-radius: 10px;
+}
+
+.order-details, .order-summary, .delivery-details {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    width: 100%;
+}
+
+.order-details {
+    flex: 2;
+    max-width: 65%;
+}
+
+.order-summary {
+    flex: 1;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align to the left */
+}
+
+.delivery-details {
+    margin-top: 20px;
+    width: 30%;
+    height: 300px;
+}
+.address-input {
+    width: 100%; /* Make the textarea take up full width of its container */
+    max-width: 500px; /* Limit the maximum width for a better appearance */
+    padding: 12px; /* Add padding for more space inside */
+    font-size: 1.2rem; /* Make the font size bigger */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    height: 150px; /* Increase height to allow for multiple lines */
+    box-sizing: border-box; /* Include padding and border in width/height calculation */
+    resize: vertical; /* Allow users to resize the textarea vertically */
+}
+
+.order-item-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.table-header, .table-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.table-header {
+    font-weight: bold;
+    border-top: 2px solid #ddd;
+    color: #333;
+}
+
+.column-item, .column-qty, .column-price {
+    width: 30%; /* Adjust the widths for each column */
+    text-align: left;
+}
+
+.column-item {
+    padding-left: 15px; /* Add some padding to the left for better readability */
+}
+
+.column-qty, .column-price {
+    text-align: right;
+}
+
+.column-price {
+    padding-right: 15px; /* Add some padding to the right for better readability */
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 0;
+}
+
+.summary-item.total {
+    font-weight: bold;
+    font-size: 1.2rem;
+    border-top: 2px solid #ddd;
+    padding-top: 10px;
+}
+
+.payment-options {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+.payment-options button {
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.payment-options .cod {
+    background-color: purple;
+    color: white;
+}
+
+.payment-options .upi {
+    background-color: #6a1b9a;
+    color: white;
+}
+
+.payment-options button:hover {
+    background-color: #555;
+}
+
+.delivery-details h2 {
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.delivery-details p {
+    margin: 5px 0;
+    font-size: 1rem;
+    color: #555;
+}
+
+.tip-input {
+    width: 100px;
+    padding: 6px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    text-align: right;
+}

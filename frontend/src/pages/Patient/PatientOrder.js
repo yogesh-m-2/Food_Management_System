@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import '../../styles/staff/StaffOrder.css';
+import '../../styles/patient/patientorder.css';
 import api from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 
-const StaffOrder = () => {
+const PatientOrder = () => {
     const [menuItems, setMenuItems] = useState([]);
-    const [cartItems, setCartItems] = useState({}); // Store quantities as an object
+    const [cartItems, setCartItems] = useState({});
     const [selectedCategory, setSelectedCategory] = useState('south');
     const navigate = useNavigate();
+
     useEffect(() => {
         const fetchMenuItems = async () => {
             try {
@@ -17,7 +18,6 @@ const StaffOrder = () => {
                 console.error('Error fetching menu items:', error);
             }
         };
-
         fetchMenuItems();
     }, []);
 
@@ -26,12 +26,13 @@ const StaffOrder = () => {
             alert("Your cart is empty!");
             return;
         }
-        navigate('/staff/checkout', { state: { cartItems, menuItems } }); // Navigate with cart data
+        navigate('/patient/checkout', { state: { cartItems, menuItems } });
     };
+
     const handleAddToCart = (item) => {
         setCartItems((prevCart) => ({
             ...prevCart,
-            [item.id]: (prevCart[item.id] || 0) + 1, // Increment quantity
+            [item.id]: (prevCart[item.id] || 0) + 1,
         }));
     };
 
@@ -48,7 +49,7 @@ const StaffOrder = () => {
             if (newCart[itemId] > 1) {
                 newCart[itemId] -= 1;
             } else {
-                delete newCart[itemId]; // Remove from cart if quantity reaches 0
+                delete newCart[itemId];
             }
             return newCart;
         });
@@ -57,7 +58,7 @@ const StaffOrder = () => {
     const filteredMenuItems = menuItems.filter(item => item.category === selectedCategory);
 
     return (
-        <div className="staff-order-container">
+        <div className="patient-order-container">
             <aside className="category-sidebar">
                 <ul>
                     {['south', 'north', 'beverages', 'tiffin'].map(category => (
@@ -111,10 +112,10 @@ const StaffOrder = () => {
                         );
                     })}
                 </ul>
-                <button onClick={handleCheckout} >Checkout</button>
+                <button onClick={handleCheckout}>Checkout</button>
             </aside>
         </div>
     );
 };
 
-export default StaffOrder;
+export default PatientOrder;

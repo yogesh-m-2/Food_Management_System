@@ -1,0 +1,44 @@
+.order-history-container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.order-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.order-history-table th, .order-history-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.order-history-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.order-history-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.order-history-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.error-message {
+    color: red;
+    font-weight: bold;
+}

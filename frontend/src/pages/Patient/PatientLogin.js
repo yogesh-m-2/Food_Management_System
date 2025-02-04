@@ -1,19 +1,26 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/patient/patient.css"; // Import the CSS file
+import "../../styles/patient/patient.css";
+import api from "../../services/api";
+import { useAuth } from "../../context/AuthContext";
 
 const PatientLogin = () => {
   const [uhid, setUhid] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-
-    if (uhid.trim()) {
-      // Simulating successful login for patient
-      navigate("/dashboard");
-    } else {
-      alert("Please enter your UHID");
+    try {
+      const response = await api.post("/authenticate/patient", { uhid });
+      if (response.data.jwt) {
+        localStorage.setItem("jwtToken", response.data.jwt);
+        await login();
+        navigate("/patient/order");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Failed to login. Please check your UHID.");
     }
   };
 

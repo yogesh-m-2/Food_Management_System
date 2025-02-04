@@ -1,0 +1,56 @@
+/* OrderSuccess.css */
+.success-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f7f7f7;
+    font-family: Arial, sans-serif;
+    color: #4CAF50;
+}
+
+.success-message {
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.success-message h2 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+.success-message p {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+}
+
+.success-animation {
+    margin-top: 20px;
+}
+
+.circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #4CAF50;
+    margin: 0 auto;
+    animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}

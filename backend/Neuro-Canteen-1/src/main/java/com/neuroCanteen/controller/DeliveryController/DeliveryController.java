@@ -16,7 +16,7 @@ import com.neuroCanteen.model.delivery.Delivery;
 import com.neuroCanteen.service.DeliveryService;
 
 @RestController
-@RequestMapping("/api/delivery")
+@RequestMapping("/delivery")
 public class DeliveryController {
     @Autowired
     private DeliveryService deliveryService;
