@@ -1,6 +1,7 @@
 package com.neuroCanteen.serviceImpl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,6 +64,57 @@ public class PatientServiceImpl  implements PatientService {
     public Patient getPatientById(int id) {
         return patientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + id));
+    }
+
+
+    
+
+    public PatientServiceImpl(PatientRepository patientRepository) {
+        this.patientRepository = patientRepository;
+    }
+
+    @Override
+    public Patient savePatient(Patient patient) {
+        return patientRepository.save(patient);
+    }
+
+   
+
+   
+
+    @Override
+    public List<String> getFloorsByWard(String ward) {
+        return patientRepository.findByWard(ward)
+                .stream()
+                .map(Patient::getFloor)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> getRoomsByFloor(String floor) {
+        return patientRepository.findByFloor(floor)
+                .stream()
+                .map(Patient::getRoomNo)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> getBedsByRoom(String roomNo) {
+        return patientRepository.findByRoomNo(roomNo)
+                .stream()
+                .map(Patient::getBedNo)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Patient getPatientByBedNo(String bedNo) {
+        return patientRepository.findByBedNo(bedNo)
+                .stream()
+                .findFirst()
+                .orElse(null);
     }
 }
 

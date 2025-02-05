@@ -10,6 +10,10 @@ public interface PatientService {
     void deletePatient(int id);
     List<Patient> getAllPatients();
     Patient getPatientById(int id);
-
+    Patient savePatient(Patient patient);
+    List<String> getFloorsByWard(String ward);
+    List<String> getRoomsByFloor(String floor);
+    List<String> getBedsByRoom(String roomNo);
+    Patient getPatientByBedNo(String bedNo);
     
 }

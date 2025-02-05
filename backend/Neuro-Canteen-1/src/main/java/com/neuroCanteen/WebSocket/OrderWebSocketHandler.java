@@ -4,6 +4,8 @@ package com.neuroCanteen.WebSocket;
     import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -11,9 +13,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class OrderWebSocketHandler extends TextWebSocketHandler {
-    
+   
     private static final Set<WebSocketSession> sessions = Collections.newSetFromMap(new ConcurrentHashMap<>());
-
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+   
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         System.out.println(session);
@@ -25,15 +28,16 @@ public class OrderWebSocketHandler extends TextWebSocketHandler {
         sessions.remove(session);
     }
 
-    public static void sendOrderUpdate(String message) {
-        for (WebSocketSession session : sessions) {
-            try {
-                session.sendMessage(new TextMessage(message));
-            } catch (IOException e) {
-                e.printStackTrace();
+    public static void sendOrderUpdate(OrderUpdateDTO orderUpdate) {
+        try {
+            String jsonMessage = objectMapper.writeValueAsString(orderUpdate);
+            for (WebSocketSession session : sessions) {
+                session.sendMessage(new TextMessage(jsonMessage));
             }
-        }
-    }
-}
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+}}}
 
 
