@@ -1,26 +1,33 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/dietitian/DietitianLogin.css"; // Import CSS
+import api from "../../services/api"; // Assuming you have a service file for API requests
+import { useAuth } from "../../context/AuthContext"; // Assuming AuthContext is used for authentication
 
 const DietitianLogin = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-
-    if (username.trim() && password.trim()) {
-      // Simulating successful login for dietitian
-      navigate("/dietitian-dashboard");
-    } else {
-      alert("Please enter both username and password");
+    try {
+      const response = await api.post("/authenticate/dietitian", { username, password });
+      if (response.data.jwt) {
+        localStorage.setItem("jwtToken", response.data.jwt);
+        await login();
+        await navigate("/dietitian/dietitian-dashboard"); // Redirect after successful login
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Failed to login. Check your credentials.");
     }
   };
 
   return (
     <div className="dietitian-login-container">
-      <h2>DIETITIAN LOGIN</h2>
+      <h2>Dietitian Login</h2>
       <div className="login-box">
         <h3>Login</h3>
         <form onSubmit={handleLogin}>
