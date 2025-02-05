@@ -55,6 +55,7 @@ public class SecurityConfigurer {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/**").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/**").permitAll()
                 .anyRequest().authenticated()
             )
             .exceptionHandling(ex -> ex
