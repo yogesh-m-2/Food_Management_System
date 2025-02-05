@@ -81,7 +81,7 @@ const KitchenDashboard = () => {
                     onChange={(e) => handleStatusChange(order.orderId, e.target.value)}
                   >
                     <option value="RECEIVED">Order Received</option>
-                    <option value="PREPARED">Cooking</option>
+                    <option value="PREPARED">Prepared</option>
                     <option value="OUT_FOR_DELIVERY">Sent for Delivery</option>
                   </select>
                 </span>

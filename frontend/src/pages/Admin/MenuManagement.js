@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/admin/AdminControl.css";
-import api from "../../services/api"; // Import the api.js file
+import api from "../../services/api";
 
 const MenuManagement = () => {
   const [menuItems, setMenuItems] = useState([]);
@@ -12,8 +12,9 @@ const MenuManagement = () => {
     picture: "",
     description: "",
     isAvailable: true,
+    role: "",
   });
-  const [editItem, setEditItem] = useState(null); // State to hold the item being edited
+  const [editItem, setEditItem] = useState(null);
 
   useEffect(() => {
     fetchMenuItems();
@@ -40,6 +41,7 @@ const MenuManagement = () => {
           picture: "",
           description: "",
           isAvailable: true,
+          role: "",
         });
         setShowAddForm(false);
       } catch (error) {
@@ -58,19 +60,15 @@ const MenuManagement = () => {
   };
 
   const handleEdit = (item) => {
-    setEditItem(item); // Set the item to be edited
-    setShowAddForm(true); // Show the form for editing
+    setEditItem(item);
+    setShowAddForm(true);
   };
 
   const handleUpdate = async () => {
     if (editItem.name && editItem.price && editItem.category) {
       try {
         const response = await api.put(`/menu-items/${editItem.id}`, editItem);
-        setMenuItems(
-          menuItems.map((item) =>
-            item.id === editItem.id ? response.data : item
-          )
-        );
+        setMenuItems(menuItems.map((item) => (item.id === editItem.id ? response.data : item)));
         setEditItem(null);
         setShowAddForm(false);
       } catch (error) {
@@ -91,6 +89,8 @@ const MenuManagement = () => {
             <th>Upload Picture</th>
             <th>Price</th>
             <th>Category</th>
+            <th>Role</th>
+            <th>Available</th>
             <th>Edit</th>
             <th>Remove</th>
           </tr>
@@ -99,32 +99,16 @@ const MenuManagement = () => {
           {menuItems.map((item) => (
             <tr key={item.id}>
               <td>{item.name}</td>
-              <td>
-                {item.picture ? (
-                  <img
-                    src={item.picture}
-                    alt={item.name}
-                    style={{
-                      width: "50px",
-                      height: "50px",
-                      objectFit: "cover",
-                    }}
-                  />
-                ) : (
-                  "No Image"
-                )}
-              </td>
+              <td>{item.picture ? <img src={item.picture} alt={item.name} style={{ width: "50px", height: "50px", objectFit: "cover" }} /> : "No Image"}</td>
               <td>{item.price}</td>
               <td>{item.category}</td>
+              <td>{item.role || "N/A"}</td>
+              <td>{item.available ? "Yes" : "No"}</td>
               <td>
-                <button className="edit-btn" onClick={() => handleEdit(item)}>
-                  ✏️
-                </button>
+                <button className="edit-btn" onClick={() => handleEdit(item)}>✏️</button>
               </td>
               <td>
-                <button className="remove-btn" onClick={() => handleRemove(item.id)}>
-                  🗑️
-                </button>
+                <button className="remove-btn" onClick={() => handleRemove(item.id)}>🗑️</button>
               </td>
             </tr>
           ))}
@@ -135,59 +119,23 @@ const MenuManagement = () => {
         <div className="modal">
           <div className="modal-content">
             <h3>{editItem ? "Edit Menu Item" : "Add New Item"}</h3>
-            <input
-              type="text"
-              name="name"
-              placeholder="Item name"
-              value={editItem ? editItem.name : newItem.name}
-              onChange={(e) =>
-                editItem
-                  ? setEditItem({ ...editItem, name: e.target.value })
-                  : setNewItem({ ...newItem, name: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              name="price"
-              placeholder="Price"
-              value={editItem ? editItem.price : newItem.price}
-              onChange={(e) =>
-                editItem
-                  ? setEditItem({ ...editItem, price: e.target.value })
-                  : setNewItem({ ...newItem, price: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              name="category"
-              placeholder="Category"
-              value={editItem ? editItem.category : newItem.category}
-              onChange={(e) =>
-                editItem
-                  ? setEditItem({ ...editItem, category: e.target.value })
-                  : setNewItem({ ...newItem, category: e.target.value })
-              }
-            />
-            <input
-              type="file"
-              name="picture"
-              onChange={(e) => {
-                const file = e.target.files[0];
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                  editItem
-                    ? setEditItem({ ...editItem, picture: reader.result })
-                    : setNewItem({ ...newItem, picture: reader.result });
-                };
-                if (file) reader.readAsDataURL(file);
-              }}
-            />
-            <button className="save-btn" onClick={editItem ? handleUpdate : handleAdd}>
-              {editItem ? "Update" : "Save"}
-            </button>
-            <button className="close-btn" onClick={() => setShowAddForm(false)}>
-              Cancel
-            </button>
+            <input type="text" name="name" placeholder="Item name" value={editItem ? editItem.name : newItem.name} onChange={(e) => editItem ? setEditItem({ ...editItem, name: e.target.value }) : setNewItem({ ...newItem, name: e.target.value })} />
+            <input type="text" name="price" placeholder="Price" value={editItem ? editItem.price : newItem.price} onChange={(e) => editItem ? setEditItem({ ...editItem, price: e.target.value }) : setNewItem({ ...newItem, price: e.target.value })} />
+            <input type="text" name="category" placeholder="Category" value={editItem ? editItem.category : newItem.category} onChange={(e) => editItem ? setEditItem({ ...editItem, category: e.target.value }) : setNewItem({ ...newItem, category: e.target.value })} />
+            <input type="file" name="picture" onChange={(e) => {
+              const file = e.target.files[0];
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                editItem ? setEditItem({ ...editItem, picture: reader.result }) : setNewItem({ ...newItem, picture: reader.result });
+              };
+              if (file) reader.readAsDataURL(file);
+            }} />
+            <label>
+              Available:
+              <input type="checkbox" checked={editItem ? editItem.available : newItem.isAvailable} onChange={(e) => editItem ? setEditItem({ ...editItem, available: e.target.checked }) : setNewItem({ ...newItem, isAvailable: e.target.checked })} />
+            </label>
+            <button className="save-btn" onClick={editItem ? handleUpdate : handleAdd}>{editItem ? "Update" : "Save"}</button>
+            <button className="close-btn" onClick={() => setShowAddForm(false)}>Cancel</button>
           </div>
         </div>
       )}
