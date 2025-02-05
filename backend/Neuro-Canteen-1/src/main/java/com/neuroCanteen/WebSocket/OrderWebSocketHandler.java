@@ -28,16 +28,27 @@ public class OrderWebSocketHandler extends TextWebSocketHandler {
         sessions.remove(session);
     }
 
-    public static void sendOrderUpdate(OrderUpdateDTO orderUpdate) {
+    public static void sendOrderUpdate(String orderUpdate) {
         try {
-            String jsonMessage = objectMapper.writeValueAsString(orderUpdate);
+            //String jsonMessage = objectMapper.writeValueAsString(orderUpdate);
             for (WebSocketSession session : sessions) {
-                session.sendMessage(new TextMessage(jsonMessage));
+                session.sendMessage(new TextMessage(orderUpdate));
             }
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-}}}
+}}
+public static void sendDeliveryUpdate(String deliveryUpdate) {
+    try {
+        for (WebSocketSession session : sessions) {
+            session.sendMessage(new TextMessage(deliveryUpdate));
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
+}
 
 

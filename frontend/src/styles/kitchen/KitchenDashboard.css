@@ -1,148 +1,224 @@
 .kitchen-dashboard-container {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-  }
-  
-  h2 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #333;
-  }
-  
-  .orders-list {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  .orders-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Added subtle shadow for table */
-  }
-  
-  .table-header {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr); /* Fixed for correct alignment of columns */
-    background-color: #f4f4f4;
-    padding: 10px 0;
-    font-weight: bold;
-    text-align: center;
-    border-bottom: 2px solid #ccc;
-  }
-  
-  .table-header .column-item {
-    padding: 0 15px;
-    text-transform: uppercase;
-    font-size: 14px;
-    color: #555;
-  }
-  
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  position: relative;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}
+
+.orders-list {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  background-color: #f4f4f4;
+  padding: 10px 0;
+  font-weight: bold;
+  text-align: center;
+  border-bottom: 2px solid #ccc;
+}
+
+.table-header .column-item {
+  padding: 0 15px;
+  text-transform: uppercase;
+  font-size: 14px;
+  color: #555;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  padding: 15px 0;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: center;
+}
+
+.table-row:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.table-row .column-item {
+  padding: 0 15px;
+  font-size: 14px;
+  color: #333;
+}
+
+.table-row .column-item:first-child {
+  font-weight: bold;
+}
+
+.table-row .column-item:last-child {
+  font-style: italic;
+}
+
+.orders-list p {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #777;
+}
+
+.orders-table .table-row:hover {
+  background-color: #f9f9f9;
+}
+
+.orders-table .table-row .column-item {
+  transition: background-color 0.2s ease;
+}
+
+.table-header .column-item,
+.table-row .column-item {
+  user-select: none;
+}
+
+.orders-table .table-row .column-item {
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+@media (max-width: 1024px) {
+  .table-header,
   .table-row {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr); /* Fixed for correct alignment of rows */
-    padding: 15px 0;
-    border-bottom: 1px solid #e0e0e0;
-    text-align: center;
+    display: block;
   }
-  
-  .table-row:nth-child(even) {
-    background-color: #fafafa;
-  }
-  
-  .table-row .column-item {
-    padding: 0 15px;
-    font-size: 14px;
-    color: #333;
-  }
-  
-  .table-row .column-item:first-child {
-    font-weight: bold;
-  }
-  
-  .table-row .column-item:last-child {
-    font-style: italic;
-  }
-  
-  .orders-list p {
-    text-align: center;
-    font-size: 1.2rem;
-    color: #777;
-  }
-  
-  /* Table hover effect for better interactivity */
-  .orders-table .table-row:hover {
-    background-color: #f9f9f9;
-  }
-  
-  .orders-table .table-row .column-item {
-    transition: background-color 0.2s ease;
-  }
-  
-  /* Accessibility fixes */
+
   .table-header .column-item,
   .table-row .column-item {
-    user-select: none; /* Prevent text selection for cleaner UI */
+    display: block;
+    width: 100%;
+    padding: 10px;
+    text-align: left;
   }
-  
-  .orders-table .table-row .column-item {
-    word-wrap: break-word; /* Ensure long content breaks into new lines */
-    white-space: normal; /* Prevent text overflow */
+
+  .table-row {
+    margin-bottom: 10px;
   }
-  
-  /* Media Queries for smaller screens */
-  @media (max-width: 1024px) {
-    .table-header,
-    .table-row {
-      display: block;
-    }
-  
-    .table-header .column-item,
-    .table-row .column-item {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      text-align: left;
-    }
-  
-    .table-row {
-      margin-bottom: 10px;
-    }
-  
-    .table-header .column-item {
-      font-size: 12px;
-    }
-  
-    .table-row .column-item {
-      font-size: 13px;
-    }
+
+  .table-header .column-item {
+    font-size: 12px;
   }
-  
-  @media (max-width: 768px) {
-    .table-header,
-    .table-row {
-      display: block;
-    }
-  
-    .table-header .column-item,
-    .table-row .column-item {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      text-align: left;
-    }
-  
-    .table-row {
-      margin-bottom: 10px;
-    }
-  
-    .table-header .column-item {
-      font-size: 12px;
-    }
-  
-    .table-row .column-item {
-      font-size: 13px;
-    }
+
+  .table-row .column-item {
+    font-size: 13px;
   }
-  
+}
+
+@media (max-width: 768px) {
+  .table-header,
+  .table-row {
+    display: block;
+  }
+
+  .table-header .column-item,
+  .table-row .column-item {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    text-align: left;
+  }
+
+  .table-row {
+    margin-bottom: 10px;
+  }
+
+  .table-header .column-item {
+    font-size: 12px;
+  }
+
+  .table-row .column-item {
+    font-size: 13px;
+  }
+}
+
+/* Notification Alert Styling */
+.notification {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
+  z-index: 1000;
+}
+
+.notification.fade-out {
+  opacity: 0;
+}
+
+/* Highlight new orders */
+.new-order {
+  background-color: #d4edda !important;
+  animation: fadeHighlight 2s ease-in-out;
+}
+
+@keyframes fadeHighlight {
+  from {
+    background-color: #c3e6cb;
+  }
+  to {
+    background-color: #ffffff;
+  }
+}
+
+.alert {
+  position: fixed;
+  top: 20px; /* Distance from the top of the screen */
+  right: 20px; /* Distance from the right side of the screen */
+  background-color: #28a745; /* Green background color */
+  color: white; /* White text */
+  padding: 15px 25px; /* Added padding for better spacing */
+  border-radius: 8px; /* Rounded corners for the alert */
+  font-weight: bold;
+  font-size: 16px; /* Adjusted text size for readability */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for a more polished look */
+  opacity: 1;
+  transition: opacity 1s ease-in-out; /* Smooth fade-out effect */
+  z-index: 1000; /* Ensure the alert is always on top */
+  animation: slideIn 0.5s ease-out; /* Slide-in animation */
+}
+
+.alert.fade-out {
+  opacity: 0; /* Fade out when no longer needed */
+}
+
+/* Slide-in animation */
+@keyframes slideIn {
+  from {
+    right: -300px; /* Start off the screen */
+  }
+  to {
+    right: 20px; /* End at the correct position */
+  }
+}
+
+/* Styling for new order highlight */
+.alert.new-order {
+  background-color: #c3e6cb; /* Light green for new orders */
+  border: 1px solid #28a745; /* Green border */
+}
+
+/* Alert Text Styling */
+.alert p {
+  margin: 0; /* Remove margin from the text */
+  font-size: 16px; /* Proper font size */
+  text-align: center; /* Center the alert text */
+}

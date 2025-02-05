@@ -1,30 +1,41 @@
 import React, { useEffect, useState } from "react";
-import api from "../../services/api"; // Import your api module
-import "../../styles/kitchen/KitchenDashboard.css"; // Make sure to add styling for the dashboard
+import api from "../../services/api";
+import "../../styles/kitchen/KitchenDashboard.css";
 
 const KitchenDashboard = () => {
-  const [orders, setOrders] = useState([]); // State to hold the orders
-  const [loading, setLoading] = useState(true); // State to handle loading state
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [newOrderAlert, setNewOrderAlert] = useState(null);
 
-  // Fetch orders from the API
   const fetchOrders = async () => {
     try {
       const response = await api.get("/orders");
-      setOrders(response.data); // Set the orders data
-      setLoading(false); // Set loading to false after data is fetched
+      setOrders(response.data.sort((a, b) => new Date(b.orderDateTime) - new Date(a.orderDateTime)));
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching orders:", error);
-      setLoading(false); // Set loading to false if there's an error
+      setLoading(false);
     }
   };
 
-  // Handle the status change and send PUT request
+  useEffect(() => {
+    fetchOrders();
+    
+    const socket = new WebSocket("ws://127.0.0.1:8142/order-updates");
+    socket.onmessage = (event) => {
+      const newOrder = JSON.parse(event.data);
+      setOrders((prevOrders) => [newOrder, ...prevOrders].sort((a, b) => new Date(b.orderDateTime) - new Date(a.orderDateTime)));
+      
+      setNewOrderAlert(`New order received: ${newOrder.itemName}`);
+      setTimeout(() => setNewOrderAlert(null), 1000);
+    };
+    
+    return () => socket.close();
+  }, []);
+
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      // Update the order status via a PATCH request with query parameters
       await api.patch(`/orders/${orderId}/status?orderStatus=${newStatus}`);
-      
-      // Update the order status locally after successful PATCH request
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order.orderId === orderId ? { ...order, orderStatus: newStatus } : order
@@ -34,19 +45,14 @@ const KitchenDashboard = () => {
       console.error("Error updating order status:", error);
     }
   };
-  
-  // Use useEffect to fetch orders when the component mounts
-  useEffect(() => {
-    fetchOrders();
-  }, []); // Empty dependency array means this effect runs once on mount
 
-  // Render loading state or orders
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="kitchen-dashboard-container">
+      {newOrderAlert && <div className="alert">{newOrderAlert}</div>}
       <h2>Kitchen Orders Dashboard</h2>
       <div className="orders-list">
         {orders.length === 0 ? (
@@ -63,8 +69,6 @@ const KitchenDashboard = () => {
               <span className="column-item">Address</span>
               <span className="column-item">Order Status</span>
             </div>
-
-            {/* Loop through orders and display them */}
             {orders.map((order) => (
               <div key={order.orderId} className="table-row">
                 <span className="column-item">{order.orderId}</span>
@@ -75,7 +79,6 @@ const KitchenDashboard = () => {
                 <span className="column-item">{order.paymentType}</span>
                 <span className="column-item">{order.address}</span>
                 <span className="column-item">
-                  {/* Dropdown for Order Status */}
                   <select
                     value={order.orderStatus || "RECEIVED"}
                     onChange={(e) => handleStatusChange(order.orderId, e.target.value)}

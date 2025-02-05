@@ -56,19 +56,28 @@ public Order createOrder(Order order) {
     Order savedOrder = orderRepository.save(order);
 
     // Send WebSocket notification
-    String message = "New order received: " + savedOrder.getItemName() + 
-                     " (Quantity: " + savedOrder.getQuantity() + ")\n" +
-                     "Ordered by: " + savedOrder.getOrderedName() + 
-                     " (Role: " + savedOrder.getOrderedRole() + ")\n" +
-                     "Category: " + savedOrder.getCategory() + "\n" +
-                     "Price: $" + savedOrder.getPrice() + "\n" +
-                     "Payment Type: " + savedOrder.getPaymentType() + "\n" +
-                     "Payment Received: " + (savedOrder.isPaymentRecived() ? "Yes" : "No") + "\n" +
-                     "Order Status: " + savedOrder.getOrderStatus() + "\n" +
-                     "Delivery Status: " + savedOrder.getDeliveryStatus() + "\n" +
-                     "Address: " + savedOrder.getAddress();
+    String jsonString = "{ " +
+    "\"orderid\": \"" + savedOrder.getOrderId() + "\", " +
+    "\"orderedRole\": \"" + savedOrder.getOrderedRole() + "\", " +
+    "\"orderedName\": \"" + savedOrder.getOrderedName() + "\", " +
+    "\"orderedUserId\": \"" + savedOrder.getOrderedUserId() + "\", " +
+    "\"itemName\": \"" + savedOrder.getItemName() + "\", " +
+    "\"quantity\": " + savedOrder.getQuantity() + ", " +  // Assuming quantity is a number
+    "\"category\": \"" + savedOrder.getCategory() + "\", " +
+    "\"price\": " + savedOrder.getPrice() + ", " +  // Assuming price is a number
+    "\"orderStatus\": \"" + savedOrder.getOrderStatus() + "\", " +
+    "\"paymentType\": \"" + savedOrder.getPaymentType() + "\", " +
+    "\"paymentRecived\": " + savedOrder.isPaymentRecived() + ", " + // Assuming boolean
+    "\"paymentStatus\": \"" + savedOrder.getPaymentStatus() + "\", " +
+    "\"orderDateTime\": \"" + savedOrder.getOrderDateTime() + "\", " +
+    "\"deliveryStatus\": \"" + savedOrder.getDeliveryStatus() + "\", " +
+    "\"address\": \"" + savedOrder.getAddress() + "\", " +
+    "\"phoneNo\": \"" + savedOrder.getPhoneNo() + "\"" +
+"}";
 
-    OrderWebSocketHandler.sendOrderUpdate(message);
+
+
+    OrderWebSocketHandler.sendOrderUpdate(jsonString);
     return savedOrder;
 }
 
