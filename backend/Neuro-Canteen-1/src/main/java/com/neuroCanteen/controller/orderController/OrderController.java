@@ -2,9 +2,12 @@ package com.neuroCanteen.controller.orderController;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.neuroCanteen.model.order.Order;
-import com.neuroCanteen.service.OrderService;
 
+import com.neuroCanteen.model.order.DeliveryStatus;
+import com.neuroCanteen.model.order.Order;
+import com.neuroCanteen.model.order.Order.OrderStatus;
+
+import com.neuroCanteen.service.OrderService;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +35,7 @@ public class OrderController {
 
     @GetMapping("/filter")
     public List<Order> getOrdersByRoleAndUserId(
-            @RequestParam String orderedRole, 
+            @RequestParam String orderedRole,
             @RequestParam String orderedUserId) {
         return orderService.getOrdersByRoleAndUserId(orderedRole, orderedUserId);
     }
@@ -51,5 +54,20 @@ public class OrderController {
     public String deleteOrder(@PathVariable Long id) {
         orderService.deleteOrder(id);
         return "Order deleted with ID: " + id;
+    }
+
+    @PatchMapping("/{id}/status")
+    public Order updateOrderStatus(@PathVariable Long id, @RequestParam OrderStatus orderStatus) {
+        return orderService.updateOrderStatus(id, orderStatus);
+    }
+
+    @PatchMapping("/{id}/delivery-status")
+    public Order updateDeliveryStatus(@PathVariable Long id, @RequestParam DeliveryStatus deliveryStatus) {
+        return orderService.updateDeliveryStatus(id, deliveryStatus);
+    }
+
+    @PatchMapping("/{id}/payment-received")
+    public Order updatePaymentReceived(@PathVariable Long id, @RequestParam boolean paymentReceived) {
+        return orderService.updatePaymentReceived(id, paymentReceived);
     }
 }
