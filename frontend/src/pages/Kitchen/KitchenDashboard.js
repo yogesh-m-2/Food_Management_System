@@ -21,10 +21,10 @@ const KitchenDashboard = () => {
   // Handle the status change and send PUT request
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      await api.put(`/orders/${orderId}`, {
-        orderStatus: newStatus,
-      });
-      // Update the order status locally after successful PUT request
+      // Update the order status via a PATCH request with query parameters
+      await api.patch(`/orders/${orderId}/status?orderStatus=${newStatus}`);
+      
+      // Update the order status locally after successful PATCH request
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order.orderId === orderId ? { ...order, orderStatus: newStatus } : order
@@ -34,7 +34,7 @@ const KitchenDashboard = () => {
       console.error("Error updating order status:", error);
     }
   };
-
+  
   // Use useEffect to fetch orders when the component mounts
   useEffect(() => {
     fetchOrders();

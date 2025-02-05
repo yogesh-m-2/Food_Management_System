@@ -35,6 +35,11 @@ public class OrderController {
         return orderService.getOrdersByUserId(userId);
     }
 
+    @GetMapping("/out-for-delivery")
+    public List<Order> getOrdersOutForDelivery() {
+        return orderService.getOrdersOutForDelivery();
+    }
+
     @GetMapping("/filter")
     public List<Order> getOrdersByRoleAndUserId(
             @RequestParam String orderedRole,
@@ -70,7 +75,7 @@ public class OrderController {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid order status: " + orderStatus);
     }
 }
-
+ 
     @PatchMapping("/{id}/delivery-status")
     public Order updateDeliveryStatus(@PathVariable Long id, @RequestParam DeliveryStatus deliveryStatus) {
         return orderService.updateDeliveryStatus(id, deliveryStatus);

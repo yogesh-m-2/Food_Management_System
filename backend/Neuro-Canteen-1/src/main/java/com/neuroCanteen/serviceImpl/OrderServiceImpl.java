@@ -25,6 +25,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<Order> getOrdersOutForDelivery() {
+        return orderRepository.findByOrderStatus(Order.OrderStatus.OUT_FOR_DELIVERY);
+    }
+
+    @Override
     public Optional<Order> getOrderById(Long id) {
         return orderRepository.findById(id);
     }

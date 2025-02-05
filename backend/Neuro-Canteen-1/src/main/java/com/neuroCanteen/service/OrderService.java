@@ -18,4 +18,5 @@ public interface OrderService {
     Order updateOrderStatus(Long orderId, OrderStatus orderStatus);
     Order updateDeliveryStatus(Long orderId, DeliveryStatus deliveryStatus);
     Order updatePaymentReceived(Long orderId, boolean paymentReceived);
+    List<Order> getOrdersOutForDelivery();
 }

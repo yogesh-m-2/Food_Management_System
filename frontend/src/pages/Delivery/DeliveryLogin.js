@@ -21,7 +21,7 @@ const DeliveryLogin = () => {
       if (response.data.jwt) {
         localStorage.setItem("jwtToken", response.data.jwt); // Store JWT in localStorage
         await login(); // Call the login method from AuthContext
-        navigate("/delivery-dashboard"); // Redirect to the delivery dashboard
+        navigate("/delivery/delivery-dashboard"); // Redirect to the delivery dashboard
       }
     } catch (error) {
       console.error("Login error:", error);
