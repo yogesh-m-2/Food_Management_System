@@ -1,5 +1,6 @@
 package com.neuroCanteen.serviceImpl;
 
+import com.neuroCanteen.WebSocket.OrderWebSocketHandler;
 import com.neuroCanteen.model.order.DeliveryStatus;
 import com.neuroCanteen.model.order.Order;
 import com.neuroCanteen.model.order.Order.OrderStatus;
@@ -38,11 +39,34 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findByOrderedRoleAndOrderedUserId(orderedRole, orderedUserId);
     }
 
+    // @Override
+    // public Order createOrder(Order order) {
+    //     order.setOrderDateTime(java.time.LocalDateTime.now());
+    //     return orderRepository.save(order);
+    // }
+
+
     @Override
-    public Order createOrder(Order order) {
-        order.setOrderDateTime(java.time.LocalDateTime.now());
-        return orderRepository.save(order);
-    }
+public Order createOrder(Order order) {
+    Order savedOrder = orderRepository.save(order);
+
+    // Send WebSocket notification
+    String message = "New order received: " + savedOrder.getItemName() + 
+                     " (Quantity: " + savedOrder.getQuantity() + ")\n" +
+                     "Ordered by: " + savedOrder.getOrderedName() + 
+                     " (Role: " + savedOrder.getOrderedRole() + ")\n" +
+                     "Category: " + savedOrder.getCategory() + "\n" +
+                     "Price: $" + savedOrder.getPrice() + "\n" +
+                     "Payment Type: " + savedOrder.getPaymentType() + "\n" +
+                     "Payment Received: " + (savedOrder.isPaymentRecived() ? "Yes" : "No") + "\n" +
+                     "Order Status: " + savedOrder.getOrderStatus() + "\n" +
+                     "Delivery Status: " + savedOrder.getDeliveryStatus() + "\n" +
+                     "Address: " + savedOrder.getAddress();
+
+    OrderWebSocketHandler.sendOrderUpdate(message);
+    return savedOrder;
+}
+
 
     @Override
     public Order updateOrder(Long id, Order order) {

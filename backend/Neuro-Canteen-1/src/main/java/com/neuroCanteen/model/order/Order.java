@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Order {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long orderId; // Unique Order ID
 
     private String orderedRole; // Role: Dietitian, Patient, Staff
