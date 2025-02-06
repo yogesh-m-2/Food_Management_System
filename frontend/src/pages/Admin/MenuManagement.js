@@ -11,7 +11,7 @@ const MenuManagement = () => {
     category: "",
     picture: "",
     description: "",
-    isAvailable: true,
+    available: true,
     role: "",
   });
   const [editItem, setEditItem] = useState(null);
@@ -40,7 +40,7 @@ const MenuManagement = () => {
           category: "",
           picture: "",
           description: "",
-          isAvailable: true,
+          available: true,
           role: "",
         });
         setShowAddForm(false);
@@ -99,7 +99,13 @@ const MenuManagement = () => {
           {menuItems.map((item) => (
             <tr key={item.id}>
               <td>{item.name}</td>
-              <td>{item.picture ? <img src={item.picture} alt={item.name} style={{ width: "50px", height: "50px", objectFit: "cover" }} /> : "No Image"}</td>
+              <td>
+                {item.picture ? (
+                  <img src={item.picture} alt={item.name} style={{ width: "50px", height: "50px", objectFit: "cover" }} />
+                ) : (
+                  "No Image"
+                )}
+              </td>
               <td>{item.price}</td>
               <td>{item.category}</td>
               <td>{item.role || "N/A"}</td>
@@ -119,23 +125,82 @@ const MenuManagement = () => {
         <div className="modal">
           <div className="modal-content">
             <h3>{editItem ? "Edit Menu Item" : "Add New Item"}</h3>
-            <input type="text" name="name" placeholder="Item name" value={editItem ? editItem.name : newItem.name} onChange={(e) => editItem ? setEditItem({ ...editItem, name: e.target.value }) : setNewItem({ ...newItem, name: e.target.value })} />
-            <input type="text" name="price" placeholder="Price" value={editItem ? editItem.price : newItem.price} onChange={(e) => editItem ? setEditItem({ ...editItem, price: e.target.value }) : setNewItem({ ...newItem, price: e.target.value })} />
-            <input type="text" name="category" placeholder="Category" value={editItem ? editItem.category : newItem.category} onChange={(e) => editItem ? setEditItem({ ...editItem, category: e.target.value }) : setNewItem({ ...newItem, category: e.target.value })} />
-            <input type="file" name="picture" onChange={(e) => {
-              const file = e.target.files[0];
-              const reader = new FileReader();
-              reader.onloadend = () => {
-                editItem ? setEditItem({ ...editItem, picture: reader.result }) : setNewItem({ ...newItem, picture: reader.result });
-              };
-              if (file) reader.readAsDataURL(file);
-            }} />
+            <input
+              type="text"
+              name="name"
+              placeholder="Item name"
+              value={editItem ? editItem.name : newItem.name}
+              onChange={(e) =>
+                editItem
+                  ? setEditItem({ ...editItem, name: e.target.value })
+                  : setNewItem({ ...newItem, name: e.target.value })
+              }
+            />
+            <input
+              type="text"
+              name="price"
+              placeholder="Price"
+              value={editItem ? editItem.price : newItem.price}
+              onChange={(e) =>
+                editItem
+                  ? setEditItem({ ...editItem, price: e.target.value })
+                  : setNewItem({ ...newItem, price: e.target.value })
+              }
+            />
+            <input
+              type="text"
+              name="category"
+              placeholder="Category"
+              value={editItem ? editItem.category : newItem.category}
+              onChange={(e) =>
+                editItem
+                  ? setEditItem({ ...editItem, category: e.target.value })
+                  : setNewItem({ ...newItem, category: e.target.value })
+              }
+            />
+            <input
+              type="text"
+              name="role"
+              placeholder="Role"
+              value={editItem ? editItem.role : newItem.role}
+              onChange={(e) =>
+                editItem
+                  ? setEditItem({ ...editItem, role: e.target.value })
+                  : setNewItem({ ...newItem, role: e.target.value })
+              }
+            />
+            <input
+              type="file"
+              name="picture"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  editItem
+                    ? setEditItem({ ...editItem, picture: reader.result })
+                    : setNewItem({ ...newItem, picture: reader.result });
+                };
+                if (file) reader.readAsDataURL(file);
+              }}
+            />
             <label>
               Available:
-              <input type="checkbox" checked={editItem ? editItem.available : newItem.isAvailable} onChange={(e) => editItem ? setEditItem({ ...editItem, available: e.target.checked }) : setNewItem({ ...newItem, isAvailable: e.target.checked })} />
+              <input
+                type="checkbox"
+                checked={editItem ? editItem.available : newItem.available}
+                onChange={(e) =>
+                  editItem
+                    ? setEditItem({ ...editItem, available: e.target.checked })
+                    : setNewItem({ ...newItem, available: e.target.checked })
+                }
+              />
             </label>
-            <button className="save-btn" onClick={editItem ? handleUpdate : handleAdd}>{editItem ? "Update" : "Save"}</button>
-            <button className="close-btn" onClick={() => setShowAddForm(false)}>Cancel</button>
+            <button className="save-btn" onClick={editItem ? handleUpdate : handleAdd}>
+              {editItem ? "Update" : "Save"}
+            </button>
+            <button className="close-btn" onClick={() => setShowAddForm(false)}>
+              Cancel
+            </button>
           </div>
         </div>
       )}
