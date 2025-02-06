@@ -55,6 +55,45 @@ public class PatientController {
 
    
 
+    @GetMapping("/floors")
+public ResponseEntity<List<String>> getAllFloors() {
+    return ResponseEntity.ok(patientService.getAllFloors());
+}
+
+@GetMapping("/wards/{floor}")
+public ResponseEntity<List<String>> getWardsByFloor(@PathVariable String floor) {
+    return ResponseEntity.ok(patientService.getWardsByFloor(floor));
+}
+@GetMapping("/rooms/{floor}/{ward}")
+public ResponseEntity<List<String>> getRoomsByFloorAndWard(@PathVariable String floor, @PathVariable String ward) {
+    return ResponseEntity.ok(patientService.getRoomsByFloorAndWard(floor, ward));
+}
+
+@GetMapping("/beds/{floor}/{ward}/{room}")
+public ResponseEntity<List<String>> getBedsByFloorWardAndRoom(
+    @PathVariable String floor, 
+    @PathVariable String ward, 
+    @PathVariable String room) {
+    return ResponseEntity.ok(patientService.getBedsByFloorWardAndRoom(floor, ward, room));
+}
+
+@GetMapping("/patients/{floor}/{ward}/{room}/{bed}")
+public ResponseEntity<List<Patient>> getPatientsByFloorWardRoomAndBed(
+    @PathVariable String floor, 
+    @PathVariable String ward, 
+    @PathVariable String room, 
+    @PathVariable String bed) {
+    List<Patient> patients = patientService.getPatientsByFloorWardRoomAndBed(floor, ward, room, bed);
+    return patients.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(patients);
+}
+
+
+
+
+
+
+
+
     
 
     @GetMapping("/floors/{ward}")

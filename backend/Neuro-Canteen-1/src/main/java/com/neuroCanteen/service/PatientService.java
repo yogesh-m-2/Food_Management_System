@@ -15,5 +15,12 @@ public interface PatientService {
     List<String> getRoomsByFloor(String floor);
     List<String> getBedsByRoom(String roomNo);
     Patient getPatientByBedNo(String bedNo);
+    List<String> getAllFloors();
+    List<String> getWardsByFloor(String floor);
+    List<String> getRoomsByFloorAndWard(String floor, String ward);
+    List<String> getBedsByFloorWardAndRoom(String floor, String ward, String room);
+    List<Patient> getPatientsByFloorWardRoomAndBed(String floor, String ward, String room, String bed);
+
+
     
 }

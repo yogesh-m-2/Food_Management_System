@@ -116,6 +116,30 @@ public class PatientServiceImpl  implements PatientService {
                 .findFirst()
                 .orElse(null);
     }
+    @Override
+public List<String> getAllFloors() {
+    return patientRepository.findDistinctFloors();
+}
+@Override
+public List<String> getWardsByFloor(String floor) {
+    return patientRepository.findDistinctWardsByFloor(floor);
+}
+
+@Override
+public List<String> getRoomsByFloorAndWard(String floor, String ward) {
+    return patientRepository.findDistinctRoomsByFloorAndWard(floor, ward);
+}
+
+@Override
+public List<String> getBedsByFloorWardAndRoom(String floor, String ward, String room) {
+    return patientRepository.findDistinctBedsByFloorWardAndRoom(floor, ward, room);
+}
+@Override
+public List<Patient> getPatientsByFloorWardRoomAndBed(String floor, String ward, String room, String bed) {
+    return patientRepository.findPatientsByFloorWardRoomAndBed(floor, ward, room, bed);
+}
+
+
 }
 
 
