@@ -13,6 +13,9 @@ const MenuManagement = () => {
     description: "",
     available: true,
     role: "",
+    staffPrice: "",
+    patientPrice: "",
+    dietitianPrice: ""
   });
   const [editItem, setEditItem] = useState(null);
 
@@ -42,6 +45,9 @@ const MenuManagement = () => {
           description: "",
           available: true,
           role: "",
+          staffPrice: "",
+          patientPrice: "",
+          dietitianPrice: ""
         });
         setShowAddForm(false);
       } catch (error) {
@@ -195,6 +201,42 @@ const MenuManagement = () => {
                 }
               />
             </label>
+            {/* Price Inputs for Staff, Patient, and Dietitian */}
+            <div className="price-inputs">
+              <input
+                type="number"
+                name="staffPrice"
+                placeholder="Staff Price"
+                value={editItem ? editItem.staffPrice : newItem.staffPrice}
+                onChange={(e) =>
+                  editItem
+                    ? setEditItem({ ...editItem, staffPrice: e.target.value })
+                    : setNewItem({ ...newItem, staffPrice: e.target.value })
+                }
+              />
+              <input
+                type="number"
+                name="patientPrice"
+                placeholder="Patient Price"
+                value={editItem ? editItem.patientPrice : newItem.patientPrice}
+                onChange={(e) =>
+                  editItem
+                    ? setEditItem({ ...editItem, patientPrice: e.target.value })
+                    : setNewItem({ ...newItem, patientPrice: e.target.value })
+                }
+              />
+              <input
+                type="number"
+                name="dietitianPrice"
+                placeholder="Dietitian Price"
+                value={editItem ? editItem.dietitianPrice : newItem.dietitianPrice}
+                onChange={(e) =>
+                  editItem
+                    ? setEditItem({ ...editItem, dietitianPrice: e.target.value })
+                    : setNewItem({ ...newItem, dietitianPrice: e.target.value })
+                }
+              />
+            </div>
             <button className="save-btn" onClick={editItem ? handleUpdate : handleAdd}>
               {editItem ? "Update" : "Save"}
             </button>

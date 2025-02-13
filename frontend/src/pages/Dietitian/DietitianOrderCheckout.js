@@ -12,7 +12,7 @@ const DietitianOrderCheckout = () => {
     const [isEditing, setIsEditing] = useState(true);
 
     // Calculate total price for each item
-    const calculateItemTotal = (item, quantity) => item.price * quantity;
+    const calculateItemTotal = (item, quantity) => item.dietitianPrice * quantity;
 
     // Calculate total order cost
     const orderTotal = Object.keys(selectedDiets).reduce((total, itemId) => {

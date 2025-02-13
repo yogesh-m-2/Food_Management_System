@@ -81,7 +81,7 @@ const StaffOrder = () => {
                         <div className="item-details">
                             <h3>{item.name}</h3>
                             <p>{item.description}</p>
-                            <p>Price: ${item.price}</p>
+                            <p>Price: ${item.staffPrice}</p>
 
                             {cartItems[item.id] ? (
                                 <div className="quantity-selector">
@@ -106,7 +106,7 @@ const StaffOrder = () => {
                         const item = menuItems.find(menuItem => menuItem.id === parseInt(id));
                         return (
                             <li key={id}>
-                                {item.name} - {cartItems[id]} x ${item.price}
+                                {item.name} - {cartItems[id]} x ${item.staffPrice}
                             </li>
                         );
                     })}
