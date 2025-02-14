@@ -13,6 +13,8 @@ const PatientOrderCheckout = () => {
     const [submittedAddress, setSubmittedAddress] = useState(''); // State to store submitted address
     const [isEditing, setIsEditing] = useState(false); // State to toggle between edit/view mode
 
+    
+
     // Handle address input change
     const handleAddressChange = (e) => {
         setAddress(e.target.value);
@@ -46,10 +48,9 @@ const PatientOrderCheckout = () => {
         return total;
     };
 
-    // Delivery fee, tip, platform fee, GST, and Restaurant charges
-    const deliveryFee = 48; // You can calculate this dynamically if needed
-    const platformFee = 10;
-    const gstAndCharges = 35.55;
+    const deliveryFee = 0; // Delivery fee (you can calculate this dynamically if needed)
+    const platformFee = 0;
+    const gstAndCharges = 0;
     const orderTotal = calculateOrderTotal();
 
     // Calculate the grand total
@@ -57,7 +58,61 @@ const PatientOrderCheckout = () => {
     const token = localStorage.getItem("jwtToken");
     const decodedToken = jwtDecode(token);
     const username = decodedToken.sub;
-    
+
+    // Handle UPI payment with Razorpay
+    const handleUPI = async () => {
+        const payment_metadata = await api.post("/payment/createOrder", { price: grandTotal });
+        const { orderId, amount } = payment_metadata.data;
+
+        
+            const options = {
+                key: "rzp_test_0oZHIWIDL59TxD", // Replace with your Razorpay key
+                amount: amount * 100, // Amount in paise (Razorpay expects the amount in paise)
+                currency: "INR",
+                name: "Your Company Name",
+                description: "Payment for Order",
+                order_id: orderId,
+                handler: function(response) {
+                    verifyPayment(response);
+                },
+                prefill: {
+                    name: username,
+                    email: "user@example.com",
+                    contact: "1234567890",
+                },
+                notes: {
+                    address: submittedAddress,
+                },
+            };
+
+            const razorpay = new window.Razorpay(options);
+            razorpay.open();
+        
+    };
+
+    const verifyPayment = async (response) => {
+        const paymentData = {
+            orderId: response.order_id,
+            paymentId: response.payment_id,
+            paymentStatus: response.razorpay_payment_status,
+            paymentMethod: response.method,
+            amount: calculateOrderTotal(),
+            createdAt: new Date().toISOString(),
+        };
+
+        try {
+            const result = await api.post("/payment/verifyPayment", paymentData);
+            if (result.data) {
+                navigate("/patient/order-success", { state: { orderHistoryRedirect: "/patient/orderhistory", orderedUserId: username, orderedRole: "Patient" } });
+            } else {
+                alert("Payment verification failed!");
+            }
+        } catch (error) {
+            console.error("Error verifying payment:", error);
+            alert("There was an issue verifying your payment.");
+        }
+    };
+
     // Handle Cash On Delivery (COD) payment
     const handleCOD = async () => {
         const orderDetails = {
@@ -92,7 +147,6 @@ const PatientOrderCheckout = () => {
         <div className="order-checkout-container">
             <div className="order-details">
                 <h2>Order Summary</h2>
-                {/* Order item table */}
                 <div className="order-item-table">
                     <div className="table-header">
                         <span className="column-item">Item</span>
@@ -113,9 +167,9 @@ const PatientOrderCheckout = () => {
                     })}
                 </div>
             </div>
+
             <div className="delivery-details">
                 <h2>Delivery Details</h2>
-                {/* Display the submitted address or show the form for editing */}
                 {submittedAddress && !isEditing ? (
                     <div>
                         <p>{submittedAddress}</p>
@@ -169,7 +223,7 @@ const PatientOrderCheckout = () => {
 
                 <div className="payment-options">
                     <button onClick={handleCOD} className="cod">Cash On Delivery</button>
-                    <button className="upi">UPI</button>
+                    <button onClick={handleUPI} className="upi">UPI</button>
                 </div>
             </div>
         </div>

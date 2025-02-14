@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation,useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import api from "../../services/api"; // Import your api module
 import '../../styles/staff/OrderCheckout.css'; // Import your CSS file
 import { jwtDecode } from "jwt-decode";
@@ -13,30 +13,25 @@ const OrderCheckout = () => {
     const [submittedAddress, setSubmittedAddress] = useState(''); // State to store submitted address
     const [isEditing, setIsEditing] = useState(false); // State to toggle between edit/view mode
 
-    // Handle address input change
     const handleAddressChange = (e) => {
         setAddress(e.target.value);
     };
 
-    // Handle address submission
     const handleAddressSubmit = (e) => {
         e.preventDefault();
         setSubmittedAddress(address);
         setIsEditing(false); // Switch to view mode after submission
     };
 
-    // Handle address edit
     const handleAddressEdit = () => {
         setAddress(submittedAddress); // Set the address to the submitted one for editing
         setIsEditing(true); // Switch to edit mode
     };
 
-    // Calculate item total
     const calculateItemTotal = (item, quantity) => {
         return item.price * quantity;
     };
 
-    // Calculate order total
     const calculateOrderTotal = () => {
         let total = 0;
         for (const itemId in cartItems) {
@@ -46,41 +41,92 @@ const OrderCheckout = () => {
         return total;
     };
 
-    // Delivery fee, tip, platform fee, GST, and Restaurant charges
-    const deliveryFee = 48; // You can calculate this dynamically if needed
-    const platformFee = 10;
-    const gstAndCharges = 35.55;
+    const handleUPI = async () => {
+        const payment_metadata = await api.post("/payment/createOrder", { price: grandTotal });
+        const { orderId, amount } = payment_metadata.data;
+
+     
+            const options = {
+                key: "rzp_test_0oZHIWIDL59TxD", // Replace with your Razorpay key
+                amount: amount * 100, // Amount in paise (Razorpay expects the amount in paise)
+                currency: "INR",
+                name: "Your Company Name",
+                description: "Payment for Order",
+                order_id: orderId,
+                handler: function(response) {
+                    verifyPayment(response);
+                },
+                prefill: {
+                    name: username,
+                    email: "user@example.com",
+                    contact: "1234567890",
+                },
+                notes: {
+                    address: submittedAddress,
+                },
+            };
+
+            const razorpay = new window.Razorpay(options);
+            razorpay.open();
+        
+    };
+
+    const verifyPayment = async (response) => {
+        const paymentData = {
+            orderId: response.order_id,
+            paymentId: response.payment_id,
+            paymentStatus: response.razorpay_payment_status,
+            paymentMethod: response.method,
+            amount: calculateOrderTotal(),
+            createdAt: new Date().toISOString(),
+        };
+
+        try {
+            const result = await api.post("/payment/verifyPayment", paymentData);
+            if (result.data) {
+                navigate("/staff/order-success", { state: { orderHistoryRedirect: "/staff/orderhistory", orderedUserId: username, orderedRole: "Staff" } });
+            } else {
+                alert("Payment verification failed!");
+            }
+        } catch (error) {
+            console.error("Error verifying payment:", error);
+            alert("There was an issue verifying your payment.");
+        }
+    };
+
+    const deliveryFee = 0; // You can calculate this dynamically if needed
+    const platformFee = 0;
+    const gstAndCharges = 0;
     const orderTotal = calculateOrderTotal();
 
-    // Calculate the grand total
     const grandTotal = orderTotal + deliveryFee + platformFee + gstAndCharges + tip;
     const token = localStorage.getItem("jwtToken");
     const decodedToken = jwtDecode(token);
     const username = decodedToken.sub;
-    // Handle Cash On Delivery (COD) payment
+
     const handleCOD = async () => {
         const orderDetails = {
-            orderedRole: "Staff", // Since it's a staff order
-            orderedName: username, // Use the logged-in username
-            orderedUserId: username, // Same as the username if no user id
+            orderedRole: "Staff",
+            orderedName: username,
+            orderedUserId: username,
             itemName: Object.keys(cartItems).map(itemId => {
                 const item = menuItems.find(menuItem => menuItem.id === parseInt(itemId));
                 return item.name;
-            }).join(", "), // Join item names into a single string
-            quantity: Object.values(cartItems).reduce((acc, qty) => acc + qty, 0), // Total quantity
-            category: "South", // You can dynamically set this if needed
-            price: orderTotal, // Total price for the items
-            orderStatus: null, // Can be updated once the order is processed
-            paymentType: "COD", // Payment type set to "Cash On Delivery"
-            paymentStatus: null, // Initially null
-            orderDateTime: new Date().toISOString(), // Current date and time
-            address: submittedAddress, // Use the submitted address
+            }).join(", "),
+            quantity: Object.values(cartItems).reduce((acc, qty) => acc + qty, 0),
+            category: "South",
+            price: orderTotal,
+            orderStatus: null,
+            paymentType: "COD",
+            paymentStatus: null,
+            orderDateTime: new Date().toISOString(),
+            address: submittedAddress,
         };
 
         try {
             const response = await api.post("/orders", orderDetails);
             console.log("Order submitted successfully", response.data);
-            navigate("/staff/order-success", { state: { orderHistoryRedirect: "/staff/orderhistory", orderedUserId:username, orderedRole:"Staff" } });
+            navigate("/staff/order-success", { state: { orderHistoryRedirect: "/staff/orderhistory", orderedUserId: username, orderedRole: "Staff" } });
         } catch (error) {
             console.error("Order submission failed", error);
             alert("There was an issue submitting your order.");
@@ -112,9 +158,9 @@ const OrderCheckout = () => {
                     })}
                 </div>
             </div>
+
             <div className="delivery-details">
                 <h2>Delivery Details</h2>
-                {/* Display the submitted address or show the form for editing */}
                 {submittedAddress && !isEditing ? (
                     <div>
                         <p>{submittedAddress}</p>
@@ -168,7 +214,7 @@ const OrderCheckout = () => {
 
                 <div className="payment-options">
                     <button onClick={handleCOD} className="cod">Cash On Delivery</button>
-                    <button className="upi">UPI</button>
+                    <button onClick={handleUPI} className="upi">UPI</button>
                 </div>
             </div>
         </div>

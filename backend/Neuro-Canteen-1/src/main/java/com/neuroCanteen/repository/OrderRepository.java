@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.neuroCanteen.model.order.Order;
 import java.util.List;
 import java.util.Optional;
+
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByOrderedUserId(String orderedUserId);
