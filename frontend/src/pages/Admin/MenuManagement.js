@@ -203,6 +203,7 @@ const MenuManagement = () => {
             </label>
             {/* Price Inputs for Staff, Patient, and Dietitian */}
             <div className="price-inputs">
+            staffPrice
               <input
                 type="number"
                 name="staffPrice"
@@ -214,6 +215,7 @@ const MenuManagement = () => {
                     : setNewItem({ ...newItem, staffPrice: e.target.value })
                 }
               />
+              patientPrice
               <input
                 type="number"
                 name="patientPrice"
@@ -225,6 +227,7 @@ const MenuManagement = () => {
                     : setNewItem({ ...newItem, patientPrice: e.target.value })
                 }
               />
+              dietitianPrice
               <input
                 type="number"
                 name="dietitianPrice"

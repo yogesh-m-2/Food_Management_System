@@ -29,7 +29,8 @@ const OrderCheckout = () => {
     };
 
     const calculateItemTotal = (item, quantity) => {
-        return item.price * quantity;
+        return item.staffPrice * quantity;
+        
     };
 
     const calculateOrderTotal = () => {
@@ -151,7 +152,7 @@ const OrderCheckout = () => {
                                 <span className="column-item">{item.name}</span>
                                 <span className="column-qty">{cartItems[itemId]}</span>
                                 <span className="column-price">
-                                    ${calculateItemTotal(item, cartItems[itemId])}
+                                ₹{calculateItemTotal(item, cartItems[itemId])}
                                 </span>
                             </div>
                         );
@@ -183,11 +184,11 @@ const OrderCheckout = () => {
                 <h2>Order Total:</h2>
                 <div className="summary-item">
                     <span>Item Total</span>
-                    <span>${orderTotal}</span>
+                    <span>₹{orderTotal}</span>
                 </div>
                 <div className="summary-item">
                     <span>Delivery Fee (4.0 kms)</span>
-                    <span>${deliveryFee}</span>
+                    <span>₹{deliveryFee}</span>
                 </div>
                 <div className="summary-item">
                     <span>Delivery Tip</span>
@@ -201,15 +202,15 @@ const OrderCheckout = () => {
                 </div>
                 <div className="summary-item">
                     <span>Platform Fee</span>
-                    <span>${platformFee}</span>
+                    <span>₹{platformFee}</span>
                 </div>
                 <div className="summary-item">
                     <span>GST and Restaurant Charges</span>
-                    <span>${gstAndCharges}</span>
+                    <span>₹{gstAndCharges}</span>
                 </div>
                 <div className="summary-item total">
                     <span>TO PAY</span>
-                    <span>${grandTotal.toFixed(2)}</span>
+                    <span>₹{grandTotal.toFixed(2)}</span>
                 </div>
 
                 <div className="payment-options">
