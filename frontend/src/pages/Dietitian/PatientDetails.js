@@ -6,6 +6,12 @@ import "../../styles/dietitian/PatientDetatils.css";
 const PatientDetails = () => {
   const { floor, ward, room, bed } = useParams();
   const [patient, setPatient] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [combo, setCombo] = useState({ solid: false, semiSolid: false, liquid: false });
+  const [allergies, setAllergies] = useState([]);
+  const [dislikes, setDislikes] = useState([]);
+  const [newAllergy, setNewAllergy] = useState("");
+  const [newDislike, setNewDislike] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,6 +25,37 @@ const PatientDetails = () => {
     };
     fetchPatient();
   }, [floor, ward, room, bed]);
+
+  const handleComboChange = (e) => {
+    setCombo({ ...combo, [e.target.name]: e.target.checked });
+  };
+
+  const handleAddAllergy = () => {
+    if (newAllergy.trim()) {
+      setAllergies([...allergies, newAllergy.trim()]);
+      setNewAllergy("");
+    }
+  };
+
+  const handleAddDislike = () => {
+    if (newDislike.trim()) {
+      setDislikes([...dislikes, newDislike.trim()]);
+      setNewDislike("");
+    }
+  };
+
+  const handleRemoveAllergy = (index) => {
+    setAllergies(allergies.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveDislike = (index) => {
+    setDislikes(dislikes.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = () => {
+    // Handle form submission logic here
+    setShowPopup(false);
+  };
 
   if (!patient) {
     return (
@@ -34,7 +71,7 @@ const PatientDetails = () => {
         {/* Profile Image */}
         <div className="patient-profile-image">
           <div className="profile-placeholder">
-            <svg className="profile-icon" ></svg>
+            <svg className="profile-icon"></svg>
           </div>
         </div>
 
@@ -59,8 +96,7 @@ const PatientDetails = () => {
                 <p><span className="label">Attender Mobile Number:</span> {patient.attendantContact || "N/A"}</p>
               </div>
               <div className="patient-actions">
-                <button className="btn-primary" onClick={() => navigate("/dietitian/create-diet", { 
-                    state: { orderedUserId: patient.uhid, patientName: patient.name }})}>Create Diet</button>
+                <button className="btn-primary" onClick={() => setShowPopup(true)}>Create Diet</button>
                 <button className="btn-primary" onClick={() => navigate("/dietitian/order-history", { 
                     state: { orderedUserId: patient.uhid, orderedRole: "Patient" }
                   })}>Check Diet History</button>
@@ -69,6 +105,69 @@ const PatientDetails = () => {
           </div>
         </div>
       </div>
+
+      {showPopup && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <h2>Create Diet</h2>
+            <div className="form-group">
+              <label>Combo:</label>
+              <div>
+                <label>
+                  <input type="checkbox" name="solid" checked={combo.solid} onChange={handleComboChange} />
+                  Solid
+                </label>
+                <label>
+                  <input type="checkbox" name="semiSolid" checked={combo.semiSolid} onChange={handleComboChange} />
+                  Semi Solid
+                </label>
+                <label>
+                  <input type="checkbox" name="liquid" checked={combo.liquid} onChange={handleComboChange} />
+                  Liquid
+                </label>
+              </div>
+            </div>
+            <div className="form-group">
+              <label>Allergies:</label>
+              <div className="chip-container">
+                {allergies.map((allergy, index) => (
+                  <div key={index} className="chip">
+                    {allergy}
+                    <button className="chip-close" onClick={() => handleRemoveAllergy(index)}>x</button>
+                  </div>
+                ))}
+              </div>
+              <input
+                type="text"
+                value={newAllergy}
+                onChange={(e) => setNewAllergy(e.target.value)}
+                placeholder="Add allergy"
+              />
+              <button onClick={handleAddAllergy}>Add Allergy</button>
+            </div>
+            <div className="form-group">
+              <label>Dislikes:</label>
+              <div className="chip-container">
+                {dislikes.map((dislike, index) => (
+                  <div key={index} className="chip">
+                    {dislike}
+                    <button className="chip-close" onClick={() => handleRemoveDislike(index)}>x</button>
+                  </div>
+                ))}
+              </div>
+              <input
+                type="text"
+                value={newDislike}
+                onChange={(e) => setNewDislike(e.target.value)}
+                placeholder="Add dislike"
+              />
+              <button onClick={handleAddDislike}>Add Dislike</button>
+            </div>
+            <button className="btn-primary" onClick={handleSubmit}>Submit</button>
+            <button className="btn-secondary" onClick={() => setShowPopup(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

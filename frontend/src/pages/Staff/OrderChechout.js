@@ -81,10 +81,28 @@ const OrderCheckout = () => {
             amount: calculateOrderTotal(),
             createdAt: new Date().toISOString(),
         };
+        const orderDetails = {
+            orderedRole: "Staff",
+            orderedName: username,
+            orderedUserId: username,
+            itemName: Object.keys(cartItems).map(itemId => {
+                const item = menuItems.find(menuItem => menuItem.id === parseInt(itemId));
+                return item.name;
+            }).join(", "),
+            quantity: Object.values(cartItems).reduce((acc, qty) => acc + qty, 0),
+            category: "South",
+            price: orderTotal,
+            orderStatus: null,
+            paymentType: "COD",
+            paymentStatus: null,
+            orderDateTime: new Date().toISOString(),
+            address: submittedAddress,
+        };
 
         try {
             const result = await api.post("/payment/verifyPayment", paymentData);
             if (result.data) {
+                const response = await api.post("/orders", orderDetails);
                 navigate("/staff/order-success", { state: { orderHistoryRedirect: "/staff/orderhistory", orderedUserId: username, orderedRole: "Staff" } });
             } else {
                 alert("Payment verification failed!");

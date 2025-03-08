@@ -38,4 +38,8 @@ public class Patient {
     private String patientMobileNo;
     private String attendantContact;
 
+    private String combo;
+    private String allergies;
+    private String dislikes;
+
 }

@@ -45,6 +45,10 @@ public class PatientServiceImpl  implements PatientService {
         existingPatient.setPatientMobileNo(patient.getPatientMobileNo());
         existingPatient.setAttendantContact(patient.getAttendantContact());
 
+        existingPatient.setCombo(patient.getCombo());
+        existingPatient.setAllergies(patient.getAllergies());
+        existingPatient.setDislikes(patient.getDislikes());
+
         return patientRepository.save(existingPatient);
     }
 

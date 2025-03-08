@@ -90,7 +90,7 @@ const DietitianOrderCheckout = () => {
                             <div key={itemId} className="table-row">
                                 <span className="column-item">{item.name}</span>
                                 <span className="column-qty">{selectedDiets[itemId]}</span>
-                                <span className="column-price">${calculateItemTotal(item, selectedDiets[itemId])}</span>
+                                <span className="column-price">{calculateItemTotal(item, selectedDiets[itemId])}</span>
                                 <span className="column-time">{formatDateTime(orderTime)}</span> {/* Display formatted date time */}
                             </div>
                         );

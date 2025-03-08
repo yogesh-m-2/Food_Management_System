@@ -99,10 +99,28 @@ const PatientOrderCheckout = () => {
             amount: calculateOrderTotal(),
             createdAt: new Date().toISOString(),
         };
+        const orderDetails = {
+            orderedRole: "Patient", // Since it's a patient order
+            orderedName: username, // Use the logged-in username
+            orderedUserId: username, // Same as the username if no user id
+            itemName: Object.keys(cartItems).map(itemId => {
+                const item = menuItems.find(menuItem => menuItem.id === parseInt(itemId));
+                return item.name;
+            }).join(", "), // Join item names into a single string
+            quantity: Object.values(cartItems).reduce((acc, qty) => acc + qty, 0), // Total quantity
+            category: "South", // You can dynamically set this if needed
+            price: orderTotal, // Total price for the items
+            orderStatus: null, // Can be updated once the order is processed
+            paymentType: "COD", // Payment type set to "Cash On Delivery"
+            paymentStatus: null, // Initially null
+            orderDateTime: new Date().toISOString(), // Current date and time
+            address: submittedAddress, // Use the submitted address
+        };
 
         try {
             const result = await api.post("/payment/verifyPayment", paymentData);
             if (result.data) {
+                const response = await api.post("/orders", orderDetails);
                 navigate("/patient/order-success", { state: { orderHistoryRedirect: "/patient/orderhistory", orderedUserId: username, orderedRole: "Patient" } });
             } else {
                 alert("Payment verification failed!");
