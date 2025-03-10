@@ -33,4 +33,6 @@ public class MenuItem {
     private double staffPrice;
     private double patientPrice;
     private double dietitianPrice;
+
+    private String combination;
 }

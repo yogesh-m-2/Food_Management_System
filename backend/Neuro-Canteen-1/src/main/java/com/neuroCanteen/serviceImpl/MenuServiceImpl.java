@@ -26,7 +26,6 @@ public class MenuServiceImpl implements MenuService {
         return menuRepository.findById(id);
     }
 
-  
     @Override
     public MenuItem createMenuItem(MenuItem menuItem) {
         return menuRepository.save(menuItem);
@@ -46,6 +45,7 @@ public class MenuServiceImpl implements MenuService {
                     menuItem.setPatientPrice(updatedMenuItem.getPatientPrice());
                     menuItem.setStaffPrice(updatedMenuItem.getStaffPrice());
                     menuItem.setAvailable(updatedMenuItem.isAvailable()); // Fix for availability update
+                    menuItem.setCombination(updatedMenuItem.getCombination());
                     return menuRepository.save(menuItem);
                 })
                 .orElseThrow(() -> new RuntimeException("Menu item not found with id: " + id));
@@ -60,6 +60,4 @@ public class MenuServiceImpl implements MenuService {
     public List<MenuItem> getMenuItemsByRole(Role role) {
         return menuRepository.findByRole(role);
     }
-
-   
 }

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/dietitian/CreateDiet.css";
 import api from "../../services/api";
-import { useNavigate,useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const CreateDiet = () => {
     const [dietItems, setDietItems] = useState([]);
     const [selectedDiets, setSelectedDiets] = useState({}); // Stores item quantities
     const [itemDateTime, setItemDateTime] = useState({}); // Stores date & time for each item
     const location = useLocation();
-    const [selectedCategory, setSelectedCategory] = useState("south");
-    const { orderedUserId: stateOrderedUserId, OrderpatientName: patientName } = location.state || {};
+    const [selectedCategory, setSelectedCategory] = useState("Clear liquid");
+    const { orderedUserId: stateOrderedUserId, patientName, dietDetails } = location.state || {};
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -27,12 +27,11 @@ const CreateDiet = () => {
 
     const handleCheckout = () => {
         let orderedUserId = stateOrderedUserId;
-        let OrderpatientName= patientName;
         if (Object.keys(selectedDiets).length === 0) {
             alert("No diet items selected!");
             return;
         }
-        navigate("/dietitian/checkout", { state: { selectedDiets, dietItems, itemDateTime,orderedUserId,OrderpatientName } });
+        navigate("/dietitian/checkout", { state: { selectedDiets, dietItems, itemDateTime, orderedUserId, patientName } });
     };
 
     const handleAddToDiet = (item) => {
@@ -80,21 +79,30 @@ const CreateDiet = () => {
         return isNaN(date) ? "Invalid Date" : date.toLocaleString(); // Format date to local string if valid
     };
 
-    const filteredDietItems = dietItems.filter(item => item.category === selectedCategory);
+    const filteredDietItems = dietItems.filter(item => {
+        const isDisliked = dietDetails.dislikes.some(dislike => 
+            dislike.toLowerCase().trim() === item.name.toLowerCase().trim()
+        );
+    
+        const isComboMatch = dietDetails.combo.includes(item.combination);
+    
+        return isComboMatch && !isDisliked;
+    });
 
     return (
         <div className="diet-container">
             <aside className="diet-sidebar">
                 <ul>
-                    {["south", "north", "beverages", "tiffin"].map(category => (
-                        <li
-                            key={category}
-                            className={selectedCategory === category ? "active" : ""}
-                            onClick={() => setSelectedCategory(category)}
-                        >
-                            {category}
-                        </li>
-                    ))}
+                    {["Clear liquid", "NORMAL", "DM", "ACITROM", "CKD", "CKD WITH DM"]
+                        .map(category => (
+                            <li
+                                key={category}
+                                className={selectedCategory === category ? "active" : ""}
+                                onClick={() => setSelectedCategory(category)}
+                            >
+                                {category}
+                            </li>
+                        ))}
                 </ul>
             </aside>
 

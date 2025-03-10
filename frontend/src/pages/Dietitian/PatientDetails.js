@@ -7,7 +7,7 @@ const PatientDetails = () => {
   const { floor, ward, room, bed } = useParams();
   const [patient, setPatient] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
-  const [combo, setCombo] = useState({ solid: false, semiSolid: false, liquid: false });
+  const [combo, setCombo] = useState({ solid: false, "semi solid": false, liquid: false });
   const [allergies, setAllergies] = useState([]);
   const [dislikes, setDislikes] = useState([]);
   const [newAllergy, setNewAllergy] = useState("");
@@ -54,7 +54,16 @@ const PatientDetails = () => {
 
   const handleSubmit = () => {
     // Handle form submission logic here
+    const selectedCombo = Object.keys(combo).filter(key => combo[key]);
+    const dietDetails = {
+      combo: selectedCombo,
+      allergies,
+      dislikes,
+    };
+    console.log(dietDetails); // Replace with actual submission logic
     setShowPopup(false);
+    navigate("/dietitian/create-diet", { 
+      state: { orderedUserId: patient.uhid, patientName: patient.name, dietDetails }});
   };
 
   if (!patient) {
@@ -118,7 +127,7 @@ const PatientDetails = () => {
                   Solid
                 </label>
                 <label>
-                  <input type="checkbox" name="semiSolid" checked={combo.semiSolid} onChange={handleComboChange} />
+                  <input type="checkbox" name="semi solid" checked={combo["semi solid"]} onChange={handleComboChange} />
                   Semi Solid
                 </label>
                 <label>
