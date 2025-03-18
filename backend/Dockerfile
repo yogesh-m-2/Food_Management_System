@@ -5,10 +5,10 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the Spring Boot jar file from the build context
-COPY target/myapp.jar /app/myapp.jar
+COPY Neuro-Canteen-1/target/Neuro-Canteen-1-0.0.1-SNAPSHOT.jar /app/Neuro-Canteen-1-0.0.1-SNAPSHOT.jar
 
 # Expose the port your Spring Boot app will run on (default is 8080)
-EXPOSE 8080
+EXPOSE 8142
 
 # Run the Spring Boot application
-ENTRYPOINT ["java", "-jar", "/app/myapp.jar"]
+ENTRYPOINT ["java", "-jar", "/app/Neuro-Canteen-1-0.0.1-SNAPSHOT.jar"]

@@ -7,30 +7,47 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8142:8142"
     environment:
       SPRING_PROFILES_ACTIVE: production
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/Canteen
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1234
+      SPRING_DATASOURCE_DRIVER-CLASS-NAME: org.postgresql.Driver
+      SPRING_JPA_HIBERNATE_DDL-AUTO: update
+      SPRING_JPA_SHOW-SQL: "true"
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+    depends_on:
+      - postgres
     networks:
       - my-network
 
   frontend:
+    image: front-end-react
     build: ./frontend
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+    networks:
+      - my-network
 
-  mongodb:
-    image: mongo:latest  # Directly use the official MongoDB image
-    container_name: mongodb
+  postgres:
+    image: postgres:latest
+    container_name: postgres
     environment:
-      MONGO_INITDB_ROOT_USERNAME: user
-      MONGO_INITDB_ROOT_PASSWORD: password
+      POSTGRES_DB: Canteen
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
     volumes:
-      - mongodb_data:/data/db
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - my-network
 
 volumes:
-  mongodb_data:
+  postgres_data:
 
 networks:
   my-network:
