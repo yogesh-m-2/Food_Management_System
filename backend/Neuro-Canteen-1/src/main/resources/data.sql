@@ -1,6 +1,6 @@
 
 -- ===================== Adding ADMIN =====================
-INSERT INTO admin (id, name, password,username) VALUES (1,'Neuro', '1234','fjsd');
+INSERT INTO admin (name, password,username) VALUES ('Neuro', '1234','fjsd');
 
 
 -- ===================== CLEAR LIQUID MENU =====================
