@@ -7,12 +7,14 @@ const StaffOrder = () => {
     const [menuItems, setMenuItems] = useState([]);
     const [cartItems, setCartItems] = useState({}); // Store quantities as an object
     const [selectedCategory, setSelectedCategory] = useState('south');
+    const [category,setCategory] = useState([])
     const navigate = useNavigate();
     useEffect(() => {
         const fetchMenuItems = async () => {
             try {
                 const response = await api.get('/menu-items');
                 setMenuItems(response.data);
+                setCategory([...new Set(response.data.map(item => item.category))])
             } catch (error) {
                 console.error('Error fetching menu items:', error);
             }
@@ -61,7 +63,7 @@ const StaffOrder = () => {
         <div className="staff-order-container">
             <aside className="category-sidebar">
                 <ul>
-                    {['south', 'north', 'beverages', 'tiffin'].map(category => (
+                    {category.map(category => (
                         <li
                             key={category}
                             className={selectedCategory === category ? 'active' : ''}
