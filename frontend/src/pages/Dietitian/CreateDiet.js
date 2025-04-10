@@ -8,6 +8,7 @@ const CreateDiet = () => {
     const [selectedDiets, setSelectedDiets] = useState({}); // Stores item quantities
     const [itemDateTime, setItemDateTime] = useState({}); // Stores date & time for each item
     const location = useLocation();
+    const [filteredDietItems,setfilteredDietItems] = useState([])
     const [selectedCategory, setSelectedCategory] = useState("Clear liquid");
     const { orderedUserId: stateOrderedUserId, patientName, dietDetails } = location.state || {};
     const navigate = useNavigate();
@@ -90,16 +91,16 @@ const CreateDiet = () => {
         const date = new Date(dateString);
         return isNaN(date) ? "Invalid Date" : date.toLocaleString(); // Format date to local string if valid
     };
-
+    useEffect(()=>{
     const filteredDietItems = dietItems.filter(item => {
         const isDisliked = dietDetails.dislikes.some(dislike => 
-            dislike.toLowerCase().trim() === item.name.toLowerCase().trim()
+            item.name.toLowerCase().includes(dislike.toLowerCase())
         );
-    
         const isComboMatch = dietDetails.combo.includes(item.combination);
-    
         return isComboMatch && !isDisliked;
-    });
+    })
+    setfilteredDietItems(filteredDietItems)
+    },[dietItems,dietDetails.dislikes,dietDetails.combo])
 
     return (
         <div className="diet-container">
