@@ -111,10 +111,10 @@ const CreateDiet = () => {
                         .map(category => (
                             <li
                                 key={category}
-                                className={selectedCategory == category ? "active" : ""}
+                                className={selectedCategory === category ? "active" : ""}
                                 onClick={() => setSelectedCategory(category)}
                             >
-                                {category}
+                                {category} 
                             </li>
                         ))}
                 </ul>

@@ -17,7 +17,7 @@
   
   /* Collapsed State */
   .navigation.collapsed {
-    width: 5px;
+    width: 10px;
   }
   
   /* Navigation Items */
@@ -52,6 +52,8 @@
     color: white;
     font-size: 20px;
     cursor: pointer;
+    padding-left: 0px;
+    margin-left: 0;
     margin-bottom: 20px;
     align-self: center;
 }

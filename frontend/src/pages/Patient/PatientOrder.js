@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const PatientOrder = () => {
     const [menuItems, setMenuItems] = useState([]);
     const [cartItems, setCartItems] = useState({});
+    const[filteredMenuItems,setfilteredMenuItems] = useState([])
     const [selectedCategory, setSelectedCategory] = useState('south');
     const navigate = useNavigate();
 
@@ -14,6 +15,7 @@ const PatientOrder = () => {
             try {
                 const response = await api.get('/menu-items');
                 setMenuItems(response.data);
+                console.log(response.data)
             } catch (error) {
                 console.error('Error fetching menu items:', error);
             }
@@ -55,13 +57,16 @@ const PatientOrder = () => {
         });
     };
 
-    const filteredMenuItems = menuItems.filter(item => item.category === selectedCategory);
+    useEffect(() => {
+        const filtered = menuItems.filter(item => item.category === selectedCategory);
+        setfilteredMenuItems(filtered);
+      }, [menuItems, selectedCategory]);
 
     return (
         <div className="patient-order-container">
             <aside className="category-sidebar">
                 <ul>
-                    {['south', 'north', 'beverages', 'tiffin'].map(category => (
+                    {['south', 'north', 'beverages', 'tiffin','Clear liquid'].map(category => (
                         <li
                             key={category}
                             className={selectedCategory === category ? 'active' : ''}
