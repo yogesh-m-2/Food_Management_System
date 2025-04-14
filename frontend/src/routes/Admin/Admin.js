@@ -7,7 +7,7 @@ import AdminControl from "../../pages/Admin/AdminControl";
 const AdminRoutes = () => {
     return (
 
-<Routes>
+      <Routes>
         <Route path="/" element={<Admin />} />
         <Route path="/control" element={<AdminControl />} />
       </Routes>

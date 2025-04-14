@@ -8,13 +8,14 @@ const CreateDiet = () => {
     const [selectedDiets, setSelectedDiets] = useState({}); // Stores item quantities
     const [itemDateTime, setItemDateTime] = useState({}); // Stores date & time for each item
     const location = useLocation();
+    const [filteredDietItems,setfilteredDietItems] = useState([])
     const [selectedCategory, setSelectedCategory] = useState("Clear liquid");
     const { orderedUserId: stateOrderedUserId, patientName, dietDetails } = location.state || {};
     const navigate = useNavigate();
     const categories = {
         solid: ['NORMAL', 'DM', 'ACITROM'],
         semisolid: ['NORMAL', 'DM', 'CKD', 'DM WITH CKD', 'ACITROM'],
-        liquid: ['CLEAR LIQUID ','NORMAL', 'DM', 'ACITROM', 'CKD', 'CKD WITH DM']
+        liquid: ['CLEAR LIQUID','NORMAL', 'DM', 'ACITROM', 'CKD', 'CKD WITH DM']
       };
       const Final_Menu_To_List = [...new Set(dietDetails.combo.reduce((acc, category) => {
         const key = category.toLowerCase().replace(' ', '');
@@ -90,16 +91,17 @@ const CreateDiet = () => {
         const date = new Date(dateString);
         return isNaN(date) ? "Invalid Date" : date.toLocaleString(); // Format date to local string if valid
     };
-
+    useEffect(()=>{
     const filteredDietItems = dietItems.filter(item => {
         const isDisliked = dietDetails.dislikes.some(dislike => 
-            dislike.toLowerCase().trim() === item.name.toLowerCase().trim()
+            item.name.toLowerCase().includes(dislike.toLowerCase())
         );
-    
+        const iscatagoryselected = item.category.toLowerCase() === selectedCategory.toLowerCase()
         const isComboMatch = dietDetails.combo.includes(item.combination);
-    
-        return isComboMatch && !isDisliked;
-    });
+        return isComboMatch && !isDisliked && iscatagoryselected;
+    })
+    setfilteredDietItems(filteredDietItems)
+    },[dietItems,dietDetails.dislikes,dietDetails.combo,selectedCategory])
 
     return (
         <div className="diet-container">
@@ -112,7 +114,7 @@ const CreateDiet = () => {
                                 className={selectedCategory === category ? "active" : ""}
                                 onClick={() => setSelectedCategory(category)}
                             >
-                                {category}
+                                {category} 
                             </li>
                         ))}
                 </ul>

@@ -213,7 +213,7 @@ const OrderCheckout = () => {
                     <input 
                         type="number" 
                         value={tip} 
-                        onChange={(e) => setTip(parseFloat(e.target.value) || 0)} 
+                        onChange={(e) => setTip(Math.max(0, parseFloat(e.target.value) || 0))} 
                         placeholder="Enter tip" 
                         className="tip-input"
                     />
