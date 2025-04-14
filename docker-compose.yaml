@@ -1,48 +1,48 @@
 version: '3.9'
 
 services:
-  backend:
-    image: my-springboot-app
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "8142:8142"
-    environment:
-      SPRING_PROFILES_ACTIVE: production
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/Canteen
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 1234
-      SPRING_DATASOURCE_DRIVER-CLASS-NAME: org.postgresql.Driver
-      SPRING_JPA_HIBERNATE_DDL-AUTO: update
-      SPRING_JPA_SHOW-SQL: "true"
-      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
-    depends_on:
-      - postgres
-    networks:
-      - my-network
-
-  frontend:
-    image: front-end-react
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-    networks:
-      - my-network
-
   postgres:
     image: postgres:latest
     container_name: postgres
+    restart: always
     environment:
       POSTGRES_DB: Canteen
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data  # Persistent storage
     ports:
       - "5432:5432"
+    networks:
+      - my-network
+
+  backend:
+    image: crimsonowl/neuro-canteen-backend:latest
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      SPRING_PROFILES_ACTIVE: production
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/Canteen
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1234
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+    ports:
+      - "8142:8142"
+    networks:
+      - my-network
+
+  frontend:
+    image: crimsonowl/neuro-canteen-frontend:latest
+    restart: always
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
     networks:
       - my-network
 
