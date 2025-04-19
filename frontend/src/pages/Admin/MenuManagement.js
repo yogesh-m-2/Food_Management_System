@@ -11,7 +11,6 @@ const MenuManagement = () => {
     picture: "",
     description: "",
     available: true,
-    // role: "",
     staffPrice: "",
     patientPrice: "",
     dietitianPrice: ""
@@ -42,7 +41,6 @@ const MenuManagement = () => {
           picture: "",
           description: "",
           available: true,
-          // role: "",
           staffPrice: "",
           patientPrice: "",
           dietitianPrice: ""
@@ -92,7 +90,6 @@ const MenuManagement = () => {
             <th>Item</th>
             <th>Upload Picture</th>
             <th>Category</th>
-            {/* <th>Role</th> */}
             <th>Available</th>
             <th>Edit</th>
             <th>Remove</th>
@@ -110,7 +107,6 @@ const MenuManagement = () => {
                 )}
               </td>
               <td>{item.category}</td>
-              <td>{item.role || "N/A"}</td>
               <td>{item.available ? "Yes" : "No"}</td>
               <td>
                 <button className="edit-btn" onClick={() => handleEdit(item)}>✏️</button>
@@ -138,17 +134,6 @@ const MenuManagement = () => {
                   : setNewItem({ ...newItem, name: e.target.value })
               }
             />
-            {/* <input
-              type="text"
-              name="price"
-              placeholder="Price"
-              value={editItem ? editItem.price : newItem.price}
-              onChange={(e) =>
-                editItem
-                  ? setEditItem({ ...editItem, price: e.target.value })
-                  : setNewItem({ ...newItem, price: e.target.value })
-              }
-            /> */}
             <input
               type="text"
               name="category"
@@ -160,17 +145,6 @@ const MenuManagement = () => {
                   : setNewItem({ ...newItem, category: e.target.value })
               }
             />
-            {/* <input
-              type="text"
-              name="role"
-              placeholder="Role"
-              value={editItem ? editItem.role : newItem.role}
-              onChange={(e) =>
-                editItem
-                  ? setEditItem({ ...editItem, role: e.target.value })
-                  : setNewItem({ ...newItem, role: e.target.value })
-              }
-            /> */}
             <input
               type="file"
               name="picture"
@@ -185,8 +159,8 @@ const MenuManagement = () => {
                 if (file) reader.readAsDataURL(file);
               }}
             />
-            <label>
-              Available:
+            <label className="aval_label">
+              <p>Available:</p>
               <input
                 type="checkbox"
                 checked={editItem ? editItem.available : newItem.available}
