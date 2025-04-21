@@ -1,7 +1,7 @@
 package com.neuroCanteen.serviceImpl;
 
 import com.neuroCanteen.model.menuitem.*;
-import com.neuroCanteen.model.menuitem.Role;
+// import com.neuroCanteen.model.menuitem.Role;
 import com.neuroCanteen.repository.MenuRepository;
 import com.neuroCanteen.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +37,7 @@ public class MenuServiceImpl implements MenuService {
                 .map(menuItem -> {
                     menuItem.setName(updatedMenuItem.getName());
                     menuItem.setCategory(updatedMenuItem.getCategory());
-                    menuItem.setPrice(updatedMenuItem.getPrice());
-                    menuItem.setRole(updatedMenuItem.getRole());
+                    // menuItem.setRole(updatedMenuItem.getRole());
                     menuItem.setPicture(updatedMenuItem.getPicture());
                     menuItem.setDescription(updatedMenuItem.getDescription());
                     menuItem.setDietitianPrice(updatedMenuItem.getDietitianPrice());
@@ -56,8 +55,5 @@ public class MenuServiceImpl implements MenuService {
         menuRepository.deleteById(id);
     }
 
-    @Override
-    public List<MenuItem> getMenuItemsByRole(Role role) {
-        return menuRepository.findByRole(role);
-    }
+
 }

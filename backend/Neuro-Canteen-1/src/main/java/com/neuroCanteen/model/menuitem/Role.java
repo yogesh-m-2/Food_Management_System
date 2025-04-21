@@ -1,5 +1,5 @@
-package com.neuroCanteen.model.menuitem;
+// package com.neuroCanteen.model.menuitem;
 
-public enum Role {
-    Staff,Patient,dietitian
-    }
+// public enum Role {
+//     Staff,Patient,dietitian
+//     }
