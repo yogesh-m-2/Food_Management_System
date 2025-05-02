@@ -17,8 +17,7 @@ const KitchenDashboard = () => {
       console.error("Error fetching orders:", error);
       setLoading(false);
     }
-  };
-
+  }
   useEffect(() => {
     fetchOrders();
     
