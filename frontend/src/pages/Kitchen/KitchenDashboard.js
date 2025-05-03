@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../../services/api";
 import "../../styles/kitchen/KitchenDashboard.css";
-import config from "../../config";
 
 const KitchenDashboard = () => {
   const [orders, setOrders] = useState([]);
@@ -21,7 +20,7 @@ const KitchenDashboard = () => {
   useEffect(() => {
     fetchOrders();
     
-    const socket = new WebSocket("ws://"+config.BASE_URL+"/order-updates");
+    const socket = new WebSocket("ws://127.0.0.1:8142/order-updates");
     socket.onmessage = (event) => {
       const newOrder = JSON.parse(event.data);
       setOrders((prevOrders) => [newOrder, ...prevOrders].sort((a, b) => new Date(b.orderDateTime) - new Date(a.orderDateTime)));
