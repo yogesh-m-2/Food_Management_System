@@ -1,5 +1,5 @@
 # build-and-deploy.ps1
-Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+
 # Set paths
 $backendPom = "backend\Neuro-Canteen-1\pom.xml"
 $backendDockerPath = "backend"
@@ -10,6 +10,12 @@ mvn -f $backendPom clean package
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Maven build failed. ❌" -ForegroundColor Red
+    exit 1
+}
+
+npm run build --prefix $frontendDockerPath
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "Npm build failed. ❌" -ForegroundColor Red
     exit 1
 }
 
