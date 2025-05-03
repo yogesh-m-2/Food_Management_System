@@ -13,6 +13,12 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
+npm run build --prefix $frontendDockerPath
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "Npm build failed. ❌" -ForegroundColor Red
+    exit 1
+}
+
 Write-Host "Building backend Docker image..." -ForegroundColor Cyan
 docker build -t crimsonowl/neuro-canteen-backend:latest $backendDockerPath
 
