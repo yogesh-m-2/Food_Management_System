@@ -6,9 +6,8 @@ WORKDIR /app
 
 # Copy the Spring Boot jar file from the build context
 COPY Neuro-Canteen-1/target/Neuro-Canteen-1-0.0.1-SNAPSHOT.jar /app/Neuro-Canteen-1-0.0.1-SNAPSHOT.jar
-COPY Neuro-Canteen-1/src/main/resources/data.sql /app/data.sql
 
-# Expose the port your Spring Boot app will run on 
+# Expose the port your Spring Boot app will run on (default is 8080)
 EXPOSE 8142
 
 # Run the Spring Boot application
