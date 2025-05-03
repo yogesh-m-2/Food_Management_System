@@ -1,5 +1,5 @@
 # build-and-deploy.ps1
-
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 # Set paths
 $backendPom = "backend\Neuro-Canteen-1\pom.xml"
 $backendDockerPath = "backend"
