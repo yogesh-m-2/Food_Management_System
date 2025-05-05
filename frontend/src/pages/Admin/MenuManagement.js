@@ -7,12 +7,12 @@ const MenuManagement = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newItem, setNewItem] = useState({
     name: "",
-    price: "",
+    // price: "",
     category: "",
     picture: "",
     description: "",
     available: true,
-    role: "",
+    // role: "",
     staffPrice: "",
     patientPrice: "",
     dietitianPrice: ""
@@ -33,18 +33,18 @@ const MenuManagement = () => {
   };
 
   const handleAdd = async () => {
-    if (newItem.name && newItem.price && newItem.category) {
+    if (newItem.name && newItem.category) {
       try {
         const response = await api.post("/menu-items", newItem);
         setMenuItems([...menuItems, response.data]);
         setNewItem({
           name: "",
-          price: "",
+          // price: "",
           category: "",
           picture: "",
           description: "",
           available: true,
-          role: "",
+          // role: "",
           staffPrice: "",
           patientPrice: "",
           dietitianPrice: ""
@@ -71,7 +71,7 @@ const MenuManagement = () => {
   };
 
   const handleUpdate = async () => {
-    if (editItem.name && editItem.price && editItem.category) {
+    if (editItem.name && editItem.category) {
       try {
         const response = await api.put(`/menu-items/${editItem.id}`, editItem);
         setMenuItems(menuItems.map((item) => (item.id === editItem.id ? response.data : item)));
@@ -93,9 +93,9 @@ const MenuManagement = () => {
           <tr>
             <th>Item</th>
             <th>Upload Picture</th>
-            <th>Price</th>
+            {/* <th>Price</th> */}
             <th>Category</th>
-            <th>Role</th>
+            {/* <th>Role</th> */}
             <th>Available</th>
             <th>Edit</th>
             <th>Remove</th>
@@ -112,9 +112,9 @@ const MenuManagement = () => {
                   "No Image"
                 )}
               </td>
-              <td>{item.price}</td>
+              {/* <td>{item.price}</td> */}
               <td>{item.category}</td>
-              <td>{item.role || "N/A"}</td>
+              {/* <td>{item.role || "N/A"}</td> */}
               <td>{item.available ? "Yes" : "No"}</td>
               <td>
                 <button className="edit-btn" onClick={() => handleEdit(item)}>✏️</button>
@@ -142,7 +142,7 @@ const MenuManagement = () => {
                   : setNewItem({ ...newItem, name: e.target.value })
               }
             />
-            <input
+            {/* <input
               type="text"
               name="price"
               placeholder="Price"
@@ -152,7 +152,7 @@ const MenuManagement = () => {
                   ? setEditItem({ ...editItem, price: e.target.value })
                   : setNewItem({ ...newItem, price: e.target.value })
               }
-            />
+            /> */}
             <input
               type="text"
               name="category"
@@ -164,7 +164,7 @@ const MenuManagement = () => {
                   : setNewItem({ ...newItem, category: e.target.value })
               }
             />
-            <input
+            {/* <input
               type="text"
               name="role"
               placeholder="Role"
@@ -174,7 +174,7 @@ const MenuManagement = () => {
                   ? setEditItem({ ...editItem, role: e.target.value })
                   : setNewItem({ ...newItem, role: e.target.value })
               }
-            />
+            /> */}
             <input
               type="file"
               name="picture"
@@ -189,8 +189,8 @@ const MenuManagement = () => {
                 if (file) reader.readAsDataURL(file);
               }}
             />
-            <label>
-              Available:
+             <label className="aval_label">
+                <p>Available:</p>
               <input
                 type="checkbox"
                 checked={editItem ? editItem.available : newItem.available}
