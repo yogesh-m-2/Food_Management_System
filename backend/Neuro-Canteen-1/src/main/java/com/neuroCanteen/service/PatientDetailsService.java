@@ -21,7 +21,7 @@ public class PatientDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String uhid) throws UsernameNotFoundException {
         if ("Public".equals(uhid)) {
             System.out.println("Returning dummy user for publicjwt...");
-            return new User("publicjwt", "", new ArrayList<>()); // Dummy user, no password
+            return new User("Public", "", new ArrayList<>()); // Dummy user, no password
         }
         String queryStr = "SELECT p FROM Patient p WHERE p.uhid = :uhid";
         TypedQuery<Patient> query = entityManager.createQuery(queryStr, Patient.class);

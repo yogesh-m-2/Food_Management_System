@@ -2,9 +2,10 @@ import { useNavigate } from 'react-router-dom';
 import '../../styles/login/Login.css';
 import { FaUserTie, FaUsers, FaProcedures, FaMotorcycle, FaUtensils, FaStethoscope } from 'react-icons/fa';
 import api from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 const LoginPage = () => {
   const navigate = useNavigate();
-
+  const { login } = useAuth();
   const handleLogin = (type) => {
     navigate(`/${type.toLowerCase()}`);
   };
@@ -15,6 +16,7 @@ const LoginPage = () => {
         const response = await api.post("/authenticate/patient", { "uhid":"Public" });
         if (response.data.jwt) {
           localStorage.setItem("jwtToken", response.data.jwt);
+          await login()
           navigate("/patient/order");
         }
       } catch (error) {
