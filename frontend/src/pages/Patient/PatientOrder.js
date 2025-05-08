@@ -8,12 +8,14 @@ const PatientOrder = () => {
     const [cartItems, setCartItems] = useState({});
     const[filteredMenuItems,setfilteredMenuItems] = useState([])
     const [selectedCategory, setSelectedCategory] = useState('south');
+    const [category,setCategory] = useState([])
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchMenuItems = async () => {
             try {
                 const response = await api.get('/menu-items');
+                setCategory([...new Set(response.data.map(item => item.category))])
                 setMenuItems(response.data);
                 console.log(response.data)
             } catch (error) {
@@ -66,7 +68,7 @@ const PatientOrder = () => {
         <div className="patient-order-container">
             <aside className="category-sidebar">
                 <ul>
-                    {['south', 'north', 'beverages', 'tiffin','Clear liquid'].map(category => (
+                    {category.map(category => (
                         <li
                             key={category}
                             className={selectedCategory === category ? 'active' : ''}

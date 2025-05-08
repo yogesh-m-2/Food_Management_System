@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import api from "../../services/api"; // Import your api module
 import '../../styles/staff/OrderCheckout.css'; // Import your CSS file
+import '../../styles/patient/patientlogin.css'
 import { jwtDecode } from "jwt-decode";
 
+let username,token,decodedToken;
 const PatientOrderCheckout = () => {
     const location = useLocation();
     const { cartItems, menuItems } = location.state;
@@ -12,8 +14,25 @@ const PatientOrderCheckout = () => {
     const [address, setAddress] = useState(''); // State to hold delivery address
     const [submittedAddress, setSubmittedAddress] = useState(''); // State to store submitted address
     const [isEditing, setIsEditing] = useState(false); // State to toggle between edit/view mode
-
-    
+    const [uhid, setUhid] = useState('');
+    const [showloginFrom, setshowloginFrom] = useState(false);
+    const handlePatientLogin = async() => {
+        try {
+            const resjwt = await api.post("/authenticate/patient", { uhid });
+            if (resjwt.data.jwt) {
+              localStorage.setItem("jwtToken", resjwt.data.jwt);
+                console.log("Working Login")
+                setshowloginFrom(false)
+                 token = localStorage.getItem("jwtToken");
+                 decodedToken = jwtDecode(token);
+                 username = decodedToken.sub;
+                handleUPI()
+            }
+          } catch (error) {
+            console.error("Login error:", error);
+            alert("Failed to login. Please check your UHID.");
+          }
+    };
 
     // Handle address input change
     const handleAddressChange = (e) => {
@@ -55,9 +74,9 @@ const PatientOrderCheckout = () => {
 
     // Calculate the grand total
     const grandTotal = orderTotal + deliveryFee + platformFee + gstAndCharges + tip;
-    const token = localStorage.getItem("jwtToken");
-    const decodedToken = jwtDecode(token);
-    const username = decodedToken.sub;
+     token = localStorage.getItem("jwtToken");
+     decodedToken = jwtDecode(token);
+     username = decodedToken.sub;
 
     // Handle UPI payment with Razorpay
     const handleUPI = async () => {
@@ -163,6 +182,28 @@ const PatientOrderCheckout = () => {
 
     return (
         <div className="order-checkout-container">
+            {showloginFrom && (
+            <div className="patient-login-overlay">
+                <div className="patient-login-box">
+                <div className="patient-login-title">PATIENT LOGIN</div>
+                <div className="patient-login-subtitle">Login</div>
+                <label className="patient-login-label">UHID</label>
+                <input
+                    type="text"
+                    value={uhid}
+                    onChange={(e) => setUhid(e.target.value)}
+                    placeholder="Enter UHID"
+                    className="patient-login-input"
+                />
+                <button
+                    className="patient-login-button"
+                    onClick={handlePatientLogin} // Direct button click triggers login
+                >
+                Submit
+                </button>
+                </div>
+            </div>
+            )}
             <div className="order-details">
                 <h2>Order Summary</h2>
                 <div className="order-item-table">
@@ -241,7 +282,7 @@ const PatientOrderCheckout = () => {
 
                 <div className="payment-options">
                     <button onClick={handleCOD} className="cod">Cash On Delivery</button>
-                    <button onClick={handleUPI} className="upi">UPI</button>
+                    <button onClick={()=>{setshowloginFrom(true)}} className="upi">UPI</button>
                 </div>
             </div>
         </div>
