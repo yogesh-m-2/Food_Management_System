@@ -35,4 +35,9 @@ public class MenuItem {
     private double dietitianPrice;
 
     private String combination;
+
+    //Addinng the New Field Formenu listing schedule
+    private String diet_type;
+    private String time_slot;
+    private String day;
 }
