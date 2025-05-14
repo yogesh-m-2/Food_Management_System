@@ -12,18 +12,6 @@ const CreateDiet = () => {
     const [selectedCategory, setSelectedCategory] = useState("Clear liquid");
     const { orderedUserId: stateOrderedUserId, patientName, dietDetails } = location.state || {};
     const navigate = useNavigate();
-    const categories = {
-        solid: ['NORMAL', 'DM', 'ACITROM'],
-        semisolid: ['NORMAL', 'DM', 'CKD', 'DM WITH CKD', 'ACITROM'],
-        liquid: ['CLEAR LIQUID','NORMAL', 'DM', 'ACITROM', 'CKD', 'CKD WITH DM']
-      };
-      const Final_Menu_To_List = [...new Set(dietDetails.combo.reduce((acc, category) => {
-        const key = category.toLowerCase().replace(' ', '');
-        if (categories[key]) {
-          acc.push(...categories[key]);
-        }
-        return acc;
-      }, []))];
 
     useEffect(() => {
         const fetchDietItems = async () => {
@@ -97,8 +85,9 @@ const CreateDiet = () => {
             item.name.toLowerCase().includes(dislike.toLowerCase())
         );
         const iscatagoryselected = item.category.toLowerCase() === selectedCategory.toLowerCase()
-        const isComboMatch = dietDetails.combo.includes(item.combination);
-        return isComboMatch && !isDisliked && iscatagoryselected;
+        const isComboMatch = dietDetails.combo.includes(item.combination.toLowerCase());
+        const isAllergiesMatch = dietDetails.allergies.length === 0 ? true : dietDetails.allergies.includes(item.diet_type.toLowerCase());
+        return isComboMatch && !isDisliked && iscatagoryselected && isAllergiesMatch;
     })
     setfilteredDietItems(filteredDietItems)
     },[dietItems,dietDetails.dislikes,dietDetails.combo,selectedCategory])
@@ -107,7 +96,7 @@ const CreateDiet = () => {
         <div className="diet-container">
             <aside className="diet-sidebar">
                 <ul>
-                    {Final_Menu_To_List
+                    {dietDetails.combo
                         .map(category => (
                             <li
                                 key={category}
