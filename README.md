@@ -7,8 +7,8 @@ sudo docker compose up -d
 
 Insert Database data
 
-docker cp data.sql 7b27:/ <br>
-docker exec -i <container_name_or_id> psql -U postgres -d Canteen -f /app/data.sql
+docker cp data.sql postgres:/ <br>
+docker exec -i postgres psql -U postgres -d Canteen -f /data.sql
 
 remove everything from docker
 
