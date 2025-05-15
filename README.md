@@ -9,3 +9,7 @@ Insert Database data
 
 docker cp data.sql 7b27:/ <br>
 docker exec -i <container_name_or_id> psql -U postgres -d Canteen -f /app/data.sql
+
+remove everything from docker
+
+docker system prune -a --volumes -f
