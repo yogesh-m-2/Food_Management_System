@@ -1,3 +1,7 @@
+-- ===================== Adding ADMIN =====================
+INSERT INTO admin (id, name, password, username)VALUES (1, 'Neuro', '1234', 'admin')ON CONFLICT (id) DO NOTHING;
+
+-- ===================== Adding Menu Items ===================== 
 INSERT INTO public.menu_item(
 	id, category, combination, description, is_available, name, dietitian_price, patient_price, staff_price, diet_type, time_slot, day
 )
