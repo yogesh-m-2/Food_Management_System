@@ -179,3 +179,24 @@
   .btn-secondary:hover {
     background-color: #5a6268;
   }
+.checkbox-group .checkbox-item{
+  margin: 5px;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  cursor: pointer;
+}
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  text-align: left;
+  accent-color: #007bff; /* Optional: sets the checkbox color (modern browsers only) */
+  cursor: pointer;
+}
+.checkbox-group .checkbox-item input{
+  margin: 0px 30px;
+}
+.checkbox-group .checkbox-item p{
+  width: 30%;
+}
