@@ -85,7 +85,7 @@ const CreateDiet = () => {
             item.name.toLowerCase().includes(dislike.toLowerCase())
         );
         const iscatagoryselected = item.category.toLowerCase() === selectedCategory.toLowerCase()
-        const isComboMatch = dietDetails.combo.includes(item.combination.toLowerCase());
+        const isComboMatch = dietDetails.combo.includes(item.category.toLowerCase());
         const isAllergiesMatch = dietDetails.allergies.length === 0 ? true : dietDetails.allergies.includes(item.diet_type.toLowerCase());
         return isComboMatch && !isDisliked && iscatagoryselected && isAllergiesMatch;
     })

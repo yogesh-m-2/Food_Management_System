@@ -9,7 +9,7 @@ const LoginPage = () => {
   const handleLogin = (type) => {
     navigate(`/${type.toLowerCase()}`);
   };
-
+  localStorage.getItem("jwtToken") && localStorage.removeItem("jwtToken");
   const handlePatienLogin = (type) => {
     const Patient_Auto_Login = async () => {
       try {

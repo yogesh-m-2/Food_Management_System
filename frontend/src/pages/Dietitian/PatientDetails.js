@@ -121,19 +121,19 @@ const PatientDetails = () => {
             <h2>Create Diet</h2>
             <div className="form-group">
               <label>Combo:</label>
-              <div>
-                <label>
+              <div className="checkbox-group">
+                <div className="checkbox-item">
+                  <p>Solid</p>
                   <input type="checkbox" name="solid" checked={combo.solid} onChange={handleComboChange} />
-                  Solid
-                </label>
-                <label>
+                </div>
+                <div className="checkbox-item">
+                  <p>Semi Solid</p>
                   <input type="checkbox" name="semi solid" checked={combo["semi solid"]} onChange={handleComboChange} />
-                  Semi Solid
-                </label>
-                <label>
+                </div>
+                <div className="checkbox-item">
+                  <p>Liquid</p>
                   <input type="checkbox" name="liquid" checked={combo.liquid} onChange={handleComboChange} />
-                  Liquid
-                </label>
+                </div>
               </div>
             </div>
             <div className="form-group">
