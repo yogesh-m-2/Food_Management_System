@@ -14,7 +14,7 @@ const PatientOrder = () => {
     useEffect(() => {
         const fetchMenuItems = async () => {
             try {
-                const response = await api.get('/menu-items');
+                const response = await api.get('/menu-items/day');
                 setCategory([...new Set(response.data.map(item => item.category))])
                 setMenuItems(response.data);
                 console.log(response.data)
