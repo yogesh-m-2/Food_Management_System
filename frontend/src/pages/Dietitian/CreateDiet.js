@@ -16,7 +16,7 @@ const CreateDiet = () => {
     useEffect(() => {
         const fetchDietItems = async () => {
             try {
-                const response = await api.get("/menu-items");
+                const response = await api.get("/menu-items/day");
                 setDietItems(response.data);
             } catch (error) {
                 console.error("Error fetching diet items:", error);

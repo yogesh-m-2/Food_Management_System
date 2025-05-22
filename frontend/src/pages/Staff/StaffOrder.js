@@ -12,7 +12,7 @@ const StaffOrder = () => {
     useEffect(() => {
         const fetchMenuItems = async () => {
             try {
-                const response = await api.get('/menu-items');
+                const response = await api.get('/menu-items/day');
                 setMenuItems(response.data);
                 setCategory([...new Set(response.data.map(item => item.category))])
             } catch (error) {

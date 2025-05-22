@@ -1,5 +1,6 @@
 package com.neuroCanteen.model.menuitem;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 // import jakarta.persistence.EnumType;
 // import jakarta.persistence.Enumerated;
@@ -10,6 +11,8 @@ import jakarta.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.Map;
+import java.util.List;
 
 @Data
 @Entity
@@ -38,6 +41,6 @@ public class MenuItem {
 
     //Addinng the New Field Formenu listing schedule
     private String diet_type;
-    private String time_slot;
-    private String day;
+    @Column(columnDefinition = "jsonb")
+    private String timeSlot;
 }
