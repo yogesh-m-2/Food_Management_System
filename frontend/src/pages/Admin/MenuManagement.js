@@ -2,6 +2,43 @@ import React, { useState, useEffect } from "react";
 import "../../styles/admin/AdminControl.css";
 import api from "../../services/api";
 
+const timeSlots = ['Morning', 'Afternoon', 'Evening', 'Dinner'];
+const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+const AvailabilityMatrix = ({ availability = {}, onToggle }) => (
+  <div className="availability-matrix">
+    <table>
+      <thead>
+        <tr>
+          <th>Day / Time</th>
+          {timeSlots.map((slot) => (
+            <th key={slot}>{slot}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {days.map((day) => (
+          <tr key={day}>
+            <td><strong>{day}</strong></td>
+            {timeSlots.map((time) => (
+              <td key={time}>
+                <label className="checkbox-container">
+                  <input
+                    type="checkbox"
+                    checked={availability[day]?.includes(time) || false}
+                    onChange={(e) => onToggle(day, time, e.target.checked)}
+                  />
+                  <span className="checkmark"></span>
+                </label>
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
+
 const MenuManagement = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -16,6 +53,20 @@ const MenuManagement = () => {
     staffPrice: "",
     patientPrice: "",
     dietitianPrice: ""
+  });
+  const [formData, setFormData] = useState({
+    name: "D.MILK/SAGO FEED",
+    category: "Liquid",
+    picture: null,
+    description: null,
+    staffPrice: 12.0,
+    patientPrice: 15.0,
+    dietitianPrice: 12.0,
+    combination: null,
+    diet_type: "CKD",
+    timeSlot: null,
+    available: true,
+    availability: {}
   });
   const [editItem, setEditItem] = useState(null);
 
@@ -33,6 +84,7 @@ const MenuManagement = () => {
   };
 
   const handleAdd = async () => {
+    console.log(formData)
     if (newItem.name && newItem.category) {
       try {
         const response = await api.post("/menu-items", newItem);
@@ -68,6 +120,22 @@ const MenuManagement = () => {
   const handleEdit = (item) => {
     setEditItem(item);
     setShowAddForm(true);
+  };
+
+  const handleAvailabilityToggle = (day, time, checked) => {
+    console.log(day,time)
+    const current = formData.availability[day] || [];
+    const updated = checked
+      ? [...new Set([...current, time])]
+      : current.filter(t => t !== time);
+    
+    setFormData({
+      ...formData,
+      availability: { 
+        ...formData.availability, 
+        [day]: updated 
+      }
+    });
   };
 
   const handleUpdate = async () => {
@@ -128,118 +196,108 @@ const MenuManagement = () => {
       </table>
 
       {showAddForm && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>{editItem ? "Edit Menu Item" : "Add New Item"}</h3>
+      <div className="modal">
+      <div className="modal-content two-column">
+        {/* Left: Form Section */}
+        <div className="modal-left">
+          <h3>{editItem ? "Edit Menu Item" : "Add New Item"}</h3>
+    
+          <input
+            type="text"
+            name="name"
+            placeholder="Item name"
+            value={editItem ? editItem.name : newItem.name}
+            onChange={(e) =>
+              editItem
+                ? setEditItem({ ...editItem, name: e.target.value })
+                : setNewItem({ ...newItem, name: e.target.value })
+            }
+          />
+    
+          <input
+            type="text"
+            name="category"
+            placeholder="Category"
+            value={editItem ? editItem.category : newItem.category}
+            onChange={(e) =>
+              editItem
+                ? setEditItem({ ...editItem, category: e.target.value })
+                : setNewItem({ ...newItem, category: e.target.value })
+            }
+          />
+    
+          <input
+            type="file"
+            name="picture"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                const imageData = reader.result;
+                editItem
+                  ? setEditItem({ ...editItem, picture: imageData })
+                  : setNewItem({ ...newItem, picture: imageData });
+              };
+              if (file) reader.readAsDataURL(file);
+            }}
+          />
+    
+          <label className="aval_label">
+            <p>Available:</p>
             <input
-              type="text"
-              name="name"
-              placeholder="Item name"
-              value={editItem ? editItem.name : newItem.name}
+              type="checkbox"
+              checked={editItem ? editItem.available : newItem.available}
               onChange={(e) =>
                 editItem
-                  ? setEditItem({ ...editItem, name: e.target.value })
-                  : setNewItem({ ...newItem, name: e.target.value })
+                  ? setEditItem({ ...editItem, available: e.target.checked })
+                  : setNewItem({ ...newItem, available: e.target.checked })
               }
             />
-            {/* <input
-              type="text"
-              name="price"
-              placeholder="Price"
-              value={editItem ? editItem.price : newItem.price}
-              onChange={(e) =>
-                editItem
-                  ? setEditItem({ ...editItem, price: e.target.value })
-                  : setNewItem({ ...newItem, price: e.target.value })
-              }
-            /> */}
+          </label>
+    
+          <div className="price-inputs">
+            <label>Staff Price</label>
             <input
-              type="text"
-              name="category"
-              placeholder="Category"
-              value={editItem ? editItem.category : newItem.category}
+              type="number"
+              name="staffPrice"
+              placeholder="Staff Price"
+              value={editItem ? editItem.staffPrice : newItem.staffPrice}
               onChange={(e) =>
                 editItem
-                  ? setEditItem({ ...editItem, category: e.target.value })
-                  : setNewItem({ ...newItem, category: e.target.value })
+                  ? setEditItem({ ...editItem, staffPrice: e.target.value })
+                  : setNewItem({ ...newItem, staffPrice: e.target.value })
               }
             />
-            {/* <input
-              type="text"
-              name="role"
-              placeholder="Role"
-              value={editItem ? editItem.role : newItem.role}
+    
+            <label>Patient Price</label>
+            <input
+              type="number"
+              name="patientPrice"
+              placeholder="Patient Price"
+              value={editItem ? editItem.patientPrice : newItem.patientPrice}
               onChange={(e) =>
                 editItem
-                  ? setEditItem({ ...editItem, role: e.target.value })
-                  : setNewItem({ ...newItem, role: e.target.value })
+                  ? setEditItem({ ...editItem, patientPrice: e.target.value })
+                  : setNewItem({ ...newItem, patientPrice: e.target.value })
               }
-            /> */}
-            <input
-              type="file"
-              name="picture"
-              onChange={(e) => {
-                const file = e.target.files[0];
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                  editItem
-                    ? setEditItem({ ...editItem, picture: reader.result })
-                    : setNewItem({ ...newItem, picture: reader.result });
-                };
-                if (file) reader.readAsDataURL(file);
-              }}
             />
-             <label className="aval_label">
-                <p>Available:</p>
-              <input
-                type="checkbox"
-                checked={editItem ? editItem.available : newItem.available}
-                onChange={(e) =>
-                  editItem
-                    ? setEditItem({ ...editItem, available: e.target.checked })
-                    : setNewItem({ ...newItem, available: e.target.checked })
-                }
-              />
-            </label>
-            {/* Price Inputs for Staff, Patient, and Dietitian */}
-            <div className="price-inputs">
-            staffPrice
-              <input
-                type="number"
-                name="staffPrice"
-                placeholder="Staff Price"
-                value={editItem ? editItem.staffPrice : newItem.staffPrice}
-                onChange={(e) =>
-                  editItem
-                    ? setEditItem({ ...editItem, staffPrice: e.target.value })
-                    : setNewItem({ ...newItem, staffPrice: e.target.value })
-                }
-              />
-              patientPrice
-              <input
-                type="number"
-                name="patientPrice"
-                placeholder="Patient Price"
-                value={editItem ? editItem.patientPrice : newItem.patientPrice}
-                onChange={(e) =>
-                  editItem
-                    ? setEditItem({ ...editItem, patientPrice: e.target.value })
-                    : setNewItem({ ...newItem, patientPrice: e.target.value })
-                }
-              />
-              dietitianPrice
-              <input
-                type="number"
-                name="dietitianPrice"
-                placeholder="Dietitian Price"
-                value={editItem ? editItem.dietitianPrice : newItem.dietitianPrice}
-                onChange={(e) =>
-                  editItem
-                    ? setEditItem({ ...editItem, dietitianPrice: e.target.value })
-                    : setNewItem({ ...newItem, dietitianPrice: e.target.value })
-                }
-              />
-            </div>
+    
+            <label>Dietitian Price</label>
+            <input
+              type="number"
+              name="dietitianPrice"
+              placeholder="Dietitian Price"
+              value={editItem ? editItem.dietitianPrice : newItem.dietitianPrice}
+              onChange={(e) =>
+                editItem
+                  ? setEditItem({ ...editItem, dietitianPrice: e.target.value })
+                  : setNewItem({ ...newItem, dietitianPrice: e.target.value })
+              }
+            />
+          </div>
+    
+          <div style={{ marginTop: '20px' }}>
             <button className="save-btn" onClick={editItem ? handleUpdate : handleAdd}>
               {editItem ? "Update" : "Save"}
             </button>
@@ -248,6 +306,19 @@ const MenuManagement = () => {
             </button>
           </div>
         </div>
+    
+        {/* Right: Matrix or Table Section */}
+        <div className="modal-right">
+          <h4>Availability Time Slot</h4>
+          <AvailabilityMatrix
+            availability={formData.availability}
+            onToggle={handleAvailabilityToggle}
+          />
+        </div>
+      </div>
+    </div>
+    
+     
       )}
     </div>
   );
