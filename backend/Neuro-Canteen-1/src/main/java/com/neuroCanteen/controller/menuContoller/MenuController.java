@@ -72,44 +72,44 @@ public class MenuController {
     }
 
     @GetMapping("/day/{day}")
-public List<MenuItem> getMenuItemsForSpecificDay(@PathVariable String day) {
-    List<MenuItem> allItems = menuService.getAllMenuItems();
-    String currentDay = day.toLowerCase();  // Normalize the input day to lowercase (e.g., "thursday")
+    public List<MenuItem> getMenuItemsForSpecificDay(@PathVariable String day) {
+        List<MenuItem> allItems = menuService.getAllMenuItems();
+        String currentDay = day.toLowerCase();  // Normalize the input day to lowercase (e.g., "thursday")
 
-    ObjectMapper objectMapper = new ObjectMapper();
-    List<MenuItem> result = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<MenuItem> result = new ArrayList<>();
 
-    for (MenuItem item : allItems) {
-        String timeSlotJson = item.getTimeSlot(); // JSON object like {"monday": ["morning", "dinner"]}
-        try {
-            if (timeSlotJson != null && !timeSlotJson.isBlank()) {
-                // Parse the timeSlotJson into a map
-                Map<String, List<String>> timeSlotMap = objectMapper.readValue(
-                    timeSlotJson,
-                    new TypeReference<Map<String, List<String>>>() {}
-                );
+        for (MenuItem item : allItems) {
+            String timeSlotJson = item.getTimeSlot(); // JSON object like {"monday": ["morning", "dinner"]}
+            try {
+                if (timeSlotJson != null && !timeSlotJson.isBlank()) {
+                    // Parse the timeSlotJson into a map
+                    Map<String, List<String>> timeSlotMap = objectMapper.readValue(
+                        timeSlotJson,
+                        new TypeReference<Map<String, List<String>>>() {}
+                    );
 
-                // Check if the provided day exists in the timeSlot map
-                if (timeSlotMap.containsKey(currentDay)) {
-                    List<String> timeSlotsForDay = timeSlotMap.get(currentDay);
+                    // Check if the provided day exists in the timeSlot map
+                    if (timeSlotMap.containsKey(currentDay)) {
+                        List<String> timeSlotsForDay = timeSlotMap.get(currentDay);
 
-                    // Format the timeSlots into a JSON string like '["Meals", "dinner"]'
-                    String formattedTimeSlot = objectMapper.writeValueAsString(timeSlotsForDay);
+                        // Format the timeSlots into a JSON string like '["Meals", "dinner"]'
+                        String formattedTimeSlot = objectMapper.writeValueAsString(timeSlotsForDay);
 
-                    // Set the formatted timeSlot back into the MenuItem object
-                    item.setTimeSlot(formattedTimeSlot);  // Assuming MenuItem has a setter for timeSlot
+                        // Set the formatted timeSlot back into the MenuItem object
+                        item.setTimeSlot(formattedTimeSlot);  // Assuming MenuItem has a setter for timeSlot
 
-                    // Add the item to the result list
-                    result.add(item);
+                        // Add the item to the result list
+                        result.add(item);
+                    }
                 }
+            } catch (Exception e) {
+                e.printStackTrace(); // Use proper logging in production
             }
-        } catch (Exception e) {
-            e.printStackTrace(); // Use proper logging in production
         }
-    }
 
-    return result;
-}
+        return result;
+    }
 
 
     @GetMapping("/{id}")
