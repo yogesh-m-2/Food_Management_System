@@ -11,8 +11,7 @@ import jakarta.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.Map;
-import java.util.List;
+import org.hibernate.annotations.ColumnTransformer;
 
 @Data
 @Entity
@@ -41,6 +40,8 @@ public class MenuItem {
 
     //Addinng the New Field Formenu listing schedule
     private String diet_type;
-    @Column(columnDefinition = "jsonb")
+
+    @ColumnTransformer(write = "?::jsonb")
+   @Column(columnDefinition = "jsonb")
     private String timeSlot;
 }
