@@ -52,22 +52,22 @@ const MenuManagement = () => {
     // role: "",
     staffPrice: "",
     patientPrice: "",
-    dietitianPrice: ""
+    dietitianPrice: "",
+    timeSlot: {}
   });
-  const [formData, setFormData] = useState({
-    name: "D.MILK/SAGO FEED",
-    category: "Liquid",
-    picture: null,
-    description: null,
-    staffPrice: 12.0,
-    patientPrice: 15.0,
-    dietitianPrice: 12.0,
-    combination: null,
-    diet_type: "CKD",
-    timeSlot: null,
-    available: true,
-    availability: {}
-  });
+  // const [formData, setFormData] = useState({
+  //   name: "D.MILK/SAGO FEED",
+  //   category: "Liquid",
+  //   picture: null,
+  //   description: null,
+  //   staffPrice: 12.0,
+  //   patientPrice: 15.0,
+  //   dietitianPrice: 12.0,
+  //   combination: null,
+  //   diet_type: "CKD",
+  //   timeSlot: null,
+  //   available: true,
+  // });
   const [editItem, setEditItem] = useState(null);
 
   useEffect(() => {
@@ -77,29 +77,46 @@ const MenuManagement = () => {
   const fetchMenuItems = async () => {
     try {
       const response = await api.get("/menu-items");
-      setMenuItems(response.data);
+      const originalData = response.data; // likely an array
+
+      // Convert stringified timeSlot for each item
+      const fixedData = originalData.map(item => ({
+        ...item,
+        timeSlot: typeof item.timeSlot === "string" ? JSON.parse(item.timeSlot) : item.timeSlot
+      }));
+      setMenuItems(fixedData);
     } catch (error) {
       console.error("Error fetching menu items:", error);
     }
   };
 
   const handleAdd = async () => {
-    console.log(formData)
+    console.log(newItem)
     if (newItem.name && newItem.category) {
+      const new_data_post = {
+        ...newItem,
+        timeSlot: JSON.stringify(newItem.timeSlot)
+      };
       try {
-        const response = await api.post("/menu-items", newItem);
-        setMenuItems([...menuItems, response.data]);
+        const response = await api.post("/menu-items", new_data_post);
+        const item = response.data;
+        
+        const fixedItem = {
+          ...item,
+          timeSlot: typeof item.timeSlot === "string" ? JSON.parse(item.timeSlot) : item.timeSlot
+        };
+        
+        setMenuItems([...menuItems, fixedItem]);
         setNewItem({
           name: "",
-          // price: "",
           category: "",
           picture: "",
           description: "",
           available: true,
-          // role: "",
           staffPrice: "",
           patientPrice: "",
-          dietitianPrice: ""
+          dietitianPrice: "",
+          timeSlot: {}
         });
         setShowAddForm(false);
       } catch (error) {
@@ -123,16 +140,20 @@ const MenuManagement = () => {
   };
 
   const handleAvailabilityToggle = (day, time, checked) => {
+    if(editItem){
+      console.log("Edit Item Wokring Good")
+    }else{
+      console.log("Add New food is Working")
+    }
     console.log(day,time)
-    const current = formData.availability[day] || [];
+    const current = newItem.timeSlot[day] || [];
     const updated = checked
       ? [...new Set([...current, time])]
       : current.filter(t => t !== time);
-    
-    setFormData({
-      ...formData,
-      availability: { 
-        ...formData.availability, 
+      setNewItem({
+      ...newItem,
+      timeSlot: { 
+        ...newItem.timeSlot, 
         [day]: updated 
       }
     });
@@ -151,9 +172,13 @@ const MenuManagement = () => {
     }
   };
 
+
   return (
     <div className="content">
-      <button className="add-btn" onClick={() => setShowAddForm(true)}>
+      <button className="add-btn" onClick={() => {
+        setShowAddForm(true)
+        setEditItem(null)
+      }}>
         Add Item
       </button>
       <table>
@@ -311,9 +336,9 @@ const MenuManagement = () => {
         <div className="modal-right">
           <h4>Availability Time Slot</h4>
           <AvailabilityMatrix
-            availability={formData.availability}
-            onToggle={handleAvailabilityToggle}
-          />
+                    availability={editItem ? editItem.timeSlot : newItem.timeSlot}
+                    onToggle={handleAvailabilityToggle}
+                  />
         </div>
       </div>
     </div>
