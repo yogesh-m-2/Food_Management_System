@@ -140,30 +140,52 @@ const MenuManagement = () => {
   };
 
   const handleAvailabilityToggle = (day, time, checked) => {
-    if(editItem){
-      console.log("Edit Item Wokring Good")
-    }else{
-      console.log("Add New food is Working")
+    if (editItem) {
+      console.log("Value")
+      console.log(day,time)
+      const current = editItem.timeSlot[day] || [];
+      const updated = checked
+        ? [...new Set([...current, time])]
+        : current.filter(t => t !== time);
+        setEditItem({
+        ...editItem,
+        timeSlot: { 
+          ...editItem.timeSlot, 
+          [day]: updated 
+        }
+      });
+    } else {
+        const current = newItem.timeSlot[day] || [];
+        const updated = checked
+          ? [...new Set([...current, time])]
+          : current.filter(t => t !== time);
+          setNewItem({
+          ...newItem,
+          timeSlot: { 
+            ...newItem.timeSlot, 
+            [day]: updated 
+          }
+        });
     }
-    console.log(day,time)
-    const current = newItem.timeSlot[day] || [];
-    const updated = checked
-      ? [...new Set([...current, time])]
-      : current.filter(t => t !== time);
-      setNewItem({
-      ...newItem,
-      timeSlot: { 
-        ...newItem.timeSlot, 
-        [day]: updated 
-      }
-    });
   };
 
   const handleUpdate = async () => {
+      const new_data_post = {
+        ...editItem,
+        timeSlot: JSON.stringify(editItem.timeSlot)
+      };
+      console.log(new_data_post)
     if (editItem.name && editItem.category) {
       try {
-        const response = await api.put(`/menu-items/${editItem.id}`, editItem);
-        setMenuItems(menuItems.map((item) => (item.id === editItem.id ? response.data : item)));
+        const response = await api.put(`/menu-items/${editItem.id}`, new_data_post);
+
+        const item = response.data;
+        const fixedItem = {
+          ...item,
+          timeSlot: typeof item.timeSlot === "string" ? JSON.parse(item.timeSlot) : item.timeSlot
+        };
+
+        setMenuItems(menuItems.map((item) => (item.id === editItem.id ? fixedItem : item)));
         setEditItem(null);
         setShowAddForm(false);
       } catch (error) {
