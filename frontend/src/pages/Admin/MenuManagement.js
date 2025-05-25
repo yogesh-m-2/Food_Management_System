@@ -3,7 +3,7 @@ import "../../styles/admin/AdminControl.css";
 import api from "../../services/api";
 
 const timeSlots = ['morning', 'afternoon', 'evening', 'dinner'];
-const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturay'];
+const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 const AvailabilityMatrix = ({ availability = {}, onToggle }) => (
   <div className="availability-matrix">
