@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import "../../styles/admin/AdminControl.css";
 import api from "../../services/api";
 
-const timeSlots = ['Morning', 'Afternoon', 'Evening', 'Dinner'];
-const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const timeSlots = ['morning', 'afternoon', 'evening', 'dinner'];
+const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturay'];
 
 const AvailabilityMatrix = ({ availability = {}, onToggle }) => (
   <div className="availability-matrix">
