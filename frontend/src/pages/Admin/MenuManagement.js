@@ -3,7 +3,7 @@ import "../../styles/admin/AdminControl.css";
 import api from "../../services/api";
 
 const timeSlots = ['morning', 'afternoon', 'evening', 'dinner'];
-const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturay'];
+const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 const AvailabilityMatrix = ({ availability = {}, onToggle }) => (
   <div className="availability-matrix">
@@ -44,30 +44,19 @@ const MenuManagement = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newItem, setNewItem] = useState({
     name: "",
-    // price: "",
     category: "",
     picture: "",
     description: "",
     available: true,
-    // role: "",
     staffPrice: "",
     patientPrice: "",
     dietitianPrice: "",
-    timeSlot: {}
+    timeSlot: {},
+    combination: "",
+    description: "",
+    diet_type: ""
   });
-  // const [formData, setFormData] = useState({
-  //   name: "D.MILK/SAGO FEED",
-  //   category: "Liquid",
-  //   picture: null,
-  //   description: null,
-  //   staffPrice: 12.0,
-  //   patientPrice: 15.0,
-  //   dietitianPrice: 12.0,
-  //   combination: null,
-  //   diet_type: "CKD",
-  //   timeSlot: null,
-  //   available: true,
-  // });
+
   const [editItem, setEditItem] = useState(null);
 
   useEffect(() => {
@@ -79,34 +68,20 @@ const MenuManagement = () => {
       const response = await api.get("/menu-items");
       const originalData = response.data; // likely an array
 
-      // Convert stringified timeSlot for each item
-      const fixedData = originalData.map(item => ({
-        ...item,
-        timeSlot: typeof item.timeSlot === "string" ? JSON.parse(item.timeSlot) : item.timeSlot
-      }));
-      setMenuItems(fixedData);
+      setMenuItems(originalData);
     } catch (error) {
       console.error("Error fetching menu items:", error);
     }
   };
 
   const handleAdd = async () => {
-    console.log(newItem)
     if (newItem.name && newItem.category) {
-      const new_data_post = {
-        ...newItem,
-        timeSlot: JSON.stringify(newItem.timeSlot)
-      };
       try {
-        const response = await api.post("/menu-items", new_data_post);
+        const response = await api.post("/menu-items", newItem);
         const item = response.data;
         
-        const fixedItem = {
-          ...item,
-          timeSlot: typeof item.timeSlot === "string" ? JSON.parse(item.timeSlot) : item.timeSlot
-        };
         
-        setMenuItems([...menuItems, fixedItem]);
+        setMenuItems([...menuItems, item]);
         setNewItem({
           name: "",
           category: "",
@@ -116,7 +91,10 @@ const MenuManagement = () => {
           staffPrice: "",
           patientPrice: "",
           dietitianPrice: "",
-          timeSlot: {}
+          timeSlot: {},
+          combination: "",
+          description: "",
+          diet_type: ""
         });
         setShowAddForm(false);
       } catch (error) {
@@ -170,22 +148,13 @@ const MenuManagement = () => {
   };
 
   const handleUpdate = async () => {
-      const new_data_post = {
-        ...editItem,
-        timeSlot: JSON.stringify(editItem.timeSlot)
-      };
-      console.log(new_data_post)
     if (editItem.name && editItem.category) {
       try {
-        const response = await api.put(`/menu-items/${editItem.id}`, new_data_post);
+        const response = await api.put(`/menu-items/${editItem.id}`, editItem);
 
-        const item = response.data;
-        const fixedItem = {
-          ...item,
-          timeSlot: typeof item.timeSlot === "string" ? JSON.parse(item.timeSlot) : item.timeSlot
-        };
+        const item_data = response.data;
 
-        setMenuItems(menuItems.map((item) => (item.id === editItem.id ? fixedItem : item)));
+        setMenuItems(menuItems.map((item) => (item.id === editItem.id ? item_data : item)));
         setEditItem(null);
         setShowAddForm(false);
       } catch (error) {
@@ -249,7 +218,9 @@ const MenuManagement = () => {
         <div className="modal-left">
           <h3>{editItem ? "Edit Menu Item" : "Add New Item"}</h3>
     
-          <input
+        <div className="price-inputs">
+          <label>Item Name</label>
+        <input
             type="text"
             name="name"
             placeholder="Item name"
@@ -260,7 +231,10 @@ const MenuManagement = () => {
                 : setNewItem({ ...newItem, name: e.target.value })
             }
           />
-    
+        </div>
+
+        <div className="price-inputs">
+          <label>Category</label>
           <input
             type="text"
             name="category"
@@ -272,7 +246,40 @@ const MenuManagement = () => {
                 : setNewItem({ ...newItem, category: e.target.value })
             }
           />
-    
+        </div>
+
+        <div className="price-inputs">
+          <label>combination</label>
+          <input
+            type="text"
+            name="combination"
+            placeholder="combination"
+            value={editItem ? editItem.combination : newItem.combination}
+            onChange={(e) =>
+              editItem
+                ? setEditItem({ ...editItem, combination: e.target.value })
+                : setNewItem({ ...newItem, combination: e.target.value })
+            }
+          />
+        </div>
+
+        <div className="price-inputs">
+          <label>Diet Type</label>
+          <input
+            type="text"
+            name="didiet_typeet"
+            placeholder="Diet Type"
+            value={editItem ? editItem.diet_type : newItem.diet_type}
+            onChange={(e) =>
+              editItem
+                ? setEditItem({ ...editItem, diet_type: e.target.value })
+                : setNewItem({ ...newItem, diet_type: e.target.value })
+            }
+          />
+        </div>
+
+        <div className="price-inputs">
+          <label>Picture</label>
           <input
             type="file"
             name="picture"
@@ -289,6 +296,26 @@ const MenuManagement = () => {
               if (file) reader.readAsDataURL(file);
             }}
           />
+        </div>
+
+
+        {/* <div className="description">
+          <label htmlFor="description" className="form-label">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Enter description"
+              rows={4}
+              value={editItem ? editItem.description : newItem.description}
+              onChange={(e) =>
+                editItem
+                  ? setEditItem({ ...editItem, description: e.target.value })
+                  : setNewItem({ ...newItem, description: e.target.value })
+              }
+        />
+        </div> */}
+
+
     
           <label className="aval_label">
             <p>Available:</p>
@@ -344,14 +371,14 @@ const MenuManagement = () => {
             />
           </div>
     
-          <div style={{ marginTop: '20px' }}>
+          {/* <div style={{ marginTop: '20px' }}>
             <button className="save-btn" onClick={editItem ? handleUpdate : handleAdd}>
               {editItem ? "Update" : "Save"}
             </button>
             <button className="close-btn" onClick={() => setShowAddForm(false)}>
               Cancel
             </button>
-          </div>
+          </div> */}
         </div>
     
         {/* Right: Matrix or Table Section */}
@@ -361,6 +388,29 @@ const MenuManagement = () => {
                     availability={editItem ? editItem.timeSlot : newItem.timeSlot}
                     onToggle={handleAvailabilityToggle}
                   />
+        <div className="price-inputs" style={{ marginTop: '20px' }}>
+          <label htmlFor="description" className="form-label">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Enter description"
+              rows={4}
+              value={editItem ? editItem.description : newItem.description}
+              onChange={(e) =>
+                editItem
+                  ? setEditItem({ ...editItem, description: e.target.value })
+                  : setNewItem({ ...newItem, description: e.target.value })
+              }
+        />
+        </div>
+            <div style={{ marginTop: '20px' }}>
+            <button className="save-btn" onClick={editItem ? handleUpdate : handleAdd}>
+              {editItem ? "Update" : "Save"}
+            </button>
+            <button className="close-btn" onClick={() => setShowAddForm(false)}>
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </div>
