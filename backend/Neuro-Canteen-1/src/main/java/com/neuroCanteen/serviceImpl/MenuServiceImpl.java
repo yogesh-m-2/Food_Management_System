@@ -46,6 +46,7 @@ public class MenuServiceImpl implements MenuService {
                     menuItem.setStaffPrice(updatedMenuItem.getStaffPrice());
                     menuItem.setAvailable(updatedMenuItem.isAvailable()); // Fix for availability update
                     menuItem.setCombination(updatedMenuItem.getCombination());
+                    menuItem.setDiet_type(updatedMenuItem.getDiet_type());
 
                     menuItem.setTimeSlot(updatedMenuItem.getTimeSlot());
                     return menuRepository.save(menuItem);
