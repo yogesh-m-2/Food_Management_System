@@ -1,6 +1,7 @@
 package com.neuroCanteen.model.menuitem;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 // import jakarta.persistence.EnumType;
 // import jakarta.persistence.Enumerated;
@@ -11,7 +12,10 @@ import jakarta.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnTransformer;
+import java.util.List;
+import java.util.Map;
+
+import com.neuroCanteen.converter.TimeSlotConverter;
 
 @Data
 @Entity
@@ -41,7 +45,8 @@ public class MenuItem {
     //Addinng the New Field Formenu listing schedule
     private String diet_type;
 
-    @ColumnTransformer(write = "?::jsonb")
-   @Column(columnDefinition = "jsonb")
-    private String timeSlot;
+    @Convert(converter = TimeSlotConverter.class)
+    @Column(columnDefinition = "TEXT")  // or "json" for PostgreSQL
+    private Map<String, List<String>> timeSlot;
+
 }

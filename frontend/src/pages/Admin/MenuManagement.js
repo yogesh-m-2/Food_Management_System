@@ -55,19 +55,7 @@ const MenuManagement = () => {
     dietitianPrice: "",
     timeSlot: {}
   });
-  // const [formData, setFormData] = useState({
-  //   name: "D.MILK/SAGO FEED",
-  //   category: "Liquid",
-  //   picture: null,
-  //   description: null,
-  //   staffPrice: 12.0,
-  //   patientPrice: 15.0,
-  //   dietitianPrice: 12.0,
-  //   combination: null,
-  //   diet_type: "CKD",
-  //   timeSlot: null,
-  //   available: true,
-  // });
+
   const [editItem, setEditItem] = useState(null);
 
   useEffect(() => {
@@ -79,12 +67,7 @@ const MenuManagement = () => {
       const response = await api.get("/menu-items");
       const originalData = response.data; // likely an array
 
-      // Convert stringified timeSlot for each item
-      const fixedData = originalData.map(item => ({
-        ...item,
-        timeSlot: typeof item.timeSlot === "string" ? JSON.parse(item.timeSlot) : item.timeSlot
-      }));
-      setMenuItems(fixedData);
+      setMenuItems(originalData);
     } catch (error) {
       console.error("Error fetching menu items:", error);
     }
@@ -93,20 +76,12 @@ const MenuManagement = () => {
   const handleAdd = async () => {
     console.log(newItem)
     if (newItem.name && newItem.category) {
-      const new_data_post = {
-        ...newItem,
-        timeSlot: JSON.stringify(newItem.timeSlot)
-      };
       try {
-        const response = await api.post("/menu-items", new_data_post);
+        const response = await api.post("/menu-items", newItem);
         const item = response.data;
         
-        const fixedItem = {
-          ...item,
-          timeSlot: typeof item.timeSlot === "string" ? JSON.parse(item.timeSlot) : item.timeSlot
-        };
         
-        setMenuItems([...menuItems, fixedItem]);
+        setMenuItems([...menuItems, item]);
         setNewItem({
           name: "",
           category: "",
@@ -170,22 +145,13 @@ const MenuManagement = () => {
   };
 
   const handleUpdate = async () => {
-      const new_data_post = {
-        ...editItem,
-        timeSlot: JSON.stringify(editItem.timeSlot)
-      };
-      console.log(new_data_post)
     if (editItem.name && editItem.category) {
       try {
-        const response = await api.put(`/menu-items/${editItem.id}`, new_data_post);
+        const response = await api.put(`/menu-items/${editItem.id}`, editItem);
 
-        const item = response.data;
-        const fixedItem = {
-          ...item,
-          timeSlot: typeof item.timeSlot === "string" ? JSON.parse(item.timeSlot) : item.timeSlot
-        };
+        const item_data = response.data;
 
-        setMenuItems(menuItems.map((item) => (item.id === editItem.id ? fixedItem : item)));
+        setMenuItems(menuItems.map((item) => (item.id === editItem.id ? item_data : item)));
         setEditItem(null);
         setShowAddForm(false);
       } catch (error) {
