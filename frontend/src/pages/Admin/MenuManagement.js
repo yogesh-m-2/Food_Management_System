@@ -44,16 +44,17 @@ const MenuManagement = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newItem, setNewItem] = useState({
     name: "",
-    // price: "",
     category: "",
     picture: "",
     description: "",
     available: true,
-    // role: "",
     staffPrice: "",
     patientPrice: "",
     dietitianPrice: "",
-    timeSlot: {}
+    timeSlot: {},
+    combination: "",
+    description: "",
+    diet_type: ""
   });
 
   const [editItem, setEditItem] = useState(null);
@@ -74,7 +75,6 @@ const MenuManagement = () => {
   };
 
   const handleAdd = async () => {
-    console.log(newItem)
     if (newItem.name && newItem.category) {
       try {
         const response = await api.post("/menu-items", newItem);
@@ -91,7 +91,10 @@ const MenuManagement = () => {
           staffPrice: "",
           patientPrice: "",
           dietitianPrice: "",
-          timeSlot: {}
+          timeSlot: {},
+          combination: "",
+          description: "",
+          diet_type: ""
         });
         setShowAddForm(false);
       } catch (error) {
@@ -215,7 +218,9 @@ const MenuManagement = () => {
         <div className="modal-left">
           <h3>{editItem ? "Edit Menu Item" : "Add New Item"}</h3>
     
-          <input
+        <div className="price-inputs">
+          <label>Item Name</label>
+        <input
             type="text"
             name="name"
             placeholder="Item name"
@@ -226,7 +231,10 @@ const MenuManagement = () => {
                 : setNewItem({ ...newItem, name: e.target.value })
             }
           />
-    
+        </div>
+
+        <div className="price-inputs">
+          <label>Category</label>
           <input
             type="text"
             name="category"
@@ -238,7 +246,40 @@ const MenuManagement = () => {
                 : setNewItem({ ...newItem, category: e.target.value })
             }
           />
-    
+        </div>
+
+        <div className="price-inputs">
+          <label>combination</label>
+          <input
+            type="text"
+            name="combination"
+            placeholder="combination"
+            value={editItem ? editItem.combination : newItem.combination}
+            onChange={(e) =>
+              editItem
+                ? setEditItem({ ...editItem, combination: e.target.value })
+                : setNewItem({ ...newItem, combination: e.target.value })
+            }
+          />
+        </div>
+
+        <div className="price-inputs">
+          <label>Diet Type</label>
+          <input
+            type="text"
+            name="didiet_typeet"
+            placeholder="Diet Type"
+            value={editItem ? editItem.diet_type : newItem.diet_type}
+            onChange={(e) =>
+              editItem
+                ? setEditItem({ ...editItem, diet_type: e.target.value })
+                : setNewItem({ ...newItem, diet_type: e.target.value })
+            }
+          />
+        </div>
+
+        <div className="price-inputs">
+          <label>Picture</label>
           <input
             type="file"
             name="picture"
@@ -255,6 +296,26 @@ const MenuManagement = () => {
               if (file) reader.readAsDataURL(file);
             }}
           />
+        </div>
+
+
+        {/* <div className="description">
+          <label htmlFor="description" className="form-label">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Enter description"
+              rows={4}
+              value={editItem ? editItem.description : newItem.description}
+              onChange={(e) =>
+                editItem
+                  ? setEditItem({ ...editItem, description: e.target.value })
+                  : setNewItem({ ...newItem, description: e.target.value })
+              }
+        />
+        </div> */}
+
+
     
           <label className="aval_label">
             <p>Available:</p>
@@ -310,14 +371,14 @@ const MenuManagement = () => {
             />
           </div>
     
-          <div style={{ marginTop: '20px' }}>
+          {/* <div style={{ marginTop: '20px' }}>
             <button className="save-btn" onClick={editItem ? handleUpdate : handleAdd}>
               {editItem ? "Update" : "Save"}
             </button>
             <button className="close-btn" onClick={() => setShowAddForm(false)}>
               Cancel
             </button>
-          </div>
+          </div> */}
         </div>
     
         {/* Right: Matrix or Table Section */}
@@ -327,6 +388,29 @@ const MenuManagement = () => {
                     availability={editItem ? editItem.timeSlot : newItem.timeSlot}
                     onToggle={handleAvailabilityToggle}
                   />
+        <div className="price-inputs" style={{ marginTop: '20px' }}>
+          <label htmlFor="description" className="form-label">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Enter description"
+              rows={4}
+              value={editItem ? editItem.description : newItem.description}
+              onChange={(e) =>
+                editItem
+                  ? setEditItem({ ...editItem, description: e.target.value })
+                  : setNewItem({ ...newItem, description: e.target.value })
+              }
+        />
+        </div>
+            <div style={{ marginTop: '20px' }}>
+            <button className="save-btn" onClick={editItem ? handleUpdate : handleAdd}>
+              {editItem ? "Update" : "Save"}
+            </button>
+            <button className="close-btn" onClick={() => setShowAddForm(false)}>
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </div>
