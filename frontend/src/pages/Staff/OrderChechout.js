@@ -74,8 +74,8 @@ const OrderCheckout = () => {
 
     const verifyPayment = async (response) => {
         const paymentData = {
-            orderId: response.order_id,
-            paymentId: response.payment_id,
+            orderId: response.razorpay_order_id,
+            paymentId: response.razorpay_payment_id,
             paymentStatus: response.razorpay_payment_status,
             paymentMethod: response.method,
             amount: calculateOrderTotal(),
