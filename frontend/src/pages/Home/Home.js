@@ -32,7 +32,7 @@ const LoginPage = () => {
       <div className="login-grid">
         <div className="login-option admin" onClick={() => handleLogin('Admin')}>
           <FaUserTie className="icon" />
-          <span>Admin Pane</span>
+          <span>Admin</span>
         </div>
         <div className="login-option" onClick={() => handleLogin('Staff')}>
           <FaUsers className="icon" />
