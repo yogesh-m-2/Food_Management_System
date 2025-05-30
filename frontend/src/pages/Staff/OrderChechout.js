@@ -51,7 +51,7 @@ const OrderCheckout = () => {
                 key: "rzp_test_0oZHIWIDL59TxD", // Replace with your Razorpay key
                 amount: amount * 100, // Amount in paise (Razorpay expects the amount in paise)
                 currency: "INR",
-                name: "Your Company Name",
+                name: "Neuro Canteen",
                 description: "Payment for Order",
                 order_id: orderId,
                 handler: function(response) {
@@ -76,8 +76,8 @@ const OrderCheckout = () => {
         const paymentData = {
             orderId: response.razorpay_order_id,
             paymentId: response.razorpay_payment_id,
-            paymentStatus: response.razorpay_payment_status,
-            paymentMethod: response.method,
+            paymentSignature : response.razorpay_signature,
+            paymentMethod: "UPI",
             amount: calculateOrderTotal(),
             createdAt: new Date().toISOString(),
         };
@@ -93,15 +93,18 @@ const OrderCheckout = () => {
             category: "South",
             price: orderTotal,
             orderStatus: null,
-            paymentType: "COD",
+            paymentType: "UPI",
             paymentStatus: null,
             orderDateTime: new Date().toISOString(),
             address: submittedAddress,
+            paymentRecived: false
         };
 
         try {
             const result = await api.post("/payment/verifyPayment", paymentData);
             if (result.data) {
+                orderDetails.paymentRecived = true
+                orderDetails.paymentStatus = "COMPLETED"
                 const response = await api.post("/orders", orderDetails);
                 navigate("/staff/order-success", { state: { orderHistoryRedirect: "/staff/orderhistory", orderedUserId: username, orderedRole: "Staff" } });
             } else {
