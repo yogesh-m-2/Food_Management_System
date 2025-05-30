@@ -88,7 +88,7 @@ const PatientOrderCheckout = () => {
                 key: "rzp_test_0oZHIWIDL59TxD", // Replace with your Razorpay key
                 amount: amount * 100, // Amount in paise (Razorpay expects the amount in paise)
                 currency: "INR",
-                name: "Your Company Name",
+                name: "Neuro Canteen",
                 description: "Payment for Order",
                 order_id: orderId,
                 handler: function(response) {
@@ -111,13 +111,14 @@ const PatientOrderCheckout = () => {
 
     const verifyPayment = async (response) => {
         const paymentData = {
-            orderId: response.order_id,
-            paymentId: response.payment_id,
-            paymentStatus: response.razorpay_payment_status,
-            paymentMethod: response.method,
+            orderId: response.razorpay_order_id,
+            paymentId: response.razorpay_payment_id,
+            paymentSignature : response.razorpay_signature,
+            paymentMethod: "UPI",
             amount: calculateOrderTotal(),
             createdAt: new Date().toISOString(),
         };
+        console.log(response)
         const orderDetails = {
             orderedRole: "Patient", // Since it's a patient order
             orderedName: username, // Use the logged-in username
@@ -130,15 +131,19 @@ const PatientOrderCheckout = () => {
             category: "South", // You can dynamically set this if needed
             price: orderTotal, // Total price for the items
             orderStatus: null, // Can be updated once the order is processed
-            paymentType: "COD", // Payment type set to "Cash On Delivery"
+            paymentType: "UPI", // Payment type set to "Cash On Delivery"
             paymentStatus: null, // Initially null
             orderDateTime: new Date().toISOString(), // Current date and time
             address: submittedAddress, // Use the submitted address
+            paymentRecived: false
         };
 
         try {
             const result = await api.post("/payment/verifyPayment", paymentData);
+            console.log(result.data)
             if (result.data) {
+                orderDetails.paymentRecived = true
+                orderDetails.paymentStatus = "COMPLETED"
                 const response = await api.post("/orders", orderDetails);
                 navigate("/patient/order-success", { state: { orderHistoryRedirect: "/patient/orderhistory", orderedUserId: username, orderedRole: "Patient" } });
             } else {
