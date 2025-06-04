@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.neuroCanteen.model.order.DeliveryStatus;
 import com.neuroCanteen.model.order.Order;
 import com.neuroCanteen.model.order.Order.OrderStatus;
+import com.neuroCanteen.model.order.Order.PaymentStatus;
 
 public interface OrderService {
     List<Order> getAllOrders();
@@ -19,4 +20,6 @@ public interface OrderService {
     Order updateDeliveryStatus(Long orderId, DeliveryStatus deliveryStatus);
     Order updatePaymentReceived(Long orderId, boolean paymentReceived);
     List<Order> getOrdersOutForDelivery();
+    List<Order> getFilteredOrders(String orderedRole, String paymentType, PaymentStatus paymentStatus);
+
 }

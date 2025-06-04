@@ -47,6 +47,16 @@ public class OrderController {
         return orderService.getOrdersByRoleAndUserId(orderedRole, orderedUserId);
     }
 
+    @GetMapping("/filter/Credit")
+    public List<Order> getFilteredOrders(@RequestBody Order filterRequest) {
+        return orderService.getFilteredOrders(
+            filterRequest.getOrderedRole(),
+            filterRequest.getPaymentType(),
+            filterRequest.getPaymentStatus()
+        );
+    }
+    
+
     @PostMapping
     public Order createOrder(@RequestBody Order order) {
         return orderService.createOrder(order);
