@@ -12,18 +12,28 @@ export default function OrdersSummaryTable() {
   
   const fetchOrders = async () => {
     try {
-      const response = await api.get("/orders", {
-        orderedRole: "Staff",
-        paymentType: "CREDIT",
-        paymentStatus: null
-      }); // Use your real endpoint here
-      const originalData = response.data; // Assuming it's an array of orders
+      const response = await api.get("/orders/filter/Credit", {
+        params: {
+          orderedRole: "Staff",
+          paymentType: "CREDIT",
+          paymentStatus: null // will be sent as 'paymentStatus='
+        }
+      });
+  
+      const originalData = response.data;
+  
+      if (!Array.isArray(originalData)) {
+        console.error("Unexpected response format:", originalData);
+        return;
+      }
+  
       setOrders(originalData);
       summarizeOrders(originalData);
     } catch (error) {
-      console.error("Error fetching orders:", error);
+      console.error("Error fetching filtered orders:", error.message || error);
     }
   };
+  
   
 
   // Summarize by user

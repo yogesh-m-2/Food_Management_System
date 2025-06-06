@@ -48,13 +48,24 @@ public class OrderController {
     }
 
     @GetMapping("/filter/Credit")
-    public List<Order> getFilteredOrders(@RequestBody Order filterRequest) {
-        return orderService.getFilteredOrders(
-            filterRequest.getOrderedRole(),
-            filterRequest.getPaymentType(),
-            filterRequest.getPaymentStatus()
-        );
+    public List<Order> getFilteredOrders(
+            @RequestParam String orderedRole,
+            @RequestParam String paymentType,
+            @RequestParam(required = false) String paymentStatus) {
+    
+        Order.PaymentStatus statusEnum = null;
+        if (paymentStatus != null && !paymentStatus.isBlank()) {
+            try {
+                statusEnum = Order.PaymentStatus.valueOf(paymentStatus.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid payment status: " + paymentStatus);
+            }
+        }
+    
+        return orderService.getFilteredOrders(orderedRole, paymentType, statusEnum);
     }
+    
+    
     
 
     @PostMapping
