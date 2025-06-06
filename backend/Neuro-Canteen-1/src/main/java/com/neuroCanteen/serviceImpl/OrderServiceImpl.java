@@ -115,6 +115,19 @@ public Order createOrder(Order order) {
     }
 
     @Override
+    public void markOrdersAsPaid(List<Long> orderIds) {
+        List<Order> orders = orderRepository.findAllById(orderIds);
+
+        for (Order order : orders) {
+            order.setPaymentRecived(true);
+            order.setPaymentStatus(Order.PaymentStatus.COMPLETED);
+        }
+
+        orderRepository.saveAll(orders);
+    }
+
+
+    @Override
     public Order updateOrderStatus(Long orderId, OrderStatus orderStatus) {
         return orderRepository.findByOrderId(orderId).map(order -> {
             order.setOrderStatus(orderStatus);

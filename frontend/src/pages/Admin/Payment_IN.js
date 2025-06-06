@@ -1,47 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../services/api';
+import "../../styles/admin/Paymentin.css"; // Import the CSS file
 
 export default function OrdersSummaryTable() {
   const [orders, setOrders] = useState([]);
   const [summaries, setSummaries] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Fetch orders from backend
   useEffect(() => {
     fetchOrders();
   }, []);
-  
+
   const fetchOrders = async () => {
     try {
       const response = await api.get("/orders/filter/Credit", {
         params: {
           orderedRole: "Staff",
           paymentType: "CREDIT",
-          paymentStatus: null // will be sent as 'paymentStatus='
+          paymentStatus: null
         }
       });
-  
+
       const originalData = response.data;
-  
+
       if (!Array.isArray(originalData)) {
         console.error("Unexpected response format:", originalData);
         return;
       }
-  
+
       setOrders(originalData);
       summarizeOrders(originalData);
     } catch (error) {
       console.error("Error fetching filtered orders:", error.message || error);
+    } finally {
+      setLoading(false);
     }
   };
-  
-  
 
-  // Summarize by user
   const summarizeOrders = (orders) => {
     const grouped = {};
 
     orders.forEach((order) => {
       const userId = order.orderedUserId;
+
       if (!grouped[userId]) {
         grouped[userId] = {
           orderedUserId: userId,
@@ -49,10 +50,13 @@ export default function OrdersSummaryTable() {
           totalPrice: 0,
           paymentType: order.paymentType,
           allPaid: true,
+          orderIds: []
         };
       }
 
       grouped[userId].totalPrice += order.price;
+      grouped[userId].orderIds.push(order.orderId);
+
       if (!order.paymentRecived) {
         grouped[userId].allPaid = false;
       }
@@ -61,25 +65,37 @@ export default function OrdersSummaryTable() {
     setSummaries(Object.values(grouped));
   };
 
-  const markAsPaid = (userId) => {
-    console.log(`Marking as paid for user ${userId}`);
-    // Here you can call an API like:
-    // fetch(`/api/orders/markPaid/${userId}`, { method: 'POST' })
-
-    // Simulate UI update
-    setSummaries((prev) =>
-      prev.map((group) =>
-        group.orderedUserId === userId
-          ? { ...group, allPaid: true }
-          : group
-      )
+  const markAsPaid = async (userId) => {
+    // Get unpaid orders for this user
+    const unpaidOrders = orders.filter(
+      (o) => o.orderedUserId === userId && !o.paymentRecived
     );
+
+    const unpaidOrderIds = unpaidOrders.map((o) => o.orderId);
+
+    if (unpaidOrderIds.length === 0) {
+      alert("No unpaid orders to mark as paid.");
+      return;
+    }
+
+    try {
+      await api.put("/orders/markPaid", unpaidOrderIds);
+      // Refresh orders
+      fetchOrders();
+    } catch (error) {
+      console.error("Error marking orders as paid:", error);
+      alert("Failed to mark as paid.");
+    }
   };
 
   return (
-    <div>
-      {/* <h2>Payment Summary</h2> */}
-      <table border="1" cellPadding="10" style={{ borderCollapse: 'collapse', width: '100%' }}>
+    <div className="orders-table-container">
+    {loading ? (
+      <p>Loading orders...</p>
+    ) : summaries.length === 0 ? (
+      <p>No orders found.</p>
+    ) : (
+      <table className="orders-table">
         <thead>
           <tr>
             <th>User ID</th>
@@ -111,6 +127,8 @@ export default function OrdersSummaryTable() {
           ))}
         </tbody>
       </table>
-    </div>
+    )}
+  </div>
+  
   );
 }

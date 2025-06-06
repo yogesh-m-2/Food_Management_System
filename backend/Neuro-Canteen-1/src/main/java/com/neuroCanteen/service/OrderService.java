@@ -21,5 +21,5 @@ public interface OrderService {
     Order updatePaymentReceived(Long orderId, boolean paymentReceived);
     List<Order> getOrdersOutForDelivery();
     List<Order> getFilteredOrders(String orderedRole, String paymentType, PaymentStatus paymentStatus);
-
+    void markOrdersAsPaid(List<Long> orderIds);
 }
