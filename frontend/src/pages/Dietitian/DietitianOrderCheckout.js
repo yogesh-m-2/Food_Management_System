@@ -48,7 +48,7 @@ const DietitianOrderCheckout = () => {
             category: "South", 
             price: orderTotal,
             orderStatus: null,
-            paymentType: "COD",
+            paymentType: "CREDIT",
             paymentStatus: null,
             orderDateTime: new Date().toISOString(),
             address: address,

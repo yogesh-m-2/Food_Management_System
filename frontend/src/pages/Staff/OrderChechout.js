@@ -155,6 +155,35 @@ const OrderCheckout = () => {
         }
     };
 
+    const handlecredit = async () => {
+        const orderDetails = {
+            orderedRole: "Staff",
+            orderedName: username,
+            orderedUserId: username,
+            itemName: Object.keys(cartItems).map(itemId => {
+                const item = menuItems.find(menuItem => menuItem.id === parseInt(itemId));
+                return item.name;
+            }).join(", "),
+            quantity: Object.values(cartItems).reduce((acc, qty) => acc + qty, 0),
+            category: "South",
+            price: orderTotal,
+            orderStatus: null,
+            paymentType: "CREDIT",
+            paymentStatus: null,
+            orderDateTime: new Date().toISOString(),
+            address: submittedAddress,
+        };
+
+        try {
+            const response = await api.post("/orders", orderDetails);
+            console.log("Order submitted successfully", response.data);
+            navigate("/staff/order-success", { state: { orderHistoryRedirect: "/staff/orderhistory", orderedUserId: username, orderedRole: "Staff" } });
+        } catch (error) {
+            console.error("Order submission failed", error);
+            alert("There was an issue submitting your order.");
+        }
+    };
+
     return (
         <div className="order-checkout-container">
             <div className="order-details">
@@ -233,10 +262,18 @@ const OrderCheckout = () => {
                     <span>TO PAY</span>
                     <span>₹{grandTotal.toFixed(2)}</span>
                 </div>
+                <div className="summary-item">
+                    <span>CREDIT BALANCE</span>
+                    <span>₹{grandTotal.toFixed(2)}</span>
+                </div>
 
                 <div className="payment-options">
                     <button onClick={handleCOD} className="cod">Cash On Delivery</button>
                     <button onClick={handleUPI} className="upi">UPI</button>
+                </div>
+
+                <div className="payment-options">
+                    <button onClick={handlecredit} className="cod">Credit</button>
                 </div>
             </div>
         </div>

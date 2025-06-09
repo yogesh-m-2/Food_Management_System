@@ -9,6 +9,8 @@ import com.neuroCanteen.model.order.Order.PaymentStatus;
 import com.neuroCanteen.repository.OrderRepository;
 import com.neuroCanteen.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +52,15 @@ public class OrderServiceImpl implements OrderService {
     //     return orderRepository.save(order);
     // }
 
+    @Override
+    public List<Order> getFilteredOrders(String orderedRole, String paymentType, PaymentStatus paymentStatus) {
+        return orderRepository.findByOrderedRoleAndPaymentTypeAndPaymentStatus(
+            orderedRole,
+            paymentType,
+            paymentStatus
+        );
+    }
+    
 
     @Override
 public Order createOrder(Order order) {
@@ -102,6 +113,19 @@ public Order createOrder(Order order) {
     public void deleteOrder(Long id) {
         orderRepository.deleteById(id);
     }
+
+    @Override
+    public void markOrdersAsPaid(List<Long> orderIds) {
+        List<Order> orders = orderRepository.findAllById(orderIds);
+
+        for (Order order : orders) {
+            order.setPaymentRecived(true);
+            order.setPaymentStatus(Order.PaymentStatus.COMPLETED);
+        }
+
+        orderRepository.saveAll(orders);
+    }
+
 
     @Override
     public Order updateOrderStatus(Long orderId, OrderStatus orderStatus) {

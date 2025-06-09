@@ -2,6 +2,7 @@ package com.neuroCanteen.controller.orderController;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -46,6 +47,32 @@ public class OrderController {
             @RequestParam String orderedUserId) {
         return orderService.getOrdersByRoleAndUserId(orderedRole, orderedUserId);
     }
+
+    @GetMapping("/filter/Credit")
+    public List<Order> getFilteredOrders(
+            @RequestParam String orderedRole,
+            @RequestParam String paymentType,
+            @RequestParam(required = false) String paymentStatus) {
+    
+        Order.PaymentStatus statusEnum = null;
+        if (paymentStatus != null && !paymentStatus.isBlank()) {
+            try {
+                statusEnum = Order.PaymentStatus.valueOf(paymentStatus.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid payment status: " + paymentStatus);
+            }
+        }
+    
+        return orderService.getFilteredOrders(orderedRole, paymentType, statusEnum);
+    }
+    
+    
+    @PutMapping("/markPaid")
+    public ResponseEntity<String> markOrdersAsPaid(@RequestBody List<Long> orderIds) {
+        orderService.markOrdersAsPaid(orderIds);
+        return ResponseEntity.ok("Selected orders marked as paid.");
+    }
+
 
     @PostMapping
     public Order createOrder(@RequestBody Order order) {
