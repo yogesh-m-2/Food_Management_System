@@ -5,7 +5,7 @@ import '../../styles/staff/OrderCheckout.css'; // Import CSS
 
 const DietitianOrderCheckout = () => {
     const location = useLocation();
-    const { selectedDiets = {}, dietItems = [], itemDateTime = {}, orderedUserId,OrderpatientName } = location.state || {};
+    const { selectedDiets = {}, dietItems = [], itemDateTime = {}, orderedUserId,patientName } = location.state || {};
     const navigate = useNavigate();
     const [tip, setTip] = useState(0);
     const [address, setAddress] = useState('');
@@ -38,7 +38,7 @@ const DietitianOrderCheckout = () => {
     const handleCOD = async () => {
         const orderDetails = {
             orderedRole: "Patient",
-            orderedName: OrderpatientName,
+            orderedName: patientName,
             orderedUserId: orderedUserId,
             itemName: Object.keys(selectedDiets).map(itemId => {
                 const item = dietItems.find(menuItem => menuItem.id === parseInt(itemId));

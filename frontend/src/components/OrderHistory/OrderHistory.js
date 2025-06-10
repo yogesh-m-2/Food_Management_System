@@ -30,7 +30,9 @@ const OrderHistory = () => {
 
                 // API request to fetch orders
                 const response = await api.get(`/orders/filter?orderedRole=${orderedRole}&orderedUserId=${orderedUserId}`);
-                setOrders(response.data);
+                // setOrders(response.data);
+                const sortedData = response.data.sort((a, b) => b.orderId - a.orderId);
+                setOrders(sortedData);
                 setLoading(false);
             } catch (err) {
                 console.error("Error fetching orders:", err);
