@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../services/api';
-import "../../styles/admin/Paymentin.css"; // Import the CSS file
+import "../../styles/admin/Paymentin.css";
 
 export default function OrdersSummaryTable() {
   const [orders, setOrders] = useState([]);
   const [summaries, setSummaries] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [roleFilter, setRoleFilter] = useState("Staff");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [roleFilter]); // Refetch when role changes
 
   const fetchOrders = async () => {
+    setLoading(true);
     try {
       const response = await api.get("/orders/filter/Credit", {
         params: {
-          orderedRole: "Staff",
+          orderedRole: roleFilter,
           paymentType: "CREDIT",
           paymentStatus: null
         }
@@ -66,11 +69,9 @@ export default function OrdersSummaryTable() {
   };
 
   const markAsPaid = async (userId) => {
-    // Get unpaid orders for this user
     const unpaidOrders = orders.filter(
       (o) => o.orderedUserId === userId && !o.paymentRecived
     );
-
     const unpaidOrderIds = unpaidOrders.map((o) => o.orderId);
 
     if (unpaidOrderIds.length === 0) {
@@ -80,7 +81,6 @@ export default function OrdersSummaryTable() {
 
     try {
       await api.put("/orders/markPaid", unpaidOrderIds);
-      // Refresh orders
       fetchOrders();
     } catch (error) {
       console.error("Error marking orders as paid:", error);
@@ -88,47 +88,73 @@ export default function OrdersSummaryTable() {
     }
   };
 
+  // Filter summaries by search term
+  const filteredSummaries = summaries.filter((summary) =>
+    summary.orderedUserId.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="orders-table-container">
-    {loading ? (
-      <p>Loading orders...</p>
-    ) : summaries.length === 0 ? (
-      <p>No orders found.</p>
-    ) : (
-      <table className="orders-table">
-        <thead>
-          <tr>
-            <th>User ID</th>
-            <th>Role</th>
-            <th>Total Price</th>
-            <th>Payment Type</th>
-            <th>Payment Received</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {summaries.map((summary) => (
-            <tr key={summary.orderedUserId}>
-              <td>{summary.orderedUserId}</td>
-              <td>{summary.orderedRole}</td>
-              <td>₹{summary.totalPrice.toFixed(2)}</td>
-              <td>{summary.paymentType}</td>
-              <td>{summary.allPaid ? 'Yes' : 'No'}</td>
-              <td>
-                {!summary.allPaid ? (
-                  <button onClick={() => markAsPaid(summary.orderedUserId)}>
-                    Mark as Paid
-                  </button>
-                ) : (
-                  <span>✓ Paid</span>
-                )}
-              </td>
+      <div className="filter-section">
+        <label>
+          Category:
+          <select
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value)}
+          >
+            <option value="Staff">Staff</option>
+            <option value="Patient">Patient</option>
+          </select>
+        </label>
+        <label>
+          Search by User ID:
+          <input
+            type="text"
+            placeholder="Enter User ID"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </label>
+      </div>
+
+      {loading ? (
+        <p>Loading orders...</p>
+      ) : filteredSummaries.length === 0 ? (
+        <p>No orders found.</p>
+      ) : (
+        <table className="orders-table">
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Role</th>
+              <th>Total Price</th>
+              <th>Payment Type</th>
+              <th>Payment Received</th>
+              <th>Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    )}
-  </div>
-  
+          </thead>
+          <tbody>
+            {filteredSummaries.map((summary) => (
+              <tr key={summary.orderedUserId}>
+                <td>{summary.orderedUserId}</td>
+                <td>{summary.orderedRole}</td>
+                <td>₹{summary.totalPrice.toFixed(2)}</td>
+                <td>{summary.paymentType}</td>
+                <td>{summary.allPaid ? 'Yes' : 'No'}</td>
+                <td>
+                  {!summary.allPaid ? (
+                    <button onClick={() => markAsPaid(summary.orderedUserId)}>
+                      Mark as Paid
+                    </button>
+                  ) : (
+                    <span>✓ Paid</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
   );
 }
