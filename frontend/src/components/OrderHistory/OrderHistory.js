@@ -1,36 +1,38 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import {jwtDecode} from "jwt-decode";
+import { useLocation, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import api from "../../services/api";
-import "../../styles/orderhistory/OrderHistory.css"; // Import the CSS file for styling
+import "../../styles/orderhistory/OrderHistory.css";
 
 const OrderHistory = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const { orderedUserId: stateOrderedUserId, orderedRole: stateOrderedRole } = location.state || {};
 
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
+    const [Orderedroledecode, setOrderedRoleDecode] = useState("");
+
     useEffect(() => {
         const fetchOrders = async () => {
             try {
                 let orderedUserId = stateOrderedUserId;
-                let orderedRole = stateOrderedRole || "Staff"; // Default role
+                let orderedRole = stateOrderedRole || "Staff";
 
-                // If no state was passed, fallback to JWT token decoding
                 if (!orderedUserId) {
                     const token = localStorage.getItem("jwtToken");
-                    if (!token) {
-                        throw new Error("User is not authenticated");
-                    }
+                    if (!token) throw new Error("User is not authenticated");
                     const decodedToken = jwtDecode(token);
                     orderedUserId = decodedToken.sub;
                 }
 
-                // API request to fetch orders
+                const token = localStorage.getItem("jwtToken");
+                const decodedToken = jwtDecode(token);
+                const role = decodedToken.Role;
+                setOrderedRoleDecode(role);
+
                 const response = await api.get(`/orders/filter?orderedRole=${orderedRole}&orderedUserId=${orderedUserId}`);
-                // setOrders(response.data);
                 const sortedData = response.data.sort((a, b) => b.orderId - a.orderId);
                 setOrders(sortedData);
                 setLoading(false);
@@ -44,8 +46,44 @@ const OrderHistory = () => {
         fetchOrders();
     }, [stateOrderedUserId, stateOrderedRole]);
 
+    // Click handler for link
+    const handleDietitianAction = () => {
+        // Example action: navigate or open link
+        navigate("/dietitian/dietitian-dashboard"); // or use window.location.href for external link
+    };
+
     return (
-        <div className="order-history-container">
+        <div className="order-history-container" style={{ position: "relative" }}>
+            {/* Conditional link top-left */}
+            {Orderedroledecode === "Dietitian" && (
+                <div style={{
+                    position: "absolute",
+                    top: "20px",
+                    left: "20px",
+                    zIndex: 1000
+                }}>
+                    <button
+                        onClick={handleDietitianAction}
+                        style={{
+                            backgroundColor: "#007bff",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "4px",
+                            padding: "8px 12px",
+                            fontSize: "14px",
+                            fontWeight: "500",
+                            cursor: "pointer",
+                            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                            transition: "background-color 0.2s ease"
+                        }}
+                        onMouseOver={e => e.currentTarget.style.backgroundColor = "#0056b3"}
+                        onMouseOut={e => e.currentTarget.style.backgroundColor = "#007bff"}
+                    >
+                        Go to Dietitian Dashboard
+                    </button>
+                </div>
+            )}
+
             <h2>Order History</h2>
 
             {loading ? (
@@ -79,7 +117,7 @@ const OrderHistory = () => {
                                 <td>{order.itemName}</td>
                                 <td>{order.quantity}</td>
                                 <td>{order.category}</td>
-                                <td>${order.price.toFixed(2)}</td>
+                                <td>₹{order.price.toFixed(2)}</td>
                                 <td>{order.orderStatus || "Pending"}</td>
                                 <td>{order.paymentType}</td>
                                 <td>{order.paymentStatus || "Pending"}</td>
