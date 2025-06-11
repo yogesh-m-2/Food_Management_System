@@ -73,22 +73,42 @@ export default function OrdersSummaryTable() {
       (o) => o.orderedUserId === userId && !o.paymentRecived
     );
     const unpaidOrderIds = unpaidOrders.map((o) => o.orderId);
-
+  
     if (unpaidOrderIds.length === 0) {
       alert("No unpaid orders to mark as paid.");
       return;
     }
-
+  
+    const summary = summaries.find((s) => s.orderedUserId === userId);
+    const totalAmount = unpaidOrders.reduce((sum, order) => sum + order.price, 0);
+  
     try {
-      await api.put("/orders/markPaid", unpaidOrderIds);
-      fetchOrders();
+
+      const markPaidResponse = await api.put("/orders/markPaid", unpaidOrderIds);
+  
+
+      if (markPaidResponse.status === 200) {
+        await api.post("/api/credit-payments", {
+          userId: userId,
+          role: summary.orderedRole.toUpperCase(),
+          amount: totalAmount,
+          orders: unpaidOrderIds.join(","),
+          paymentType: "CREDIT",
+          paid: true 
+        });
+  
+        fetchOrders();
+      } else {
+        alert("Failed to mark orders as paid.");
+      }
     } catch (error) {
-      console.error("Error marking orders as paid:", error);
-      alert("Failed to mark as paid.");
+      console.error("Error during payment process:", error);
+      alert("Failed to process payment.");
     }
   };
+  
 
-  // Filter summaries by search term
+
   const filteredSummaries = summaries.filter((summary) =>
     summary.orderedUserId.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -128,6 +148,7 @@ export default function OrdersSummaryTable() {
               <th>User ID</th>
               <th>Role</th>
               <th>Total Price</th>
+              <th>Total Orders</th> 
               <th>Payment Type</th>
               <th>Payment Received</th>
               <th>Action</th>
@@ -139,6 +160,7 @@ export default function OrdersSummaryTable() {
                 <td>{summary.orderedUserId}</td>
                 <td>{summary.orderedRole}</td>
                 <td>₹{summary.totalPrice.toFixed(2)}</td>
+                <td>{summary.orderIds.length}</td>
                 <td>{summary.paymentType}</td>
                 <td>{summary.allPaid ? 'Yes' : 'No'}</td>
                 <td>
