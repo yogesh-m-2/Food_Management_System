@@ -84,14 +84,15 @@ const DeliveryDashboard = () => {
                 <span className="column-item">{order.orderStatus || "Pending"}</span>
                 <span className="column-item">{order.paymentType}</span>
                 <span className="column-item">
-                  <select
-                    value={order.paymentReceived}
-                    onChange={(e) => updatePaymentReceived(order.orderId, e.target.value === "true")}
-                  >
-                    <option value="false">False</option>
-                    <option value="true">True</option>
-                  </select>
-                </span>
+                <select
+                  value={order.paymentReceived}
+                  onChange={(e) => updatePaymentReceived(order.orderId, e.target.value === "true")}
+                  disabled={order.paymentType === "CREDIT"} // 🔒 Disable if payment is Credit
+                >
+                  <option value="false">False</option>
+                  <option value="true">True</option>
+                </select>
+              </span>
                 <span className="column-item">{new Date(order.orderDateTime).toLocaleString()}</span>
                 <span className="column-item">
                   <select
