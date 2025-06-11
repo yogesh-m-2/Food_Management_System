@@ -86,7 +86,16 @@ const CreateDiet = () => {
         );
         const iscatagoryselected = item.category.toLowerCase() === selectedCategory.toLowerCase()
         const isComboMatch = dietDetails.combo.includes(item.category.toLowerCase());
-        const isAllergiesMatch = dietDetails.allergies.length === 0 ? true : dietDetails.allergies.includes((item.diet_type|| '').toLowerCase());
+        // const isAllergiesMatch = dietDetails.allergies.length === 0 ? true : dietDetails.allergies.includes((item.diet_type|| '').toLowerCase());
+        const dietTypes = (item.diet_type || '')
+                            .toLowerCase()
+                            .split(',')
+                            .map(type => type.trim());
+
+                            const isAllergiesMatch = dietDetails.allergies.length === 0 
+                            ? true 
+                            : dietTypes.some(type => dietDetails.allergies.includes(type));
+
         return isComboMatch && !isDisliked && iscatagoryselected && isAllergiesMatch;
     })
     setfilteredDietItems(filteredDietItems)

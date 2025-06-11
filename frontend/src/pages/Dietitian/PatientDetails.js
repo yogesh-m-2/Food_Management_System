@@ -149,7 +149,7 @@ const PatientDetails = () => {
               <input
                 type="text"
                 value={newAllergy}
-                onChange={(e) => setNewAllergy(e.target.value)}
+                onChange={(e) => setNewAllergy(e.target.value.toLowerCase())}
                 placeholder="Add allergy"
               />
               <button onClick={handleAddAllergy}>Add Allergy</button>

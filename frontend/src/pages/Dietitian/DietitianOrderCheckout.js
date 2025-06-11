@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import api from "../../services/api"; // API module
 import '../../styles/staff/OrderCheckout.css'; // Import CSS
-
+import '../../styles/dietitian/diettablecheckout.css'; // Import CSS
 const DietitianOrderCheckout = () => {
     const location = useLocation();
-    const { selectedDiets = {}, dietItems = [], itemDateTime = {}, orderedUserId,OrderpatientName } = location.state || {};
+    const { selectedDiets = {}, dietItems = [], itemDateTime = {}, orderedUserId,patientName } = location.state || {};
     const navigate = useNavigate();
     const [tip, setTip] = useState(0);
     const [address, setAddress] = useState('');
@@ -38,7 +38,7 @@ const DietitianOrderCheckout = () => {
     const handleCOD = async () => {
         const orderDetails = {
             orderedRole: "Patient",
-            orderedName: OrderpatientName,
+            orderedName: patientName,
             orderedUserId: orderedUserId,
             itemName: Object.keys(selectedDiets).map(itemId => {
                 const item = dietItems.find(menuItem => menuItem.id === parseInt(itemId));
@@ -65,11 +65,30 @@ const DietitianOrderCheckout = () => {
     };
 
     // Format date time
-    const formatDateTime = (dateTime) => {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
-        const formattedDate = new Date(dateTime).toLocaleDateString('en-US', options);
-        return formattedDate;
-    };
+    // const formatDateTime = (dateTime) => {
+    //     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
+    //     const formattedDate = new Date(dateTime).toLocaleDateString('en-US', options);
+    //     return formattedDate;
+    // };
+    function formatDateTime(date) {
+        const d = new Date(date);
+        const datePart = d.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    
+        const timePart = d.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        });
+    
+        return `${datePart}\n${timePart}`; // Add line break
+    }
+    
 
     return (
         <div className="order-checkout-container">
@@ -91,7 +110,7 @@ const DietitianOrderCheckout = () => {
                                 <span className="column-item">{item.name}</span>
                                 <span className="column-qty">{selectedDiets[itemId]}</span>
                                 <span className="column-price">{calculateItemTotal(item, selectedDiets[itemId])}</span>
-                                <span className="column-time">{formatDateTime(orderTime)}</span> {/* Display formatted date time */}
+                                <span className="column-time">{formatDateTime(orderTime)}</span>
                             </div>
                         );
                     })}
