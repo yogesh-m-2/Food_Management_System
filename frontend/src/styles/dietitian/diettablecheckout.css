@@ -1,0 +1,51 @@
+.order-item-table {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow-x: auto;
+    font-size: 14px;
+}
+
+.table-header,
+.table-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    border-bottom: 1px solid #ddd;
+    flex-wrap: wrap; /* allows wrapping on smaller screens */
+}
+
+.table-header {
+    font-weight: bold;
+}
+
+.column-item,
+.column-qty,
+.column-price,
+.column-time {
+    flex: 1 1 25%; /* equally divide the row */
+    min-width: 80px; /* ensures no column gets too narrow */
+    text-align: center;
+    padding-right: 10px;
+    box-sizing: border-box;
+}
+
+/* Responsive tweaks for smaller screens */
+@media (max-width: 600px) {
+    .column-item,
+    .column-qty,
+    .column-price,
+    .column-time {
+        flex: 1 1 50%; /* stack two columns per row */
+        min-width: unset;
+        margin-bottom: 5px;
+    }
+
+    .table-header,
+    .table-row {
+        padding: 8px 10px;
+    }
+}
+.column-time {
+    white-space: pre-line; /* Allow \n to show as line break */
+}
