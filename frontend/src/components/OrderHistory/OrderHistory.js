@@ -55,7 +55,7 @@ const OrderHistory = () => {
     return (
         <div className="order-history-container" style={{ position: "relative" }}>
             {/* Conditional link top-left */}
-            {Orderedroledecode === "Dietitian" && (
+            {["Dietitian", "Staff", "Patient"].includes(Orderedroledecode) && (
                 <div style={{
                     position: "absolute",
                     top: "20px",
@@ -63,7 +63,15 @@ const OrderHistory = () => {
                     zIndex: 1000
                 }}>
                     <button
-                        onClick={handleDietitianAction}
+                        onClick={() => {
+                            if (Orderedroledecode === "Dietitian") {
+                                navigate("/dietitian/dietitian-dashboard");
+                            } else if (Orderedroledecode === "Staff") {
+                                navigate("/staff/order");
+                            } else if (Orderedroledecode === "Patient") {
+                                navigate("/patient/order");
+                            }
+                        }}
                         style={{
                             backgroundColor: "#007bff",
                             color: "#fff",
@@ -79,7 +87,9 @@ const OrderHistory = () => {
                         onMouseOver={e => e.currentTarget.style.backgroundColor = "#0056b3"}
                         onMouseOut={e => e.currentTarget.style.backgroundColor = "#007bff"}
                     >
-                        Go to Dietitian Dashboard
+                        {Orderedroledecode === "Dietitian" && "Go to Dietitian Dashboard"}
+                        {Orderedroledecode === "Staff" && "Go to Staff Panel"}
+                        {Orderedroledecode === "Patient" && "Go to Patient Profile"}
                     </button>
                 </div>
             )}
