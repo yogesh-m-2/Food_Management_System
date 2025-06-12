@@ -64,9 +64,9 @@ const DeliveryDashboard = () => {
               <span className="column-item">Ordered By</span>
               <span className="column-item">Item</span>
               <span className="column-item">Quantity</span>
-              <span className="column-item">Category</span>
+              {/* <span className="column-item">Category</span> */}
               <span className="column-item">Price</span>
-              <span className="column-item">Order Status</span>
+              {/* <span className="column-item">Order Status</span> */}
               <span className="column-item">Payment</span>
               <span className="column-item">Payment Received</span>
               <span className="column-item">Order Date</span>
@@ -79,9 +79,9 @@ const DeliveryDashboard = () => {
                 <span className="column-item">{order.orderedName}</span>
                 <span className="column-item">{order.itemName}</span>
                 <span className="column-item">{order.quantity}</span>
-                <span className="column-item">{order.category}</span>
+                {/* <span className="column-item">{order.category}</span> */}
                 <span className="column-item">${order.price}</span>
-                <span className="column-item">{order.orderStatus || "Pending"}</span>
+                {/* <span className="column-item">{order.orderStatus || "Pending"}</span> */}
                 <span className="column-item">{order.paymentType}</span>
                 <span className="column-item">
                 <select

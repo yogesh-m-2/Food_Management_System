@@ -4,35 +4,40 @@
   }
   
   .orders-list {
-    margin-top: 20px;
+    margin-top: 10px;
+    max-width: 85%;
   }
   
   .orders-table {
     width: 100%;
     border-collapse: collapse;
+    border: 1px solid black;
   }
   
   .table-header {
     display: flex;
     font-weight: bold;
     background-color: #f4f4f4;
-    padding: 10px;
+    padding: 15px;
   }
   
   .table-row {
     display: flex;
-    padding: 10px;
+    padding: 15px;
     border-bottom: 1px solid #ddd;
   }
   
   .column-item {
     flex: 1;
-    padding: 5px;
+    padding: 15px;
     text-align: center;
+    padding: 10px;
   }
   
   select {
-    padding: 5px;
+    padding: 10px;
+    width: none;
+
   }
   
   .loading {
@@ -40,4 +45,35 @@
     font-size: 18px;
     font-weight: bold;
   }
-  
+  /* Specific column tweaks */
+.column-item:nth-child(9),  /* Address */
+.column-item:nth-child(10) { /* Phone No */
+  text-align: center;
+  padding-left: 20px;
+}
+
+/* Optional: Better dropdown alignment */
+.column-item select {
+
+  box-sizing: border-box;
+}
+/* Delivery Status (column 8), Address (column 9), Phone No (column 10) */
+.column-item:nth-child(8),  /* Delivery Status */
+.column-item:nth-child(9),  /* Address */
+.column-item:nth-child(10) { /* Phone No */
+  text-align: center; /* Align text to the left for better readability */
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: 20px;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+.column-item:nth-child(8) select {
+  padding: 10px;
+}
+.column-item:nth-child(3),
+.column-item:nth-child(4)
+{
+  padding: 0px;
+} /* Address */
+

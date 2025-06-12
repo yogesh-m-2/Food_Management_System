@@ -12,7 +12,7 @@ const OrderCheckout = () => {
     const [address, setAddress] = useState(''); // State to hold delivery address
     const [submittedAddress, setSubmittedAddress] = useState(''); // State to store submitted address
     const [isEditing, setIsEditing] = useState(false); // State to toggle between edit/view mode
-
+    console.log(cartItems)
     const handleAddressChange = (e) => {
         setAddress(e.target.value);
     };
@@ -87,7 +87,7 @@ const OrderCheckout = () => {
             orderedUserId: username,
             itemName: Object.keys(cartItems).map(itemId => {
                 const item = menuItems.find(menuItem => menuItem.id === parseInt(itemId));
-                return item.name;
+                return item.name+" - "+cartItems[itemId];
             }).join(", "),
             quantity: Object.values(cartItems).reduce((acc, qty) => acc + qty, 0),
             category: "South",
@@ -133,7 +133,7 @@ const OrderCheckout = () => {
             orderedUserId: username,
             itemName: Object.keys(cartItems).map(itemId => {
                 const item = menuItems.find(menuItem => menuItem.id === parseInt(itemId));
-                return item.name;
+                return item.name+" - "+cartItems[itemId];
             }).join(", "),
             quantity: Object.values(cartItems).reduce((acc, qty) => acc + qty, 0),
             category: "South",
@@ -162,7 +162,7 @@ const OrderCheckout = () => {
             orderedUserId: username,
             itemName: Object.keys(cartItems).map(itemId => {
                 const item = menuItems.find(menuItem => menuItem.id === parseInt(itemId));
-                return item.name;
+                return item.name+" - "+cartItems[itemId];
             }).join(", "),
             quantity: Object.values(cartItems).reduce((acc, qty) => acc + qty, 0),
             category: "South",
