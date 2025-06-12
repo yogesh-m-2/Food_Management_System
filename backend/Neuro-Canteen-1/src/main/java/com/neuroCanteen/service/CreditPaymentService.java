@@ -9,7 +9,7 @@ public interface CreditPaymentService {
     CreditPayment saveCreditPayment(CreditPayment creditPayment);
     List<CreditPayment> getAllCreditPayments();
     Optional<CreditPayment> getCreditPaymentById(Long id);
-    List<CreditPayment> getCreditPaymentsByUserId(Long userId);
+    List<CreditPayment> getCreditPaymentsByUserId(String userId);
     List<CreditPayment> getCreditPaymentsByRole(String role);
     List<CreditPayment> getCreditPaymentsByPaymentType(String paymentType);
     List<CreditPayment> getCreditPaymentsByIsPaid(boolean isPaid);

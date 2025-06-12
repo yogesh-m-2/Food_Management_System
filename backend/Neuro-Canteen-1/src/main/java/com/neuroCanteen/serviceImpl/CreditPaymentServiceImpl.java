@@ -32,7 +32,7 @@ public class CreditPaymentServiceImpl implements CreditPaymentService {
     }
 
     @Override
-    public List<CreditPayment> getCreditPaymentsByUserId(Long userId) {
+    public List<CreditPayment> getCreditPaymentsByUserId(String userId) {
         return creditPaymentRepository.findByUserId(userId);
     }
 
