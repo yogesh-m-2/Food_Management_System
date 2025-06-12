@@ -80,7 +80,7 @@ const DeliveryDashboard = () => {
                 <span className="column-item">{order.itemName}</span>
                 <span className="column-item">{order.quantity}</span>
                 {/* <span className="column-item">{order.category}</span> */}
-                <span className="column-item">${order.price}</span>
+                <span className="column-item">₹{order.price}</span>
                 {/* <span className="column-item">{order.orderStatus || "Pending"}</span> */}
                 <span className="column-item">{order.paymentType}</span>
                 <span className="column-item">
