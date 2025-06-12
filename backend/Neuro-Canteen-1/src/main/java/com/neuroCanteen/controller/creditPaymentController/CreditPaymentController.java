@@ -35,7 +35,7 @@ public class CreditPaymentController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<CreditPayment>> getCreditPaymentsByUserId(@PathVariable Long userId) {
+    public ResponseEntity<List<CreditPayment>> getCreditPaymentsByUserId(@PathVariable String userId) {
         return ResponseEntity.ok(creditPaymentService.getCreditPaymentsByUserId(userId));
     }
 
