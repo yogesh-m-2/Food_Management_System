@@ -84,7 +84,7 @@ const StaffManagement = () => {
 
   return (
     <div className="staff-management">
-      <button onClick={() => setShowAddForm(true)}>Add New Staff</button>
+      <button onClick={() => {setShowAddForm(true);setEditStaff(null)}}>Add New Staff</button>
       <table>
         <thead>
           <tr>
