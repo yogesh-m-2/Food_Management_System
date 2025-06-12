@@ -125,7 +125,7 @@ const PatientOrderCheckout = () => {
             orderedUserId: username, // Same as the username if no user id
             itemName: Object.keys(cartItems).map(itemId => {
                 const item = menuItems.find(menuItem => menuItem.id === parseInt(itemId));
-                return item.name+" - "+cartItems[itemId];
+                return item.name+" X "+cartItems[itemId];
             }).join(", "), // Join item names into a single string
             quantity: Object.values(cartItems).reduce((acc, qty) => acc + qty, 0), // Total quantity
             category: "South", // You can dynamically set this if needed
@@ -163,7 +163,7 @@ const PatientOrderCheckout = () => {
             orderedUserId: username, // Same as the username if no user id
             itemName: Object.keys(cartItems).map(itemId => {
                 const item = menuItems.find(menuItem => menuItem.id === parseInt(itemId));
-                return item.name+" - "+cartItems[itemId];
+                return item.name+" X "+cartItems[itemId];
             }).join(", "), // Join item names into a single string
             quantity: Object.values(cartItems).reduce((acc, qty) => acc + qty, 0), // Total quantity
             category: "South", // You can dynamically set this if needed
