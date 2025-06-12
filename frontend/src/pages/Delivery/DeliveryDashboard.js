@@ -11,6 +11,7 @@ const DeliveryDashboard = () => {
     try {
       const response = await api.get("/orders/out-for-delivery");
       // Sort orders by orderDateTime in descending order (latest first)
+      console.log("Fetched Orders:", response.data);
       const sortedOrders = response.data.sort(
         (a, b) => new Date(b.orderDateTime) - new Date(a.orderDateTime)
       );
@@ -85,13 +86,13 @@ const DeliveryDashboard = () => {
                 <span className="column-item">{order.paymentType}</span>
                 <span className="column-item">
                 <select
-                  value={order.paymentReceived}
-                  onChange={(e) => updatePaymentReceived(order.orderId, e.target.value === "true")}
-                  disabled={order.paymentType === "CREDIT"} // 🔒 Disable if payment is Credit
-                >
-                  <option value="false">False</option>
-                  <option value="true">True</option>
-                </select>
+                    value={String(order.paymentRecived)} // typo used here
+                    onChange={(e) => updatePaymentReceived(order.orderId, e.target.value === "true")}
+                    disabled={order.paymentType === "CREDIT"}
+                  >
+                    <option value="false">False</option>
+                    <option value="true">True</option>
+                  </select>
               </span>
                 <span className="column-item">{new Date(order.orderDateTime).toLocaleString()}</span>
                 <span className="column-item">
