@@ -8,7 +8,7 @@ import DeliveryManagement from "./DeliveryManagement";
 import KitchenManagement from "./KitchenManagement";
 import OrdersSummaryTable from "./Payment_IN";
 const sections = ["Menu", "Staff","Patient","Dietitian", "Delivery","Kitchen","Payment-IN"];
-
+//PR Check
 const AdminControl = () => {
   const [activeSection, setActiveSection] = useState("Menu");
 
