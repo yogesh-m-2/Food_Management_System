@@ -42,7 +42,7 @@ const DietitianOrderCheckout = () => {
             orderedUserId: orderedUserId,
             itemName: Object.keys(selectedDiets).map(itemId => {
                 const item = dietItems.find(menuItem => menuItem.id === parseInt(itemId));
-                return item.name+" - "+selectedDiets[itemId];
+                return item.name+" X "+selectedDiets[itemId];
             }).join(", "),
             quantity: Object.values(selectedDiets).reduce((acc, qty) => acc + qty, 0),
             category: "South", 

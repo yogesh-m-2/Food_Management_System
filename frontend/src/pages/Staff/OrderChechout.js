@@ -87,7 +87,7 @@ const OrderCheckout = () => {
             orderedUserId: username,
             itemName: Object.keys(cartItems).map(itemId => {
                 const item = menuItems.find(menuItem => menuItem.id === parseInt(itemId));
-                return item.name+" - "+cartItems[itemId];
+                return item.name+" X "+cartItems[itemId];
             }).join(", "),
             quantity: Object.values(cartItems).reduce((acc, qty) => acc + qty, 0),
             category: "South",
@@ -133,7 +133,7 @@ const OrderCheckout = () => {
             orderedUserId: username,
             itemName: Object.keys(cartItems).map(itemId => {
                 const item = menuItems.find(menuItem => menuItem.id === parseInt(itemId));
-                return item.name+" - "+cartItems[itemId];
+                return item.name+" X "+cartItems[itemId];
             }).join(", "),
             quantity: Object.values(cartItems).reduce((acc, qty) => acc + qty, 0),
             category: "South",
@@ -162,7 +162,7 @@ const OrderCheckout = () => {
             orderedUserId: username,
             itemName: Object.keys(cartItems).map(itemId => {
                 const item = menuItems.find(menuItem => menuItem.id === parseInt(itemId));
-                return item.name+" - "+cartItems[itemId];
+                return item.name+" X "+cartItems[itemId];
             }).join(", "),
             quantity: Object.values(cartItems).reduce((acc, qty) => acc + qty, 0),
             category: "South",
