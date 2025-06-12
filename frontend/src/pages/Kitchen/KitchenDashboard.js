@@ -76,7 +76,7 @@ const KitchenDashboard = () => {
                 <span className="column-item">{order.orderedName}</span>
                 <span className="column-item">{order.itemName}</span>
                 <span className="column-item">{order.quantity}</span>
-                <span className="column-item">${order.price}</span>
+                <span className="column-item">₹{order.price}</span>
                 <span className="column-item">{order.paymentType}</span>
                 <span className="column-item">{order.address}</span>
                 <span className="column-item">

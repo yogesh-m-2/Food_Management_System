@@ -54,6 +54,7 @@ const StaffManagement = () => {
       const response = await api.put(`/staff/${id}`, editStaff);
       setStaffList(staffList.map(staff => (staff.id === id ? response.data : staff)));
       setEditStaff(null);
+      setShowAddForm(false)
     } catch (error) {
       console.error("Error updating staff:", error);
     }
