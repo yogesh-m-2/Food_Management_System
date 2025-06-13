@@ -13,6 +13,9 @@ const OrderSuccess = () => {
 
     useEffect(() => {
         // Redirect after 5 seconds, passing state instead of query parameters
+        console.log(orderHistoryRedirect, { 
+            state: { orderedUserId, orderedRole } 
+        })
         const timer = setTimeout(() => {
             navigate(orderHistoryRedirect, { 
                 state: { orderedUserId, orderedRole } 

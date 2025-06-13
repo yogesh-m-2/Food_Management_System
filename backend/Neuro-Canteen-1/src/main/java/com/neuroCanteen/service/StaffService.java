@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface StaffService {
     List<Staff> getAllStaff();
     Optional<Staff> getStaffById(int id);
+    Optional<Staff> getStaffByEmployeeId(String employeeId);
     Staff createStaff(Staff staff);
     Staff updateStaff(int id, Staff staff);
     void deleteStaff(int id);

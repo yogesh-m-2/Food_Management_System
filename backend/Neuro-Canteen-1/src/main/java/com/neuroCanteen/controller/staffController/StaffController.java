@@ -5,9 +5,11 @@ import org.springframework.web.bind.annotation.*;
 
 import com.neuroCanteen.model.staff.Staff;
 import com.neuroCanteen.service.StaffService;
+import com.neuroCanteen.dto.StaffDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/staff")
@@ -17,13 +19,22 @@ public class StaffController {
     private StaffService staffService;
 
     @GetMapping
-    public List<Staff> getAllStaff() {
-        return staffService.getAllStaff();
+    public List<StaffDTO> getAllStaff() {
+        return staffService.getAllStaff().stream()
+                .map(StaffDTO::fromStaff)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public Optional<Staff> getStaffById(@PathVariable int id) {
-        return staffService.getStaffById(id);
+    public Optional<StaffDTO> getStaffById(@PathVariable int id) {
+        return staffService.getStaffById(id)
+                .map(StaffDTO::fromStaff);
+    }
+
+    @GetMapping("/employee/{employeeId}")
+    public Optional<StaffDTO> getStaffByEmployeeId(@PathVariable String employeeId) {
+        return staffService.getStaffByEmployeeId(employeeId)
+                .map(StaffDTO::fromStaff);
     }
 
     @PostMapping

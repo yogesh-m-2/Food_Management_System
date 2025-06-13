@@ -63,7 +63,7 @@ const PatientDetails = () => {
     console.log(dietDetails); // Replace with actual submission logic
     setShowPopup(false);
     navigate("/dietitian/create-diet", { 
-      state: { orderedUserId: patient.uhid, patientName: patient.name, dietDetails }});
+      state: { orderedUserId: patient.uhid, patientName: patient.name, dietDetails,patientMobileNumber : patient.patientMobileNo }});
   };
 
   if (!patient) {

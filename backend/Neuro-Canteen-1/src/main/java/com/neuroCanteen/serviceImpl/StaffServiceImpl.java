@@ -27,6 +27,11 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
+    public Optional<Staff> getStaffByEmployeeId(String employeeId) {
+        return staffRepository.findByEmployeeId(employeeId);
+    }
+
+    @Override
     public Staff createStaff(Staff staff) {
         return staffRepository.save(staff);
     }

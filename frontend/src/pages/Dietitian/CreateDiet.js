@@ -10,7 +10,7 @@ const CreateDiet = () => {
     const location = useLocation();
     const [filteredDietItems,setfilteredDietItems] = useState([])
     const [selectedCategory, setSelectedCategory] = useState("Clear liquid");
-    const { orderedUserId: stateOrderedUserId, patientName, dietDetails } = location.state || {};
+    const { orderedUserId: stateOrderedUserId, patientName, dietDetails,patientMobileNumber } = location.state || {};
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -32,7 +32,7 @@ const CreateDiet = () => {
             alert("No diet items selected!");
             return;
         }
-        navigate("/dietitian/checkout", { state: { selectedDiets, dietItems, itemDateTime, orderedUserId, patientName } });
+        navigate("/dietitian/checkout", { state: { selectedDiets, dietItems, itemDateTime, orderedUserId, patientName,patientMobileNumber } });
     };
 
     const handleAddToDiet = (item) => {
