@@ -14,7 +14,8 @@ import org.springframework.stereotype.Component;
 public class JwtUtil {
 
     // The secret key should be kept private, don't hardcode it in production
-    private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private static final String SECRET_KEY_STRING = "your_fixed_secret_key_here_make_it_long_and_secure_at_least_32_characters";
+    private static final Key SECRET_KEY = Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes());
 
     // Generate JWT token
     public String generateToken(UserDetails userDetails, String Role) {
