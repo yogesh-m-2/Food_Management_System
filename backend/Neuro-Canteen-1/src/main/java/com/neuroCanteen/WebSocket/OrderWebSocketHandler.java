@@ -1,7 +1,6 @@
 package com.neuroCanteen.WebSocket;
 
-
-    import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,36 +18,54 @@ public class OrderWebSocketHandler extends TextWebSocketHandler {
    
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
-        System.out.println(session);
+        System.out.println("New WebSocket connection established: " + session);
         sessions.add(session);
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, org.springframework.web.socket.CloseStatus status) {
+        System.out.println("WebSocket connection closed: " + session);
         sessions.remove(session);
     }
 
     public static void sendOrderUpdate(String orderUpdate) {
         try {
-            //String jsonMessage = objectMapper.writeValueAsString(orderUpdate);
+            String message = String.format("{\"type\": \"ORDER_UPDATED\", \"payload\": %s}", orderUpdate);
             for (WebSocketSession session : sessions) {
-                session.sendMessage(new TextMessage(orderUpdate));
+                if (session.isOpen()) {
+                    session.sendMessage(new TextMessage(message));
+                }
             }
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-}}
-public static void sendDeliveryUpdate(String deliveryUpdate) {
-    try {
-        for (WebSocketSession session : sessions) {
-            session.sendMessage(new TextMessage(deliveryUpdate));
         }
-    } catch (IOException e) {
-        e.printStackTrace();
     }
-}
 
+    public static void sendNewOrder(String orderData) {
+        try {
+            String message = String.format("{\"type\": \"ORDER_CREATED\", \"payload\": %s}", orderData);
+            for (WebSocketSession session : sessions) {
+                if (session.isOpen()) {
+                    session.sendMessage(new TextMessage(message));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void sendDeliveryUpdate(String deliveryUpdate) {
+        try {
+            String message = String.format("{\"type\": \"DELIVERY_UPDATED\", \"payload\": %s}", deliveryUpdate);
+            for (WebSocketSession session : sessions) {
+                if (session.isOpen()) {
+                    session.sendMessage(new TextMessage(message));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
 
 

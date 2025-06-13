@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import api from "../../services/api"; // Import API service
 import "../../styles/delivery/DeliveryDashboard.css"; // Reusing the same styles
+import config from "../../config";
 
 const DeliveryDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [newOrderAlert, setNewOrderAlert] = useState(null);
 
   // Fetch orders from API
   const fetchOrders = async () => {
@@ -22,6 +24,48 @@ const DeliveryDashboard = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchOrders();
+    
+    // Set up WebSocket connection
+    const socket = new WebSocket("ws://"+config.Socket_URL+"/order-updates");
+    
+    socket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      const orderData = message.payload;
+    
+      if (message.type === "ORDER_UPDATED") {
+        if (orderData.orderStatus === "OUT_FOR_DELIVERY") {
+          setNewOrderAlert(
+            <>
+              <strong>New Delivery Order:</strong><br />
+              <strong>Customer:</strong> {orderData.orderedName}<br />
+              <strong>Item:</strong> {orderData.itemName}<br />
+              <strong>Address:</strong> {orderData.address}<br />
+              <strong>Phone:</strong> {orderData.phoneNo || "N/A"}
+            </>
+          );
+          
+          setTimeout(() => setNewOrderAlert(null), 5000);
+          fetchOrders(); // Refresh the orders list
+        }
+      }
+    };
+    
+
+    socket.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    socket.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, []);
 
   const updateDeliveryStatus = async (orderId, deliveryStatus) => {
     try {
@@ -45,16 +89,13 @@ const DeliveryDashboard = () => {
     }
   };
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="delivery-dashboard-container">
+      {newOrderAlert && <div className="alert">{newOrderAlert}</div>}
       <h2>Delivery Orders Dashboard</h2>
       <div className="orders-list">
         {orders.length === 0 ? (

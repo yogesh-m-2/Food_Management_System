@@ -21,14 +21,32 @@ const KitchenDashboard = () => {
 
   useEffect(() => {
     fetchOrders();
-    
-    const socket = new WebSocket("ws://"+config.BASE_URL+"/order-updates");
+    const socket = new WebSocket("ws://"+config.Socket_URL+"/order-updates");
     socket.onmessage = (event) => {
-      const newOrder = JSON.parse(event.data);
-      setOrders((prevOrders) => [newOrder, ...prevOrders].sort((a, b) => new Date(b.orderDateTime) - new Date(a.orderDateTime)));
+      const message = JSON.parse(event.data);
+      const newOrder = message.payload;
+    
+      if (message.type === "ORDER_UPDATED") {
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order.orderId === newOrder.orderId ? newOrder : order
+          )
+        );
+      } else if (message.type === "ORDER_CREATED") {
+        setOrders((prevOrders) => [newOrder, ...prevOrders]);
+        setNewOrderAlert({
+          orderId: newOrder.orderId,
+          orderedName: newOrder.orderedName,
+          itemName: newOrder.itemName,
+          quantity: newOrder.quantity,
+        });
+        
       
-      setNewOrderAlert(`New order received: ${newOrder.itemName}`);
-      setTimeout(() => setNewOrderAlert(null), 1000);
+        setTimeout(() => setNewOrderAlert(null), 5000); // 5 seconds
+      }
+      
+    
+      console.log("Socket message received:", message);
     };
     
     return () => socket.close();
@@ -53,7 +71,18 @@ const KitchenDashboard = () => {
 
   return (
     <div className="kitchen-dashboard-container">
-      {newOrderAlert && <div className="alert">{newOrderAlert}</div>}
+    {newOrderAlert && (
+      <div className="order-toast">
+        <strong>New Order Received!</strong><br />
+        <strong>Order ID:</strong> {newOrderAlert.orderId}<br />
+        <strong>Name:</strong> {newOrderAlert.orderedName}<br />
+        <strong>Item:</strong> {newOrderAlert.itemName}<br/>
+        <strong>quantity:</strong> {newOrderAlert.quantity}<br/>
+      </div>
+    )}
+
+
+
       <h2>Kitchen Orders Dashboard</h2>
       <div className="orders-list">
         {orders.length === 0 ? (

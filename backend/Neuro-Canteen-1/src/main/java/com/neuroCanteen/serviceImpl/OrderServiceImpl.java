@@ -63,35 +63,32 @@ public class OrderServiceImpl implements OrderService {
     
 
     @Override
-public Order createOrder(Order order) {
-    Order savedOrder = orderRepository.save(order);
+    public Order createOrder(Order order) {
+        Order savedOrder = orderRepository.save(order);
 
-    // Send WebSocket notification
-    String jsonString = "{ " +
-    "\"orderid\": \"" + savedOrder.getOrderId() + "\", " +
-    "\"orderedRole\": \"" + savedOrder.getOrderedRole() + "\", " +
-    "\"orderedName\": \"" + savedOrder.getOrderedName() + "\", " +
-    "\"orderedUserId\": \"" + savedOrder.getOrderedUserId() + "\", " +
-    "\"itemName\": \"" + savedOrder.getItemName() + "\", " +
-    "\"quantity\": " + savedOrder.getQuantity() + ", " +  // Assuming quantity is a number
-    "\"category\": \"" + savedOrder.getCategory() + "\", " +
-    "\"price\": " + savedOrder.getPrice() + ", " +  // Assuming price is a number
-    "\"orderStatus\": \"" + savedOrder.getOrderStatus() + "\", " +
-    "\"paymentType\": \"" + savedOrder.getPaymentType() + "\", " +
-    "\"paymentRecived\": " + savedOrder.isPaymentRecived() + ", " + // Assuming boolean
-    "\"paymentStatus\": \"" + savedOrder.getPaymentStatus() + "\", " +
-    "\"orderDateTime\": \"" + savedOrder.getOrderDateTime() + "\", " +
-    "\"deliveryStatus\": \"" + savedOrder.getDeliveryStatus() + "\", " +
-    "\"address\": \"" + savedOrder.getAddress() + "\", " +
-    "\"phoneNo\": \"" + savedOrder.getPhoneNo() + "\"" +
-"}";
+        // Send WebSocket notification for new order
+        String jsonString = "{ " +
+            "\"orderId\": \"" + savedOrder.getOrderId() + "\", " +
+            "\"orderedRole\": \"" + savedOrder.getOrderedRole() + "\", " +
+            "\"orderedName\": \"" + savedOrder.getOrderedName() + "\", " +
+            "\"orderedUserId\": \"" + savedOrder.getOrderedUserId() + "\", " +
+            "\"itemName\": \"" + savedOrder.getItemName() + "\", " +
+            "\"quantity\": " + savedOrder.getQuantity() + ", " +
+            "\"category\": \"" + savedOrder.getCategory() + "\", " +
+            "\"price\": " + savedOrder.getPrice() + ", " +
+            "\"orderStatus\": \"" + savedOrder.getOrderStatus() + "\", " +
+            "\"paymentType\": \"" + savedOrder.getPaymentType() + "\", " +
+            "\"paymentRecived\": " + savedOrder.isPaymentRecived() + ", " +
+            "\"paymentStatus\": \"" + savedOrder.getPaymentStatus() + "\", " +
+            "\"orderDateTime\": \"" + savedOrder.getOrderDateTime() + "\", " +
+            "\"deliveryStatus\": \"" + savedOrder.getDeliveryStatus() + "\", " +
+            "\"address\": \"" + savedOrder.getAddress() + "\", " +
+            "\"phoneNo\": \"" + savedOrder.getPhoneNo() + "\"" +
+        "}";
 
-
-
-    OrderWebSocketHandler.sendOrderUpdate(jsonString);
-    return savedOrder;
-}
-
+        OrderWebSocketHandler.sendNewOrder(jsonString);
+        return savedOrder;
+    }
 
     @Override
     public Order updateOrder(Long id, Order order) {
@@ -126,16 +123,36 @@ public Order createOrder(Order order) {
         orderRepository.saveAll(orders);
     }
 
-
     @Override
     public Order updateOrderStatus(Long orderId, OrderStatus orderStatus) {
-        return orderRepository.findByOrderId(orderId).map(order -> {
-            order.setOrderStatus(orderStatus);
-            return orderRepository.save(order);
-        }).orElseThrow(() -> new RuntimeException("Order not found"));
-    }
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new RuntimeException("Order not found"));
+        order.setOrderStatus(orderStatus);
+        Order updatedOrder = orderRepository.save(order);
 
-   
+        // Send WebSocket notification for order status update
+        String jsonString = "{ " +
+            "\"orderId\": \"" + updatedOrder.getOrderId() + "\", " +
+            "\"orderedRole\": \"" + updatedOrder.getOrderedRole() + "\", " +
+            "\"orderedName\": \"" + updatedOrder.getOrderedName() + "\", " +
+            "\"orderedUserId\": \"" + updatedOrder.getOrderedUserId() + "\", " +
+            "\"itemName\": \"" + updatedOrder.getItemName() + "\", " +
+            "\"quantity\": " + updatedOrder.getQuantity() + ", " +
+            "\"category\": \"" + updatedOrder.getCategory() + "\", " +
+            "\"price\": " + updatedOrder.getPrice() + ", " +
+            "\"orderStatus\": \"" + updatedOrder.getOrderStatus() + "\", " +
+            "\"paymentType\": \"" + updatedOrder.getPaymentType() + "\", " +
+            "\"paymentRecived\": " + updatedOrder.isPaymentRecived() + ", " +
+            "\"paymentStatus\": \"" + updatedOrder.getPaymentStatus() + "\", " +
+            "\"orderDateTime\": \"" + updatedOrder.getOrderDateTime() + "\", " +
+            "\"deliveryStatus\": \"" + updatedOrder.getDeliveryStatus() + "\", " +
+            "\"address\": \"" + updatedOrder.getAddress() + "\", " +
+            "\"phoneNo\": \"" + updatedOrder.getPhoneNo() + "\"" +
+        "}";
+
+        OrderWebSocketHandler.sendOrderUpdate(jsonString);
+        return updatedOrder;
+    }
 
     @Override
     public Order updatePaymentReceived(Long orderId, boolean paymentReceived) {
