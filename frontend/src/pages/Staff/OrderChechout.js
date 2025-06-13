@@ -177,7 +177,15 @@ const OrderCheckout = () => {
             alert("There was an issue submitting your order.");
         }
     };
+    const handleorderhistory = () => {
+        navigate("/staff/orderhistory",{
+            "state": {
+                "orderedUserId": "admin",
+                "orderedRole": "Staff"
+            }
+        });
 
+    }
     const handlecredit = async () => {
         const orderDetails = {
             orderedRole: "Staff",
@@ -299,6 +307,9 @@ const OrderCheckout = () => {
 
                 <div className="payment-options">
                     <button onClick={handlecredit} className="cod">Credit</button>
+                </div>
+                <div className="payment-options">
+                    <button style={{backgroundColor:"blue"}} onClick={handleorderhistory} className="cod">Order History</button>
                 </div>
             </div>
         </div>
