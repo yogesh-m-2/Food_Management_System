@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import api from "../../services/api"; // Import your api module
 import '../../styles/staff/OrderCheckout.css'; // Import your CSS file
@@ -12,10 +12,31 @@ const OrderCheckout = () => {
     const [address, setAddress] = useState(''); // State to hold delivery address
     const [submittedAddress, setSubmittedAddress] = useState(''); // State to store submitted address
     const [isEditing, setIsEditing] = useState(false); // State to toggle between edit/view mode
+    const [staffData, setStaffData] = useState(null);
+
     console.log(cartItems)
     const handleAddressChange = (e) => {
         setAddress(e.target.value);
     };
+
+    useEffect(() => {
+        const fetchStaffDetails = async () => {
+            try {
+                const token = localStorage.getItem("jwtToken");
+                const decodedToken = jwtDecode(token);
+                const employeeId = decodedToken.sub; // or decodedToken.employeeId if your JWT has that key
+
+                const response = await api.get(`/staff/employee/${employeeId}`);
+                console.log(response.data)
+                setStaffData(response.data);
+                console.log("Fetched staff data:", response.data);
+            } catch (error) {
+                console.error("Failed to fetch staff data:", error);
+            }
+        };
+
+        fetchStaffDetails();
+    }, []);
 
     const handleAddressSubmit = (e) => {
         e.preventDefault();
@@ -97,7 +118,8 @@ const OrderCheckout = () => {
             paymentStatus: null,
             orderDateTime: new Date().toISOString(),
             address: submittedAddress,
-            paymentRecived: false
+            paymentRecived: false,
+            phoneNo : staffData.mobileNumber
         };
 
         try {
@@ -143,6 +165,7 @@ const OrderCheckout = () => {
             paymentStatus: null,
             orderDateTime: new Date().toISOString(),
             address: submittedAddress,
+            phoneNo : staffData.mobileNumber
         };
 
         try {
@@ -172,6 +195,8 @@ const OrderCheckout = () => {
             paymentStatus: null,
             orderDateTime: new Date().toISOString(),
             address: submittedAddress,
+            phoneNo : staffData.mobileNumber
+
         };
 
         try {
