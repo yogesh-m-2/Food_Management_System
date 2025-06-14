@@ -19,24 +19,24 @@ const OrderCheckout = () => {
         setAddress(e.target.value);
     };
 
-    useEffect(() => {
-        const fetchStaffDetails = async () => {
-            try {
-                const token = localStorage.getItem("jwtToken");
-                const decodedToken = jwtDecode(token);
-                const employeeId = decodedToken.sub; // or decodedToken.employeeId if your JWT has that key
+    // useEffect(() => {
+    //     const fetchStaffDetails = async () => {
+    //         try {
+    //             const token = localStorage.getItem("jwtToken");
+    //             const decodedToken = jwtDecode(token);
+    //             const employeeId = decodedToken.sub; // or decodedToken.employeeId if your JWT has that key
 
-                const response = await api.get(`/staff/employee/${employeeId}`);
-                console.log(response.data)
-                setStaffData(response.data);
-                console.log("Fetched staff data:", response.data);
-            } catch (error) {
-                console.error("Failed to fetch staff data:", error);
-            }
-        };
+    //             const response = await api.get(`/staff/employee/${employeeId}`);
+    //             console.log(response.data)
+    //             setStaffData(response.data);
+    //             console.log("Fetched staff data:", response.data);
+    //         } catch (error) {
+    //             console.error("Failed to fetch staff data:", error);
+    //         }
+    //     };
 
-        fetchStaffDetails();
-    }, []);
+    //     fetchStaffDetails();
+    // }, []);
 
     const handleAddressSubmit = (e) => {
         e.preventDefault();
@@ -119,7 +119,7 @@ const OrderCheckout = () => {
             orderDateTime: new Date().toISOString(),
             address: submittedAddress,
             paymentRecived: false,
-            phoneNo : staffData.mobileNumber
+            // phoneNo : staffData.mobileNumber
         };
 
         try {
@@ -165,7 +165,7 @@ const OrderCheckout = () => {
             paymentStatus: null,
             orderDateTime: new Date().toISOString(),
             address: submittedAddress,
-            phoneNo : staffData.mobileNumber
+            // phoneNo : staffData.mobileNumber
         };
 
         try {
@@ -203,7 +203,7 @@ const OrderCheckout = () => {
             paymentStatus: null,
             orderDateTime: new Date().toISOString(),
             address: submittedAddress,
-            phoneNo : staffData.mobileNumber
+            // phoneNo : staffData.mobileNumber
 
         };
 
