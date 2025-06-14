@@ -5,16 +5,18 @@ import { useNavigate } from 'react-router-dom';
 
 const StaffOrder = () => {
     const [menuItems, setMenuItems] = useState([]);
-    const [cartItems, setCartItems] = useState({}); // Store quantities as an object
-    const [selectedCategory, setSelectedCategory] = useState('south');
-    const [category,setCategory] = useState([])
+    const [cartItems, setCartItems] = useState({});
+    const [selectedCategory, setSelectedCategory] = useState('All'); // Changed default to 'All'
+    const [category, setCategory] = useState([]);
     const navigate = useNavigate();
+
     useEffect(() => {
         const fetchMenuItems = async () => {
             try {
                 const response = await api.get('/menu-items');
                 setMenuItems(response.data);
-                setCategory([...new Set(response.data.map(item => item.category))])
+                const uniqueCategories = [...new Set(response.data.map(item => item.category))];
+                setCategory(['All', ...uniqueCategories]); // Add 'All' at the beginning
             } catch (error) {
                 console.error('Error fetching menu items:', error);
             }
@@ -29,12 +31,13 @@ const StaffOrder = () => {
             return;
         }
 
-        navigate('/staff/checkout', { state: { cartItems, menuItems } }); // Navigate with cart data
+        navigate('/staff/checkout', { state: { cartItems, menuItems } });
     };
+
     const handleAddToCart = (item) => {
         setCartItems((prevCart) => ({
             ...prevCart,
-            [item.id]: (prevCart[item.id] || 0) + 1, // Increment quantity
+            [item.id]: (prevCart[item.id] || 0) + 1,
         }));
     };
 
@@ -51,35 +54,37 @@ const StaffOrder = () => {
             if (newCart[itemId] > 1) {
                 newCart[itemId] -= 1;
             } else {
-                delete newCart[itemId]; // Remove from cart if quantity reaches 0
+                delete newCart[itemId];
             }
             return newCart;
         });
     };
 
-    const filteredMenuItems = menuItems.filter(item => item.category === selectedCategory);
+    // 🔄 Update filtering logic to allow "All" category
+    const filteredMenuItems = selectedCategory === 'All'
+        ? menuItems
+        : menuItems.filter(item => item.category === selectedCategory);
 
-    const handleorderhistory = () => {
-        navigate("/staff/orderhistory",{
-            "state": {
-                "orderedUserId": "admin",
-                "orderedRole": "Staff"
+    const handleOrderHistory = () => {
+        navigate("/staff/orderhistory", {
+            state: {
+                orderedUserId: "admin",
+                orderedRole: "Staff"
             }
         });
-
-    }
+    };
 
     return (
         <div className="staff-order-container">
             <aside className="category-sidebar">
                 <ul>
-                    {category.map(category => (
+                    {category.map(cat => (
                         <li
-                            key={category}
-                            className={selectedCategory === category ? 'active' : ''}
-                            onClick={() => setSelectedCategory(category)}
+                            key={cat}
+                            className={selectedCategory === cat ? 'active' : ''}
+                            onClick={() => setSelectedCategory(cat)}
                         >
-                            {category}
+                            {cat}
                         </li>
                     ))}
                 </ul>
@@ -124,8 +129,8 @@ const StaffOrder = () => {
                         );
                     })}
                 </ul>
-                <button onClick={handleCheckout} >Checkout</button>
-                <button style={{backgroundColor:"#3674B5"}} onClick={handleorderhistory}>Order History</button>
+                <button onClick={handleCheckout}>Checkout</button>
+                <button style={{ backgroundColor: "#3674B5" }} onClick={handleOrderHistory}>Order History</button>
             </aside>
         </div>
     );
