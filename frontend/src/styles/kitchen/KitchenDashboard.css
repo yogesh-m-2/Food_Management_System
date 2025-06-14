@@ -230,5 +230,69 @@ h2 {
     transform: translateY(0);
   }
 }
+/* Filters (Search + Dropdown) */
+.filters {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
 
+.filters input[type="text"],
+.filters select {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 200px;
+  outline: none;
+  transition: border 0.3s ease;
+}
 
+.filters input[type="text"]:focus,
+.filters select:focus {
+  border-color: #28a745;
+}
+.table-filters {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  padding: 10px 0;
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+  gap: 5px;
+}
+
+.table-filters .column-item {
+  padding: 5px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 90%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.table-filters input,
+.table-filters select {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 13px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.table-filters input:focus,
+.table-filters select:focus {
+  border-color: #28a745;
+}
+
+.no-orders {
+  font-style: italic;
+  background-color: #fafafa;
+  user-select: none;
+}
