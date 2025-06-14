@@ -1,5 +1,6 @@
 package com.neuroCanteen.model.staff;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,6 +17,7 @@ public class Staff {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+    @Column(unique = true, nullable = false)
     private String employeeId;
     private String name;
     private String department;

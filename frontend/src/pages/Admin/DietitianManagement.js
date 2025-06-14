@@ -37,8 +37,18 @@ const DietitianManagement = () => {
       resetForm();
     } catch (error) {
       console.error("Error saving dietitian:", error);
+      if (error.response && error.response.data && error.response.data.message) {
+        if (error.response.data.message.toLowerCase().includes("already exists")) {
+          alert("ID already exists");
+        } else {
+          alert(error.response.data.message); 
+        }
+      } else {
+        alert("An unexpected error occurred.");
+      }
     }
   };
+  
 
   const handleDelete = async (id) => {
     try {
