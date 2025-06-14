@@ -9,7 +9,7 @@ const CreateDiet = () => {
     const [itemDateTime, setItemDateTime] = useState({}); // Stores date & time for each item
     const location = useLocation();
     const [filteredDietItems,setfilteredDietItems] = useState([])
-    const [selectedCategory, setSelectedCategory] = useState("Clear liquid");
+    const [selectedCategory, setSelectedCategory] = useState("Liquid");
     const { orderedUserId: stateOrderedUserId, patientName, dietDetails,patientMobileNumber } = location.state || {};
     const navigate = useNavigate();
 

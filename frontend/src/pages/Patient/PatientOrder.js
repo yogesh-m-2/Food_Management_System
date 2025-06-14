@@ -6,24 +6,32 @@ import { useNavigate } from 'react-router-dom';
 const PatientOrder = () => {
     const [menuItems, setMenuItems] = useState([]);
     const [cartItems, setCartItems] = useState({});
-    const[filteredMenuItems,setfilteredMenuItems] = useState([])
-    const [selectedCategory, setSelectedCategory] = useState('south');
-    const [category,setCategory] = useState([])
+    const [filteredMenuItems, setFilteredMenuItems] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('All'); // ✅ Default to "All"
+    const [category, setCategory] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchMenuItems = async () => {
             try {
                 const response = await api.get('/menu-items');
-                setCategory([...new Set(response.data.map(item => item.category))])
                 setMenuItems(response.data);
-                console.log(response.data)
+
+                const uniqueCategories = [...new Set(response.data.map(item => item.category))];
+                setCategory(['All', ...uniqueCategories]); // ✅ Add "All" to categories
             } catch (error) {
                 console.error('Error fetching menu items:', error);
             }
         };
         fetchMenuItems();
     }, []);
+
+    useEffect(() => {
+        const filtered = selectedCategory === 'All'
+            ? menuItems
+            : menuItems.filter(item => item.category === selectedCategory);
+        setFilteredMenuItems(filtered); // ✅ Apply "All" filter logic
+    }, [menuItems, selectedCategory]);
 
     const handleCheckout = () => {
         if (Object.keys(cartItems).length === 0) {
@@ -59,22 +67,17 @@ const PatientOrder = () => {
         });
     };
 
-    useEffect(() => {
-        const filtered = menuItems.filter(item => item.category === selectedCategory);
-        setfilteredMenuItems(filtered);
-      }, [menuItems, selectedCategory]);
-
     return (
         <div className="patient-order-container">
             <aside className="category-sidebar">
                 <ul>
-                    {category.map(category => (
+                    {category.map(cat => (
                         <li
-                            key={category}
-                            className={selectedCategory === category ? 'active' : ''}
-                            onClick={() => setSelectedCategory(category)}
+                            key={cat}
+                            className={selectedCategory === cat ? 'active' : ''}
+                            onClick={() => setSelectedCategory(cat)}
                         >
-                            {category}
+                            {cat}
                         </li>
                     ))}
                 </ul>
