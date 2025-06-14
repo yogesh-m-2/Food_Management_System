@@ -23,7 +23,7 @@ const OrderCheckout = () => {
     //     const fetchStaffDetails = async () => {
     //         try {
     //             const token = localStorage.getItem("jwtToken");
-    //             const decodedToken = jwtDecode(token);
+    //             const decodedToken = jwtDeco
     //             const employeeId = decodedToken.sub; // or decodedToken.employeeId if your JWT has that key
 
     //             const response = await api.get(`/staff/employee/${employeeId}`);
@@ -308,9 +308,9 @@ const OrderCheckout = () => {
                 <div className="payment-options">
                     <button onClick={handlecredit} className="cod">Credit</button>
                 </div>
-                <div className="payment-options">
+                {/* <div className="payment-options">
                     <button style={{backgroundColor:"blue"}} onClick={handleorderhistory} className="cod">Order History</button>
-                </div>
+                </div> */}
             </div>
         </div>
     );

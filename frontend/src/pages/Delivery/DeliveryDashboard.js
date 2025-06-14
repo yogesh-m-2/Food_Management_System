@@ -129,7 +129,7 @@ const DeliveryDashboard = () => {
                 <select
                     value={String(order.paymentRecived)} // typo used here
                     onChange={(e) => updatePaymentReceived(order.orderId, e.target.value === "true")}
-                    disabled={order.paymentType === "CREDIT" || order.paymentType === "UPI"}
+                    disabled={order.paymentType === "CREDIT" || order.paymentType === "UPI" || order.paymentRecived === true}
                   >
                     <option value="false">False</option>
                     <option value="true">True</option>

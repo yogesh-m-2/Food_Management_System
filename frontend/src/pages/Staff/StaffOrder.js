@@ -59,6 +59,16 @@ const StaffOrder = () => {
 
     const filteredMenuItems = menuItems.filter(item => item.category === selectedCategory);
 
+    const handleorderhistory = () => {
+        navigate("/staff/orderhistory",{
+            "state": {
+                "orderedUserId": "admin",
+                "orderedRole": "Staff"
+            }
+        });
+
+    }
+
     return (
         <div className="staff-order-container">
             <aside className="category-sidebar">
@@ -115,6 +125,7 @@ const StaffOrder = () => {
                     })}
                 </ul>
                 <button onClick={handleCheckout} >Checkout</button>
+                <button style={{backgroundColor:"#3674B5"}} onClick={handleorderhistory}>Order History</button>
             </aside>
         </div>
     );
