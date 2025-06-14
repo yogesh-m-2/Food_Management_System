@@ -62,7 +62,14 @@ const PatientManagement = () => {
       ));
       setEditingPatient(null); // Clear the editing state
     } catch (error) {
-      console.error("Error updating patient:", error);
+      if (error.response) {
+        console.error('Server error:', error.response.data.message);
+        alert("ID already exists");
+      } else if (error.request) {
+        console.error('No response received from server');
+      } else {
+        console.error('Error:', error.message);
+      }
     }
   };
 
@@ -91,7 +98,14 @@ const PatientManagement = () => {
       }); // Reset form
       setShowAddForm(false); // Close the add form
     } catch (error) {
-      console.error("Error adding patient:", error);
+      if (error.response) {
+        console.error('Server error:', error.response.data.message);
+        alert("ID already exists");
+      } else if (error.request) {
+        console.error('No response received from server');
+      } else {
+        console.error('Error:', error.message);
+      }
     }
   };
 

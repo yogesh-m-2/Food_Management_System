@@ -16,6 +16,7 @@ public class DeliverUser {
     private int id;
     
     private String name;
+    @Column(unique = true, nullable = false)
     private String username;
     private String password;
     private String contact;

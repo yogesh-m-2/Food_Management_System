@@ -1,5 +1,6 @@
 package com.neuroCanteen.model.dietitian;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,6 +18,7 @@ public class Dietitian {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String name;
+    @Column(unique = true, nullable = false)
     private String username;
     private String password;
     private String specialization;

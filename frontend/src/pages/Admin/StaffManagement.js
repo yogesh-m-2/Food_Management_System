@@ -44,7 +44,14 @@ const StaffManagement = () => {
         });
         setShowAddForm(false);
       } catch (error) {
-        console.error("Error adding staff:", error);
+        if (error.response) {
+          console.error('Server error:', error.response.data.message);
+          alert("ID already exists");
+        } else if (error.request) {
+          console.error('No response received from server');
+        } else {
+          console.error('Error:', error.message);
+        }
       }
     }
   };
@@ -55,8 +62,15 @@ const StaffManagement = () => {
       setStaffList(staffList.map(staff => (staff.id === id ? response.data : staff)));
       setEditStaff(null);
       setShowAddForm(false)
-    } catch (error) {
-      console.error("Error updating staff:", error);
+    }catch (error) {
+      if (error.response) {
+        console.error('Server error:', error.response.data.message);
+        alert("ID already exists");
+      } else if (error.request) {
+        console.error('No response received from server');
+      } else {
+        console.error('Error:', error.message);
+      }
     }
   };
 

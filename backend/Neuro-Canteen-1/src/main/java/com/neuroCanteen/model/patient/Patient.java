@@ -1,5 +1,6 @@
 package com.neuroCanteen.model.patient;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,7 +19,7 @@ public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    
+    @Column(unique = true, nullable = false)
     private String uhid; // Unique Hospital ID
     private String ipId; // In-Patient ID
     private String name;
