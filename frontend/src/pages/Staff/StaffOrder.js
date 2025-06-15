@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../../styles/staff/StaffOrder.css';
 import api from '../../services/api';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode";
 
 const StaffOrder = () => {
     const [menuItems, setMenuItems] = useState([]);
@@ -9,6 +10,9 @@ const StaffOrder = () => {
     const [selectedCategory, setSelectedCategory] = useState('All'); // Changed default to 'All'
     const [category, setCategory] = useState([]);
     const navigate = useNavigate();
+    const token = localStorage.getItem("jwtToken");
+    const decodedToken = jwtDecode(token);
+    const username = decodedToken.sub;
 
     useEffect(() => {
         const fetchMenuItems = async () => {
@@ -68,7 +72,7 @@ const StaffOrder = () => {
     const handleOrderHistory = () => {
         navigate("/staff/orderhistory", {
             state: {
-                orderedUserId: "admin",
+                orderedUserId: username,
                 orderedRole: "Staff"
             }
         });

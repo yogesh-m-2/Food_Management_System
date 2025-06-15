@@ -72,7 +72,7 @@ const KitchenDashboard = () => {
         (filters.orderedName === "" || order.orderedName.toLowerCase().includes(filters.orderedName.toLowerCase())) &&
         (filters.itemName === "" || order.itemName.toLowerCase().includes(filters.itemName.toLowerCase())) &&
         (filters.quantity === "" || order.quantity.toString().includes(filters.quantity)) &&
-        (filters.price === "" || order.price.toString().includes(filters.price)) &&
+        (filters.price === "" || order.price.toString().startsWith(filters.price)) &&
         (filters.paymentType === "" || order.paymentType.toLowerCase().includes(filters.paymentType.toLowerCase())) &&
         (filters.address === "" || order.address.toLowerCase().includes(filters.address.toLowerCase())) &&
         (filters.orderStatus === "" || order.orderStatus === filters.orderStatus)

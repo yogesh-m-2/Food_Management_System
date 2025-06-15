@@ -68,7 +68,7 @@ const DeliveryDashboard = () => {
       (!filters.orderedName || order.orderedName.toLowerCase().includes(filters.orderedName.toLowerCase())) &&
       (!filters.itemName || order.itemName.toLowerCase().includes(filters.itemName.toLowerCase())) &&
       (!filters.quantity || order.quantity.toString().includes(filters.quantity)) &&
-      (!filters.price || order.price.toString().includes(filters.price)) &&
+      (!filters.price || order.price.toString().startsWith(filters.price)) &&
       (!filters.paymentType || order.paymentType.toLowerCase().includes(filters.paymentType.toLowerCase())) &&
       (!filters.paymentRecived || String(order.paymentRecived) === filters.paymentRecived) &&
       (!filters.deliveryStatus || order.deliveryStatus === filters.deliveryStatus) &&
