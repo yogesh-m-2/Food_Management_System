@@ -44,7 +44,7 @@ const DeliveryManagement = () => {
     }catch (error) {
       console.error("Error saving dietitian:", error);
       if (error.response && error.response.data && error.response.data.message) {
-        if (error.response.data.message.toLowerCase().includes("already exists")) {
+        if (error.response.status == 500) {
           alert("ID already exists");
         } else {
           alert(error.response.data.message); 

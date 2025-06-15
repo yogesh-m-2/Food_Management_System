@@ -62,7 +62,7 @@ const PatientManagement = () => {
       ));
       setEditingPatient(null); // Clear the editing state
     } catch (error) {
-      if (error.response) {
+        if (error.response.status == 500) {
         console.error('Server error:', error.response.data.message);
         alert("ID already exists");
       } else if (error.request) {
