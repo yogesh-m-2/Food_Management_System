@@ -52,6 +52,10 @@ public class SecurityConfigurer {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/authenticate/**").permitAll()
                 .requestMatchers("/order-updates/**").permitAll() // Allow WebSocket connections
+                .requestMatchers("/delivery-update/**").permitAll() // Allow WebSocket connections
+                .requestMatchers("/ws/**").permitAll() // Allow WebSocket connections
+                .requestMatchers("/sockjs-node/**").permitAll() // Allow SockJS connections
+                .requestMatchers("/webjars/**").permitAll() // Allow SockJS resources
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/**").permitAll()

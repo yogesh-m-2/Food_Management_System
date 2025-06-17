@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../../services/api";
 import "../../styles/delivery/DeliveryDashboard.css";
 import config from "../../config";
+import SockJS from 'sockjs-client';
 
 const DeliveryDashboard = () => {
   const [allOrders, setAllOrders] = useState([]);
@@ -38,7 +39,7 @@ const DeliveryDashboard = () => {
   useEffect(() => {
     fetchOrders();
 
-    const socket = new WebSocket(`ws://${config.Socket_URL}/order-updates`);
+    const socket = new SockJS(`http://${config.Socket_URL}/order-updates`);
 
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data);

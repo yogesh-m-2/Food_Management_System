@@ -17,10 +17,17 @@ public class WebConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**") // Apply CORS to all endpoints
-                        .allowedOriginPatterns("*") // Allow frontend requests
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH") // Allowed HTTP methods
-                        .allowCredentials(true); // Allow cookies, Authorization header
+                registry.addMapping("/**")
+                        .allowedOriginPatterns(
+                            "http://localhost:*",
+                            "http://170.187.200.195:*",
+                            "http://192.168.43.247:*"
+                        )
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+                        .allowedHeaders("*")
+                        .exposedHeaders("Authorization")
+                        .allowCredentials(true)
+                        .maxAge(3600);
             }
         };
     }
