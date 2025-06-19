@@ -66,7 +66,7 @@ const DeliveryDashboard = () => {
 
   useEffect(() => {
     const filtered = allOrders.filter((order) =>
-      (!filters.orderedName || order.orderedName.toLowerCase().includes(filters.orderedName.toLowerCase())) &&
+      (filters.orderedName === "" || (order.orderedName || " ").toLowerCase().includes(filters.orderedName.toLowerCase())) &&
       (!filters.itemName || order.itemName.toLowerCase().includes(filters.itemName.toLowerCase())) &&
       (!filters.quantity || order.quantity.toString().includes(filters.quantity)) &&
       (!filters.price || order.price.toString().startsWith(filters.price)) &&

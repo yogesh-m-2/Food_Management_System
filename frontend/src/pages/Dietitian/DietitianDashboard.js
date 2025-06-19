@@ -20,6 +20,10 @@ const DietitianDashboard = () => {
 
   return (
     <div className="dashboard-container">
+      <div className="wonder-nav">
+        <Link to="/dietitian/dietitian-dashboard" className="wonder-link">Floor</Link>
+      </div>
+
       <h2>Dietitian Dashboard</h2>
       <div className="list-section">
         <h3>Floors</h3>

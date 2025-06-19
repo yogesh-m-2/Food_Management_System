@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../../services/api";
+import { ArrowRight } from "lucide-react";
 
 const Beds = () => {
   const { floor, ward, room } = useParams();
@@ -19,6 +20,16 @@ const Beds = () => {
   }, [floor, ward, room]);
 
   return (
+    <div className="dashboard-container">
+    <div className="wonder-nav">
+        <Link to="/dietitian/dietitian-dashboard" className="wonder-link">Floor</Link>
+        <ArrowRight className="nav-icon" />
+        <Link to={`/dietitian/wards/${floor}`} className="wonder-link">Ward</Link>
+        <ArrowRight className="nav-icon" />
+        <Link to={`/dietitian/rooms/${floor}/${ward}`} className="wonder-link">Rooms</Link>
+        <ArrowRight className="nav-icon" />
+        <Link to={`/dietitian/beds/${floor}/${ward}/${room}`} className="wonder-link">Beds</Link>
+      </div>
     <div className="list-section">
       <h3>Beds in {room}</h3>
       {beds.map((bed) => (
@@ -27,6 +38,7 @@ const Beds = () => {
         </Link>
       ))}
     </div>
+  </div>
   );
 };
 

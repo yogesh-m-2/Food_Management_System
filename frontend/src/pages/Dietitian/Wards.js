@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../../services/api";
+import { ArrowRight } from "lucide-react";
 
 const Wards = () => {
   const { floor } = useParams();
@@ -19,6 +20,12 @@ const Wards = () => {
   }, [floor]);
 
   return (
+    <div className="dashboard-container">
+           <div className="wonder-nav">
+        <Link to="/dietitian/dietitian-dashboard" className="wonder-link">Floor</Link>
+        <ArrowRight className="nav-icon" />
+        <Link to={`/dietitian/wards/${floor}`} className="wonder-link">Ward</Link>
+      </div>
     <div className="list-section">
       <h3>Wards in {floor}</h3>
       {wards.map((ward) => (
@@ -26,6 +33,7 @@ const Wards = () => {
           {ward}
         </Link>
       ))}
+    </div>
     </div>
   );
 };

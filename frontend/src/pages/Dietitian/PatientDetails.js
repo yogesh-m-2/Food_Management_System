@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../../services/api";
 import "../../styles/dietitian/PatientDetatils.css";
+import { ArrowRight } from "lucide-react";
+
 
 const PatientDetails = () => {
   const { floor, ward, room, bed } = useParams();
@@ -75,6 +77,18 @@ const PatientDetails = () => {
   }
 
   return (
+    <div>
+    <div className="wonder-nav">
+        <Link to="/dietitian/dietitian-dashboard" className="wonder-link">Floor</Link>
+        <ArrowRight className="nav-icon" />
+        <Link to={`/dietitian/wards/${floor}`} className="wonder-link">Ward</Link>
+        <ArrowRight className="nav-icon" />
+        <Link to={`/dietitian/rooms/${floor}/${ward}`} className="wonder-link">Rooms</Link>
+        <ArrowRight className="nav-icon" />
+        <Link to={`/dietitian/beds/${floor}/${ward}/${room}`} className="wonder-link">Beds</Link>
+        <ArrowRight className="nav-icon" />
+        <Link to={`/dietitian/patient/${floor}/${ward}/${room}/${bed}`} className="wonder-link">Patient</Link>
+      </div>
     <div className="patient-details-container">
       <div className="patient-info-wrapper">
         {/* Profile Image */}
@@ -177,6 +191,7 @@ const PatientDetails = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };
