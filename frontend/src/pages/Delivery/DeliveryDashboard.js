@@ -10,6 +10,7 @@ const DeliveryDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [newOrderAlert, setNewOrderAlert] = useState(null);
   const [filters, setFilters] = useState({
+    orderId : "",
     orderedName: "",
     itemName: "",
     quantity: "",
@@ -39,7 +40,8 @@ const DeliveryDashboard = () => {
   useEffect(() => {
     fetchOrders();
 
-    const socket = new SockJS(`http://${config.Socket_URL}/order-updates`);
+    // const socket = new SockJS(`http://${config.Socket_URL}/order-updates`);
+    const socket = new SockJS(`http://170.187.200.195:8142/order-updates`);
 
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data);
@@ -66,6 +68,7 @@ const DeliveryDashboard = () => {
 
   useEffect(() => {
     const filtered = allOrders.filter((order) =>
+      (filters.orderId === "" || order.orderId.toString().includes(filters.orderId)) &&
       (filters.orderedName === "" || (order.orderedName || " ").toLowerCase().includes(filters.orderedName.toLowerCase())) &&
       (!filters.itemName || order.itemName.toLowerCase().includes(filters.itemName.toLowerCase())) &&
       (!filters.quantity || order.quantity.toString().includes(filters.quantity)) &&
@@ -126,6 +129,7 @@ const DeliveryDashboard = () => {
           <thead>
             {/* Headers */}
             <tr>
+              <th>Order ID</th>
               <th>Ordered By</th>
               <th>Item</th>
               <th>Quantity</th>
@@ -140,6 +144,7 @@ const DeliveryDashboard = () => {
   
             {/* Filters */}
             <tr>
+              <th className = "table-serach"><input placeholder="Order ID" value={filters.orderId} onChange={(e) => handleFilterChange("orderId", e.target.value)} /></th>
               <th className="table-search"><input placeholder="Name" value={filters.orderedName} onChange={(e) => handleFilterChange("orderedName", e.target.value)} /></th>
               <th className="table-search"><input placeholder="Item" value={filters.itemName} onChange={(e) => handleFilterChange("itemName", e.target.value)} /></th>
               <th className="table-search"><input placeholder="Qty" value={filters.quantity} onChange={(e) => handleFilterChange("quantity", e.target.value)} /></th>
@@ -177,6 +182,7 @@ const DeliveryDashboard = () => {
             ) : (
               orders.map((order) => (
                 <tr key={order.orderId}>
+                  <td>{order.orderId}</td>
                   <td>{order.orderedName}</td>
                   <td>
                     <pre style={{ margin: 0, whiteSpace: "pre-wrap", width : '200px' }}>
