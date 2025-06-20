@@ -48,15 +48,9 @@ const DeliveryDashboard = () => {
       const orderData = message.payload;
 
       if (message.type === "ORDER_UPDATED" && orderData.orderStatus === "OUT_FOR_DELIVERY") {
-        setNewOrderAlert(
-          <>
-            <strong>New Delivery Order:</strong><br />
-            <strong>Customer:</strong> {orderData.orderedName}<br />
-            <strong>Item:</strong> {orderData.itemName}<br />
-            <strong>Address:</strong> {orderData.address}<br />
-            <strong>Phone:</strong> {orderData.phoneNo || "N/A"}
-          </>
-        );
+        console.log("new notification received")
+        setNewOrderAlert(orderData);
+
 
         setTimeout(() => setNewOrderAlert(null), 5000);
         fetchOrders();
@@ -112,15 +106,16 @@ const DeliveryDashboard = () => {
 
   return (
     <div className="delivery-dashboard-container">
-      {newOrderAlert && (
-        <div className="order-toast">
-          <strong>New Delivery Order!</strong><br />
-          <strong>Customer:</strong> {newOrderAlert.orderedName}<br />
-          <strong>Item:</strong> {newOrderAlert.itemName}<br />
-          <strong>Address:</strong> {newOrderAlert.address}<br />
-          <strong>Phone:</strong> {newOrderAlert.phoneNo || "N/A"}
-        </div>
-      )}
+{newOrderAlert && (
+  <div className="order-toast">
+    <strong>New Delivery Order!</strong><br />
+    <strong>Customer:</strong> {newOrderAlert.orderedName}<br />
+    <strong>Item:</strong> {newOrderAlert.itemName}<br />
+    <strong>Address:</strong> {newOrderAlert.address}<br />
+    <strong>Phone:</strong> {newOrderAlert.phoneNo || "N/A"}
+  </div>
+)}
+
   
       <h2>Delivery Orders Dashboard</h2>
   
