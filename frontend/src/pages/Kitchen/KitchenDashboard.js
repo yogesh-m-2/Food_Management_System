@@ -184,6 +184,7 @@ const KitchenDashboard = () => {
                     <select
                       value={order.orderStatus || "RECEIVED"}
                       onChange={(e) => handleStatusChange(order.orderId, e.target.value)}
+                      style={{ margin: 0, width : "auto" }}
                     >
                       <option value="RECEIVED">Order Received</option>
                       <option value="PREPARED">Prepared</option>
