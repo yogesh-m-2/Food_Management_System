@@ -1,7 +1,12 @@
 package com.neuroCanteen.controller.staffController;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.neuroCanteen.model.staff.Staff;
 import com.neuroCanteen.service.StaffService;
@@ -38,13 +43,54 @@ public class StaffController {
     }
 
     @PostMapping
-    public Staff createStaff(@RequestBody Staff staff) {
-        return staffService.createStaff(staff);
-    }
+    public ResponseEntity<Map<String, Object>> createStaff(@RequestBody Staff staff) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Staff createdStaff = staffService.createStaff(staff);
+            response.put("status", "success");
+            response.put("message", "Staff created successfully");
+            response.put("data", createdStaff);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (DataIntegrityViolationException e) {
+            response.put("status", "error");
+            response.put("message", "Username already exists");
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "Internal server error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }    
+
 
     @PutMapping("/{id}")
-    public Staff updateStaff(@PathVariable int id, @RequestBody Staff updatedStaff) {
-        return staffService.updateStaff(id, updatedStaff);
+    public ResponseEntity<Map<String, Object>> updateStaff(@PathVariable int id, @RequestBody Staff updatedStaff) {
+        Map<String, Object> response = new HashMap<>();
+    
+        try {
+            Staff updated = staffService.updateStaff(id, updatedStaff);
+    
+            if (updated == null) {
+                response.put("status", "error");
+                response.put("message", "Staff not found with ID: " + id);
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); 
+            }
+    
+            response.put("status", "success");
+            response.put("message", "Staff updated successfully");
+            response.put("data", updated);
+            return new ResponseEntity<>(response, HttpStatus.OK); 
+    
+        } catch (DataIntegrityViolationException e) {
+            response.put("status", "error");
+            response.put("message", "Username already exists");
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT); 
+    
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "Internal server error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/{id}")

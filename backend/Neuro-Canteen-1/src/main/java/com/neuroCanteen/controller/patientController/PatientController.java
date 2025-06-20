@@ -1,8 +1,12 @@
 package com.neuroCanteen.controller.patientController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,13 +28,58 @@ public class PatientController {
     private PatientService patientService;
 
     @PostMapping("/add")
-    public Patient createPatient(@RequestBody Patient patient) {
-        return patientService.createPatient(patient);
+    public ResponseEntity<Map<String, Object>> createPatient(@RequestBody Patient patient) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Patient createdPatient = patientService.createPatient(patient);
+
+            response.put("status", "success");
+            response.put("message", "Patient created successfully");
+            response.put("data", createdPatient);
+
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+        } catch (DataIntegrityViolationException e) {
+            response.put("status", "error");
+            response.put("message", "Username already exists");
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "Internal server error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping("/update/{id}")
-    public Patient updatePatient(@PathVariable int id, @RequestBody Patient patient) {
-        return patientService.updatePatient(id, patient);
+    public ResponseEntity<Map<String, Object>> updatePatient(@PathVariable int id, @RequestBody Patient patient) {
+        Map<String, Object> response = new HashMap<>();
+    
+        try {
+            Patient updated = patientService.updatePatient(id, patient);
+    
+            if (updated == null) {
+                response.put("status", "error");
+                response.put("message", "Patient not found with ID: " + id);
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); 
+            }
+    
+            response.put("status", "success");
+            response.put("message", "Patient updated successfully");
+            response.put("data", updated);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+    
+        } catch (DataIntegrityViolationException e) {
+            response.put("status", "error");
+            response.put("message", "Username already exists");
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT); 
+    
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "Internal server error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/delete/{id}")
@@ -86,15 +135,6 @@ public ResponseEntity<List<Patient>> getPatientsByFloorWardRoomAndBed(
     List<Patient> patients = patientService.getPatientsByFloorWardRoomAndBed(floor, ward, room, bed);
     return patients.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(patients);
 }
-
-
-
-
-
-
-
-
-    
 
     @GetMapping("/floors/{ward}")
     public ResponseEntity<List<String>> getFloorsByWard(@PathVariable String ward) {

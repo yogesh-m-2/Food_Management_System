@@ -32,27 +32,27 @@ const DeliveryManagement = () => {
         const response = await api.put(`/delivery-user/${editDeliverUser.id}`, editDeliverUser);
         setDeliverUsers(
           deliverUsers.map((d) =>
-            d.id === editDeliverUser.id ? response.data : d
+            d.id === editDeliverUser.id ? response.data.data : d
           )
         );
       } else {
         // Add new delivery user
         const response = await api.post("/delivery-user", newDeliverUser);
-        setDeliverUsers([...deliverUsers, response.data]);
+        setDeliverUsers([...deliverUsers, response.data.data]);
       }
       resetForm();
     }catch (error) {
-      console.error("Error saving dietitian:", error);
-      if (error.response && error.response.data && error.response.data.message) {
-        if (error.response.status == 500) {
-          alert("ID already exists");
+        if (error.response.status == 409) {
+          console.log(error.response.data.message);
+          alert(error.response.data.message);
+        } else if (error.response.status == 201) {
+          console.log('User Created');
+        } else if (error.response.status == 500) {
+          console.log('Server is Not Working');
         } else {
-          alert(error.response.data.message); 
+          console.log('Error:', error.message);
         }
-      } else {
-        alert("An unexpected error occurred.");
       }
-    }
   };
 
   const handleDelete = async (id) => {

@@ -27,22 +27,22 @@ const KitchenManagement = () => {
     try {
       if (editUser) {
         const response = await api.put(`/kitchen-users/${editUser.id}`, editUser);
-        setKitchenUsers(kitchenUsers.map((user) => (user.id === editUser.id ? response.data : user)));
+        setKitchenUsers(kitchenUsers.map((user) => (user.id === editUser.id ? response.data.data : user)));
       } else {
         const response = await api.post("/kitchen-users", newUser);
-        setKitchenUsers([...kitchenUsers, response.data]);
+        setKitchenUsers([...kitchenUsers, response.data.data]);
       }
       resetForm();
-    } catch (error) {
-      console.error("Error saving dietitian:", error);
-      if (error.response && error.response.data && error.response.data.message) {
-        if (error.response.status == 500) {
-          alert("ID already exists");
-        } else {
-          alert(error.response.data.message); 
-        }
+    }catch (error) {
+      if (error.response.status == 409) {
+        console.log(error.response.data.message);
+        alert(error.response.data.message);
+      } else if (error.response.status == 201) {
+        console.log('User Created');
+      } else if (error.response.status == 500) {
+        console.log('Server is Not Working');
       } else {
-        alert("An unexpected error occurred.");
+        console.log('Error:', error.message);
       }
     }
   };

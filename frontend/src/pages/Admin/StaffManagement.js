@@ -32,7 +32,7 @@ const StaffManagement = () => {
     if (newStaff.name && newStaff.employeeId) {
       try {
         const response = await api.post("/staff", newStaff);
-        setStaffList([...staffList, response.data]);
+        setStaffList([...staffList, response.data.data]);
         setNewStaff({
           employeeId: "",
           name: "",
@@ -44,13 +44,15 @@ const StaffManagement = () => {
         });
         setShowAddForm(false);
       } catch (error) {
-        if (error.response.status == 500) {
-          console.error('Server error:', error.response.data.message);
-          alert("ID already exists");
-        } else if (error.request) {
-          console.error('No response received from server');
+        if (error.response.status == 409) {
+          console.log(error.response.data.message);
+          alert(error.response.data.message);
+        } else if (error.response.status == 201) {
+          console.log('User Created');
+        } else if (error.response.status == 500) {
+          console.log('Server is Not Working');
         } else {
-          console.error('Error:', error.message);
+          console.log('Error:', error.message);
         }
       }
     }
@@ -59,17 +61,19 @@ const StaffManagement = () => {
   const handleEdit = async (id) => {
     try {
       const response = await api.put(`/staff/${id}`, editStaff);
-      setStaffList(staffList.map(staff => (staff.id === id ? response.data : staff)));
+      setStaffList(staffList.map(staff => (staff.id === id ? response.data.data : staff)));
       setEditStaff(null);
       setShowAddForm(false)
     }catch (error) {
-      if (error.response) {
-        console.error('Server error:', error.response.data.message);
-        alert("ID already exists");
-      } else if (error.request) {
-        console.error('No response received from server');
+      if (error.response.status == 409) {
+        console.log(error.response.data.message);
+        alert(error.response.data.message);
+      } else if (error.response.status == 201) {
+        console.log('User Created');
+      } else if (error.response.status == 500) {
+        console.log('Server is Not Working');
       } else {
-        console.error('Error:', error.message);
+        console.log('Error:', error.message);
       }
     }
   };

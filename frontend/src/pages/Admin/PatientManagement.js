@@ -58,17 +58,19 @@ const PatientManagement = () => {
     try {
       const response = await api.put(`/patient/update/${editingPatient.id}`, editingPatient);
       setPatients(patients.map((patient) => 
-        patient.id === editingPatient.id ? response.data : patient
+        patient.id === editingPatient.id ? response.data.data : patient
       ));
       setEditingPatient(null); // Clear the editing state
     } catch (error) {
-        if (error.response.status == 500) {
-        console.error('Server error:', error.response.data.message);
-        alert("ID already exists");
-      } else if (error.request) {
-        console.error('No response received from server');
+      if (error.response.status == 409) {
+        console.log(error.response.data.message);
+        alert(error.response.data.message);
+      } else if (error.response.status == 201) {
+        console.log('User Created');
+      } else if (error.response.status == 500) {
+        console.log('Server is Not Working');
       } else {
-        console.error('Error:', error.message);
+        console.log('Error:', error.message);
       }
     }
   };
@@ -77,7 +79,7 @@ const PatientManagement = () => {
   const handleAdd = async () => {
     try {
       const response = await api.post("/patient/add", newPatient); // Updated API endpoint
-      setPatients([...patients, response.data]);
+      setPatients([...patients, response.data.data]);
       setNewPatient({
         name: "",
         uhid: "",
@@ -97,14 +99,16 @@ const PatientManagement = () => {
         attendantContact: "",
       }); // Reset form
       setShowAddForm(false); // Close the add form
-    } catch (error) {
-      if (error.response) {
-        console.error('Server error:', error.response.data.message);
-        alert("ID already exists");
-      } else if (error.request) {
-        console.error('No response received from server');
+    }catch (error) {
+      if (error.response.status == 409) {
+        console.log(error.response.data.message);
+        alert(error.response.data.message);
+      } else if (error.response.status == 201) {
+        console.log('User Created');
+      } else if (error.response.status == 500) {
+        console.log('Server is Not Working');
       } else {
-        console.error('Error:', error.message);
+        console.log('Error:', error.message);
       }
     }
   };
