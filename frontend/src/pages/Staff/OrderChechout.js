@@ -15,6 +15,8 @@ const OrderCheckout = () => {
     const [staffData, setStaffData] = useState(null);
 
     console.log(cartItems)
+    console.log(menuItems)
+
     const handleAddressChange = (e) => {
         setAddress(e.target.value);
     };
@@ -108,7 +110,7 @@ const OrderCheckout = () => {
             orderedUserId: username,
             itemName: Object.keys(cartItems).map(itemId => {
                 const item = menuItems.find(menuItem => menuItem.id === parseInt(itemId));
-                return item.name+" X "+cartItems[itemId];
+                return item.name+" ("+item.category+")"+" X "+cartItems[itemId];
             }).join(", "),
             quantity: Object.values(cartItems).reduce((acc, qty) => acc + qty, 0),
             category: "South",
@@ -155,7 +157,7 @@ const OrderCheckout = () => {
             orderedUserId: username,
             itemName: Object.keys(cartItems).map(itemId => {
                 const item = menuItems.find(menuItem => menuItem.id === parseInt(itemId));
-                return item.name+" X "+cartItems[itemId];
+                return item.name+" ("+item.category+")"+" X "+cartItems[itemId];
             }).join(", "),
             quantity: Object.values(cartItems).reduce((acc, qty) => acc + qty, 0),
             category: "South",
@@ -193,7 +195,7 @@ const OrderCheckout = () => {
             orderedUserId: username,
             itemName: Object.keys(cartItems).map(itemId => {
                 const item = menuItems.find(menuItem => menuItem.id === parseInt(itemId));
-                return item.name+" X "+cartItems[itemId];
+                return item.name+" ("+item.category+")"+" X "+cartItems[itemId];
             }).join(", "),
             quantity: Object.values(cartItems).reduce((acc, qty) => acc + qty, 0),
             category: "South",

@@ -118,72 +118,87 @@ const KitchenDashboard = () => {
           <strong>Quantity:</strong> {newOrderAlert.quantity}<br />
         </div>
       )}
-
+  
       <h2>Kitchen Orders Dashboard</h2>
+  
       <div className="orders-list">
-  <div className="orders-table">
-    {/* Table Header */}
-    <div className="table-header">
-      <span className="column-item">Order ID</span>
-      <span className="column-item">Ordered By</span>
-      <span className="column-item">Item</span>
-      <span className="column-item">Quantity</span>
-      <span className="column-item">Price</span>
-      <span className="column-item">Payment</span>
-      <span className="column-item">Address</span>
-      <span className="column-item">Order Status</span>
-    </div>
-
-    {/* Filters */}
-    <div className="table-filters">
-      <input className="column-item" placeholder="Order ID" value={filters.orderId} onChange={(e) => handleFilterChange("orderId", e.target.value)} />
-      <input className="column-item" placeholder="Name" value={filters.orderedName} onChange={(e) => handleFilterChange("orderedName", e.target.value)} />
-      <input className="column-item" placeholder="Item" value={filters.itemName} onChange={(e) => handleFilterChange("itemName", e.target.value)} />
-      <input className="column-item" placeholder="Qty" value={filters.quantity} onChange={(e) => handleFilterChange("quantity", e.target.value)} />
-      <input className="column-item" placeholder="Price" value={filters.price} onChange={(e) => handleFilterChange("price", e.target.value)} />
-      <input className="column-item" placeholder="Payment" value={filters.paymentType} onChange={(e) => handleFilterChange("paymentType", e.target.value)} />
-      <input className="column-item" placeholder="Address" value={filters.address} onChange={(e) => handleFilterChange("address", e.target.value)} />
-      <select className="column-item" value={filters.orderStatus} onChange={(e) => handleFilterChange("orderStatus", e.target.value)}>
-        <option value="">All</option>
-        <option value="RECEIVED">Received</option>
-        <option value="PREPARED">Prepared</option>
-        <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
-      </select>
-    </div>
-
-    {/* Rows */}
-    {orders.length === 0 ? (
-      <div className="table-row no-orders" style={{ gridColumn: "span 8", textAlign: "center", padding: "20px", color: "#777" }}>
-        No orders available.
+        <table className="orders-table">
+          <thead>
+            {/* Table Headers */}
+            <tr>
+              <th>Order ID</th>
+              <th>Ordered By</th>
+              <th>Item</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Payment</th>
+              <th>Address</th>
+              <th>Order Status</th>
+            </tr>
+  
+            {/* Filters */}
+            <tr>
+              <th className = "table-serach"><input placeholder="Order ID" value={filters.orderId} onChange={(e) => handleFilterChange("orderId", e.target.value)} /></th>
+              <th className = "table-serach"><input placeholder="Name" value={filters.orderedName} onChange={(e) => handleFilterChange("orderedName", e.target.value)} /></th>
+              <th className = "table-serach"><input placeholder="Item" value={filters.itemName} onChange={(e) => handleFilterChange("itemName", e.target.value)} /></th>
+              <th className = "table-serach"><input placeholder="Qty" value={filters.quantity} onChange={(e) => handleFilterChange("quantity", e.target.value)} /></th>
+              <th className = "table-serach"><input placeholder="Price" value={filters.price} onChange={(e) => handleFilterChange("price", e.target.value)} /></th>
+              <th className = "table-serach"><input placeholder="Payment" value={filters.paymentType} onChange={(e) => handleFilterChange("paymentType", e.target.value)} /></th>
+              <th className = "table-serach"><input placeholder="Address" value={filters.address} onChange={(e) => handleFilterChange("address", e.target.value)} /></th>
+              <th className = "table-serach">
+                <select value={filters.orderStatus} onChange={(e) => handleFilterChange("orderStatus", e.target.value)}>
+                  <option value="">All</option>
+                  <option value="RECEIVED">Received</option>
+                  <option value="PREPARED">Prepared</option>
+                  <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
+                </select>
+              </th>
+            </tr>
+          </thead>
+  
+          <tbody>
+            {orders.length === 0 ? (
+              <tr>
+                <td colSpan="8" style={{ textAlign: "center", padding: "20px"}}>
+                  No orders available.
+                </td>
+              </tr>
+            ) : (
+              orders.map((order) => (
+                <tr key={order.orderId}>
+                  <td>{order.orderId}</td>
+                  <td>{order.orderedName}</td>
+                  <td>
+                    <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>
+                      {order.itemName.split(',').map((item) => {
+                        const [name, qty] = item.trim().split(' X ');
+                        return `${name?.trim()} X ${qty?.trim()}`;
+                      }).join('\n')}
+                    </pre>
+                  </td>
+                  <td  style={{ margin: 0, width : "auto" }}>{order.quantity}</td>
+                  <td>₹{order.price}</td>
+                  <td>{order.paymentType}</td>
+                  <td>{order.address}</td>
+                  <td>
+                    <select
+                      value={order.orderStatus || "RECEIVED"}
+                      onChange={(e) => handleStatusChange(order.orderId, e.target.value)}
+                    >
+                      <option value="RECEIVED">Order Received</option>
+                      <option value="PREPARED">Prepared</option>
+                      <option value="OUT_FOR_DELIVERY">Sent for Delivery</option>
+                    </select>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
-    ) : (
-      orders.map((order) => (
-        <div key={order.orderId} className="table-row">
-          <span className="column-item">{order.orderId}</span>
-          <span className="column-item">{order.orderedName}</span>
-          <span className="column-item">{order.itemName}</span>
-          <span className="column-item">{order.quantity}</span>
-          <span className="column-item">₹{order.price}</span>
-          <span className="column-item">{order.paymentType}</span>
-          <span className="column-item">{order.address}</span>
-          <span className="column-item">
-            <select
-              value={order.orderStatus || "RECEIVED"}
-              onChange={(e) => handleStatusChange(order.orderId, e.target.value)}
-            >
-              <option value="RECEIVED">Order Received</option>
-              <option value="PREPARED">Prepared</option>
-              <option value="OUT_FOR_DELIVERY">Sent for Delivery</option>
-            </select>
-          </span>
-        </div>
-      ))
-    )}
-  </div>
-</div>
-
     </div>
   );
+  
 };
 
 export default KitchenDashboard;

@@ -42,3 +42,6 @@ h2 {
     color: red;
     font-weight: bold;
 }
+.order-history-table td {
+    vertical-align: top;
+}

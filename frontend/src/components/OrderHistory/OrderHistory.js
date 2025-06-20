@@ -13,6 +13,7 @@ const OrderHistory = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [Orderedroledecode, setOrderedRoleDecode] = useState("");
+    
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -110,7 +111,6 @@ const OrderHistory = () => {
                             <th>Ordered Name</th>
                             <th>Item</th>
                             <th>Quantity</th>
-                            <th>Category</th>
                             <th>Price</th>
                             <th>Order Status</th>
                             <th>Payment Type</th>
@@ -124,9 +124,17 @@ const OrderHistory = () => {
                             <tr key={order.orderId}>
                                 <td>{order.orderId}</td>
                                 <td>{order.orderedName}</td>
-                                <td>{order.itemName}</td>
+                                <td>
+                                    <pre style={{ margin: 0 }}>
+                                        {order.itemName.split(',').map((item, index) => {
+                                            const parts = item.trim().split(' X ');
+                                            const name = parts[0]?.trim().padEnd(30);
+                                            const qty = parts[1]?.trim();
+                                            return `${name} X ${qty}`;
+                                        }).join('\n')}
+                                    </pre>
+                                </td>
                                 <td>{order.quantity}</td>
-                                <td>{order.category}</td>
                                 <td>₹{order.price.toFixed(2)}</td>
                                 <td>{order.orderStatus || "Pending"}</td>
                                 <td>{order.paymentType}</td>

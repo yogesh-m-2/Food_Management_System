@@ -109,90 +109,120 @@ const DeliveryDashboard = () => {
 
   return (
     <div className="delivery-dashboard-container">
-      {newOrderAlert && <div className="alert">{newOrderAlert}</div>}
-      <h2>Delivery Orders Dashboard</h2>
-
-      <div className="orders-list">
-        <div className="orders-table">
-          {/* Header */}
-          <div className="table-header">
-            <span className="column-item">Ordered By</span>
-            <span className="column-item">Item</span>
-            <span className="column-item">Quantity</span>
-            <span className="column-item">Price</span>
-            <span className="column-item">Payment</span>
-            <span className="column-item">Payment Received</span>
-            <span className="column-item">Order Date</span>
-            <span className="column-item">Delivery Status</span>
-            <span className="column-item">Address</span>
-            <span className="column-item">Phone No</span>
-          </div>
-
-          {/* Filters */}
-          <div className="table-filters">
-            <input className="column-item" placeholder="Name" value={filters.orderedName} onChange={(e) => handleFilterChange("orderedName", e.target.value)} />
-            <input className="column-item" placeholder="Item" value={filters.itemName} onChange={(e) => handleFilterChange("itemName", e.target.value)} />
-            <input className="column-item" placeholder="Qty" value={filters.quantity} onChange={(e) => handleFilterChange("quantity", e.target.value)} />
-            <input className="column-item" placeholder="Price" value={filters.price} onChange={(e) => handleFilterChange("price", e.target.value)} />
-            <input className="column-item" placeholder="Payment" value={filters.paymentType} onChange={(e) => handleFilterChange("paymentType", e.target.value)} />
-            <select className="column-item" value={filters.paymentRecived} onChange={(e) => handleFilterChange("paymentRecived", e.target.value)}>
-              <option value="">All</option>
-              <option value="true">True</option>
-              <option value="false">False</option>
-            </select>
-            <span className="column-item"></span>
-            <select className="column-item" value={filters.deliveryStatus} onChange={(e) => handleFilterChange("deliveryStatus", e.target.value)}>
-              <option value="">All</option>
-              <option value="OrderReceived">Order Received</option>
-              <option value="OutForDelivery">Out for Delivery</option>
-              <option value="Cancelled">Cancelled</option>
-              <option value="Delivered">Delivered</option>
-            </select>
-            <input className="column-item" placeholder="Address" value={filters.address} onChange={(e) => handleFilterChange("address", e.target.value)} />
-            <input className="column-item" placeholder="Phone" value={filters.phoneNo} onChange={(e) => handleFilterChange("phoneNo", e.target.value)} />
-          </div>
-
-          {/* Rows */}
-          {orders.length === 0 ? (
-            <div className="table-row no-orders" style={{ gridColumn: "span 10", textAlign: "center", padding: "20px", color: "#777" }}>
-              No orders found.
-            </div>
-          ) : (
-            orders.map((order) => (
-              <div key={order.orderId} className="table-row">
-                <span className="column-item">{order.orderedName}</span>
-                <span className="column-item">{order.itemName}</span>
-                <span className="column-item">{order.quantity}</span>
-                <span className="column-item">₹{order.price}</span>
-                <span className="column-item">{order.paymentType}</span>
-                <span className="column-item">
-                  <select
-                    value={String(order.paymentRecived)}
-                    onChange={(e) => updatePaymentReceived(order.orderId, e.target.value === "true")}
-                    disabled={["CREDIT", "UPI"].includes(order.paymentType) || order.paymentRecived === true}
-                  >
-                    <option value="false">False</option>
-                    <option value="true">True</option>
-                  </select>
-                </span>
-                <span className="column-item">{new Date(order.orderDateTime).toLocaleString()}</span>
-                <span className="column-item">
-                  <select value={order.deliveryStatus || "OrderReceived"} onChange={(e) => updateDeliveryStatus(order.orderId, e.target.value)}>
-                    <option value="OrderReceived">Order Received</option>
-                    <option value="OutForDelivery">Out for Delivery</option>
-                    <option value="Cancelled">Cancelled</option>
-                    <option value="Delivered">Delivered</option>
-                  </select>
-                </span>
-                <span className="column-item">{order.address}</span>
-                <span className="column-item">{order.phoneNo || "N/A"}</span>
-              </div>
-            ))
-          )}
+      {newOrderAlert && (
+        <div className="order-toast">
+          <strong>New Delivery Order!</strong><br />
+          <strong>Customer:</strong> {newOrderAlert.orderedName}<br />
+          <strong>Item:</strong> {newOrderAlert.itemName}<br />
+          <strong>Address:</strong> {newOrderAlert.address}<br />
+          <strong>Phone:</strong> {newOrderAlert.phoneNo || "N/A"}
         </div>
+      )}
+  
+      <h2>Delivery Orders Dashboard</h2>
+  
+      <div className="orders-list">
+        <table className="orders-table">
+          <thead>
+            {/* Headers */}
+            <tr>
+              <th>Ordered By</th>
+              <th>Item</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Payment</th>
+              <th>Payment Received</th>
+              <th>Order Date</th>
+              <th>Delivery Status</th>
+              <th>Address</th>
+              <th>Phone No</th>
+            </tr>
+  
+            {/* Filters */}
+            <tr>
+              <th className="table-search"><input placeholder="Name" value={filters.orderedName} onChange={(e) => handleFilterChange("orderedName", e.target.value)} /></th>
+              <th className="table-search"><input placeholder="Item" value={filters.itemName} onChange={(e) => handleFilterChange("itemName", e.target.value)} /></th>
+              <th className="table-search"><input placeholder="Qty" value={filters.quantity} onChange={(e) => handleFilterChange("quantity", e.target.value)} /></th>
+              <th className="table-search"><input placeholder="Price" value={filters.price} onChange={(e) => handleFilterChange("price", e.target.value)} /></th>
+              <th className="table-search"><input placeholder="Payment" value={filters.paymentType} onChange={(e) => handleFilterChange("paymentType", e.target.value)} /></th>
+              <th className="table-search">
+                <select value={filters.paymentRecived} onChange={(e) => handleFilterChange("paymentRecived", e.target.value)}>
+                  <option value="">All</option>
+                  <option value="true">True</option>
+                  <option value="false">False</option>
+                </select>
+              </th>
+              <th></th>
+              <th className="table-search">
+                <select value={filters.deliveryStatus} onChange={(e) => handleFilterChange("deliveryStatus", e.target.value)}>
+                  <option value="">All</option>
+                  <option value="OrderReceived">Order Received</option>
+                  <option value="OutForDelivery">Out for Delivery</option>
+                  <option value="Cancelled">Cancelled</option>
+                  <option value="Delivered">Delivered</option>
+                </select>
+              </th>
+              <th className="table-search"><input placeholder="Address" value={filters.address} onChange={(e) => handleFilterChange("address", e.target.value)} /></th>
+              <th className="table-search"><input placeholder="Phone" value={filters.phoneNo} onChange={(e) => handleFilterChange("phoneNo", e.target.value)} /></th>
+            </tr>
+          </thead>
+  
+          <tbody>
+            {orders.length === 0 ? (
+              <tr>
+                <td colSpan="10" style={{ textAlign: "center", padding: "20px" }}>
+                  No orders found.
+                </td>
+              </tr>
+            ) : (
+              orders.map((order) => (
+                <tr key={order.orderId}>
+                  <td>{order.orderedName}</td>
+                  <td>
+                    <pre style={{ margin: 0, whiteSpace: "pre-wrap", width : '200px' }}>
+                      {order.itemName.split(',').map((item) => {
+                        const [name, qty] = item.trim().split(' X ');
+                        return `${name?.trim()} X ${qty?.trim()}`;
+                      }).join('\n')}
+                    </pre>
+                  </td>
+                  <td>{order.quantity}</td>
+                  <td  style={{ margin: 0, width : "auto" }}>₹{order.price}</td>
+                  <td>{order.paymentType}</td>
+                  <td>
+                    <select
+                      value={String(order.paymentRecived)}
+                      onChange={(e) => updatePaymentReceived(order.orderId, e.target.value === "true")}
+                      disabled={["CREDIT", "UPI"].includes(order.paymentType) || order.paymentRecived === true}
+                    >
+                      <option value="false">False</option>
+                      <option value="true">True</option>
+                    </select>
+                  </td>
+                  <td>{new Date(order.orderDateTime).toLocaleString()}</td>
+                  <td>
+                    <select
+                      value={order.deliveryStatus || "OrderReceived"}
+                      onChange={(e) => updateDeliveryStatus(order.orderId, e.target.value)}
+                      style={{ margin: 0, whiteSpace: "pre-wrap", width : "auto" }}
+                    >
+                      <option value="OrderReceived">Order Received</option>
+                      <option value="OutForDelivery">Out for Delivery</option>
+                      <option value="Cancelled">Cancelled</option>
+                      <option value="Delivered">Delivered</option>
+                    </select>
+                  </td>
+                  <td>{order.address}</td>
+                  <td>{order.phoneNo || "N/A"}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );
+  
 };
 
 export default DeliveryDashboard;

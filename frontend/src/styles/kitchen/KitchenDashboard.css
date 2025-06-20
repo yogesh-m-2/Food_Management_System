@@ -14,6 +14,7 @@ h2 {
 .orders-list {
   max-width: 1200px;
   margin: 0 auto;
+  overflow-x: auto;
 }
 
 .orders-table {
@@ -21,150 +22,78 @@ h2 {
   border-collapse: collapse;
   margin-top: 20px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: white;
 }
 
-.table-header {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  background-color: #f4f4f4;
-  padding: 10px 0;
-  font-weight: bold;
-  text-align: center;
-  border-bottom: 2px solid #ccc;
-}
-
-.table-header .column-item {
-  padding: 0 15px;
-  text-transform: uppercase;
+.orders-table th,
+.orders-table td {
+  padding: 12px 15px;
+  border: 1px solid #e0e0e0;
   font-size: 14px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.orders-table th {
+  background-color: #f4f4f4;
   color: #555;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
-.table-row {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  padding: 15px 0;
-  border-bottom: 1px solid #e0e0e0;
-  text-align: center;
+.orders-table td pre {
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  font-family: inherit;
 }
 
-.table-row:nth-child(even) {
+.orders-table tr:nth-child(even) {
   background-color: #fafafa;
 }
 
-.table-row .column-item {
-  padding: 0 15px;
-  font-size: 14px;
-  color: #333;
-}
-
-.table-row .column-item:first-child {
-  font-weight: bold;
-}
-
-.table-row .column-item:last-child {
-  font-style: italic;
-}
-
-.orders-list p {
-  text-align: center;
-  font-size: 1.2rem;
-  color: #777;
-}
-
-.orders-table .table-row:hover {
+.orders-table tr:hover {
   background-color: #f9f9f9;
 }
 
-.orders-table .table-row .column-item {
-  transition: background-color 0.2s ease;
+.orders-table select {
+  padding: 6px 8px;
+  font-size: 13px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  width: 100%;
 }
 
-.table-header .column-item,
-.table-row .column-item {
-  user-select: none;
+/* Filters in thead */
+.orders-table thead input,
+.orders-table thead select {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 13px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+  outline: none;
 }
 
-.orders-table .table-row .column-item {
-  word-wrap: break-word;
-  white-space: normal;
+.orders-table thead input:focus,
+.orders-table thead select:focus {
+  border-color: #28a745;
 }
 
-@media (max-width: 1024px) {
-  .table-header,
-  .table-row {
-    display: block;
-  }
-
-  .table-header .column-item,
-  .table-row .column-item {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    text-align: left;
-  }
-
-  .table-row {
-    margin-bottom: 10px;
-  }
-
-  .table-header .column-item {
-    font-size: 12px;
-  }
-
-  .table-row .column-item {
-    font-size: 13px;
-  }
+/* Empty state row */
+.orders-table .no-orders td {
+  text-align: center;
+  font-style: italic;
+  color: #777;
+  padding: 20px;
+  background-color: #fafafa;
 }
 
-@media (max-width: 768px) {
-  .table-header,
-  .table-row {
-    display: block;
-  }
-
-  .table-header .column-item,
-  .table-row .column-item {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    text-align: left;
-  }
-
-  .table-row {
-    margin-bottom: 10px;
-  }
-
-  .table-header .column-item {
-    font-size: 12px;
-  }
-
-  .table-row .column-item {
-    font-size: 13px;
-  }
-}
-
-/* Notification Alert Styling */
-.notification {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #28a745;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-weight: bold;
-  opacity: 1;
-  transition: opacity 1s ease-in-out;
-  z-index: 1000;
-}
-
-.notification.fade-out {
-  opacity: 0;
-}
-
-/* Highlight new orders */
+/* New Order Highlight */
 .new-order {
   background-color: #d4edda !important;
   animation: fadeHighlight 2s ease-in-out;
@@ -172,43 +101,19 @@ h2 {
 
 @keyframes fadeHighlight {
   from {
-    background-color: #c3e6cb;
+    background-color: rgb(241, 241, 241);
   }
   to {
     background-color: #ffffff;
   }
 }
 
-.alert {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4CAF50;
-  color: white;
-  padding: 15px 25px;
-  border-radius: 4px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  z-index: 1000;
-  animation: slideIn 0.5s ease-out;
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-/* Alert Text Styling */
+/* Toast Notification */
 .order-toast {
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: #28a745; /* Bootstrap green */
+  background-color: #28a745;
   color: white;
   padding: 15px 20px;
   border-radius: 8px;
@@ -230,69 +135,24 @@ h2 {
     transform: translateY(0);
   }
 }
-/* Filters (Search + Dropdown) */
-.filters {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
 
-.filters input[type="text"],
-.filters select {
-  padding: 8px 12px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  min-width: 200px;
-  outline: none;
-  transition: border 0.3s ease;
-}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .orders-table thead input,
+  .orders-table thead select,
+  .orders-table td,
+  .orders-table th {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
 
-.filters input[type="text"]:focus,
-.filters select:focus {
-  border-color: #28a745;
+  .order-toast {
+    font-size: 13px;
+    padding: 12px 16px;
+    max-width: 90%;
+  }
 }
-.table-filters {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  padding: 10px 0;
-  background-color: #fff;
-  border-bottom: 1px solid #ccc;
-  gap: 5px;
-}
-
-.table-filters .column-item {
-  padding: 5px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  width: 90%;
-  margin: 0 auto;
-  box-sizing: border-box;
-}
-
-.table-filters input,
-.table-filters select {
-  width: 100%;
-  padding: 6px 8px;
-  font-size: 13px;
-  background-color: #f9f9f9;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  outline: none;
-  transition: border-color 0.3s ease;
-}
-
-.table-filters input:focus,
-.table-filters select:focus {
-  border-color: #28a745;
-}
-
-.no-orders {
-  font-style: italic;
-  background-color: #fafafa;
-  user-select: none;
+.orders-table thead th{
+  background-color: rgb(241, 241, 241);
+  color: black;
 }
