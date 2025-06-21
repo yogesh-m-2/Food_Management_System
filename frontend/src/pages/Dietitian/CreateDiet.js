@@ -9,7 +9,7 @@ const CreateDiet = () => {
     const [itemDateTime, setItemDateTime] = useState({}); // Stores date & time for each item
     const location = useLocation();
     const [filteredDietItems,setfilteredDietItems] = useState([])
-    const [selectedCategory, setSelectedCategory] = useState("Liquid");
+    const [selectedCategory, setSelectedCategory] = useState("All");
     const { orderedUserId: stateOrderedUserId, patientName, dietDetails,patientMobileNumber } = location.state || {};
     const navigate = useNavigate();
     const [uniqueCategories, setUniqueCategories] = useState([]);
@@ -94,14 +94,15 @@ const CreateDiet = () => {
         item.category.toLowerCase() === selectedCategory.toLowerCase();    
         const isComboMatch = dietDetails.combo.includes((item.combination||'').toLowerCase());
         // const isAllergiesMatch = dietDetails.allergies.length === 0 ? true : dietDetails.allergies.includes((item.diet_type|| '').toLowerCase());
-        const dietTypes = (item.diet_type || '')
-                            .toLowerCase()
-                            .split(',')
-                            .map(type => type.trim());
-
-                            const isAllergiesMatch = dietDetails.allergies.length === 0 
-                            ? true 
-                            : dietTypes.some(type => dietDetails.allergies.includes(type));
+        // const dietTypes = (item.diet_type || '')
+        //                     .toLowerCase()
+        //                     .split(',')
+        //                     .map(type => type.trim());
+        const isAllergiesMatch = dietDetails.allergies.length === 0 
+        ? true 
+        : dietDetails.allergies.some(allergy =>
+            (item.name || '').toLowerCase().includes(allergy.toLowerCase())
+          );      
 
         return isComboMatch && !isDisliked && iscatagoryselected && isAllergiesMatch;
     })
