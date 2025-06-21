@@ -12,19 +12,25 @@ const CreateDiet = () => {
     const [selectedCategory, setSelectedCategory] = useState("Liquid");
     const { orderedUserId: stateOrderedUserId, patientName, dietDetails,patientMobileNumber } = location.state || {};
     const navigate = useNavigate();
+    const [uniqueCategories, setUniqueCategories] = useState([]);
 
     useEffect(() => {
         const fetchDietItems = async () => {
             try {
                 const response = await api.get("/menu-items");
                 setDietItems(response.data);
+    
+                // Extract unique categories
+                const categories = Array.from(new Set(response.data.map(item => item.category)));
+                setUniqueCategories(["All", ...categories]); // Include 'All' option
             } catch (error) {
                 console.error("Error fetching diet items:", error);
             }
         };
-
+    
         fetchDietItems();
     }, []);
+    
 
     const handleCheckout = () => {
         let orderedUserId = stateOrderedUserId;
@@ -84,8 +90,9 @@ const CreateDiet = () => {
         const isDisliked = dietDetails.dislikes.some(dislike => 
             item.name.toLowerCase().includes(dislike.toLowerCase())
         );
-        const iscatagoryselected = item.category.toLowerCase() === selectedCategory.toLowerCase()
-        const isComboMatch = dietDetails.combo.includes(item.category.toLowerCase());
+        const iscatagoryselected = selectedCategory === "All" || 
+        item.category.toLowerCase() === selectedCategory.toLowerCase();    
+        const isComboMatch = dietDetails.combo.includes((item.combination||'').toLowerCase());
         // const isAllergiesMatch = dietDetails.allergies.length === 0 ? true : dietDetails.allergies.includes((item.diet_type|| '').toLowerCase());
         const dietTypes = (item.diet_type || '')
                             .toLowerCase()
@@ -105,8 +112,7 @@ const CreateDiet = () => {
         <div className="diet-container">
             <aside className="diet-sidebar">
                 <ul>
-                    {dietDetails.combo
-                        .map(category => (
+                {uniqueCategories.map(category => ( 
                             <li
                                 key={category}
                                 className={selectedCategory === category ? "active" : ""}

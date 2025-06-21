@@ -3,12 +3,14 @@ import api from "../../services/api";
 import "../../styles/delivery/DeliveryDashboard.css";
 import config from "../../config";
 import SockJS from 'sockjs-client';
+import { FaBell } from "react-icons/fa";
 
 const DeliveryDashboard = () => {
   const [allOrders, setAllOrders] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [newOrderAlert, setNewOrderAlert] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);  
   const [filters, setFilters] = useState({
     orderId : "",
     orderedName: "",
@@ -48,13 +50,21 @@ const DeliveryDashboard = () => {
       const orderData = message.payload;
 
       if (message.type === "ORDER_UPDATED" && orderData.orderStatus === "OUT_FOR_DELIVERY") {
-        console.log("new notification received")
-        setNewOrderAlert(orderData);
-
-
-        setTimeout(() => setNewOrderAlert(null), 5000);
+        console.log("new notification received");
+      
+        const newNotification = {
+          id: Date.now(),
+          orderedName: orderData.orderedName,
+          itemName: orderData.itemName,
+          address: orderData.address,
+          phoneNo: orderData.phoneNo || "N/A",
+          orderId: orderData.orderId,
+        };
+      
+        setNotifications((prev) => [newNotification, ...prev]);
         fetchOrders();
       }
+      
     };
 
     return () => socket.close();
@@ -106,15 +116,52 @@ const DeliveryDashboard = () => {
 
   return (
     <div className="delivery-dashboard-container">
-{newOrderAlert && (
-  <div className="order-toast">
-    <strong>New Delivery Order!</strong><br />
-    <strong>Customer:</strong> {newOrderAlert.orderedName}<br />
-    <strong>Item:</strong> {newOrderAlert.itemName}<br />
-    <strong>Address:</strong> {newOrderAlert.address}<br />
-    <strong>Phone:</strong> {newOrderAlert.phoneNo || "N/A"}
-  </div>
-)}
+      <div className="notification-bell">
+  <button className="bell-btn" onClick={() => setShowNotifications(!showNotifications)}>
+    <FaBell className="bell-label" size={24} style={{color:"green"}}/>
+    {notifications.length > 0 && <span className="badge">{notifications.length}</span>}
+  </button>
+
+  {showNotifications && (
+    <div className="notifications-panel">
+      {notifications.length === 0 ? (
+        <p style={{paddingLeft:"10px"}}>No notifications</p>
+      ) : (
+        notifications.map((n) => (
+          <div key={n.id} className="notification-item">
+            <div className="notification-content">
+              <div className="notification-details">
+                <div><strong>Order ID:</strong> {n.orderId}</div>
+                <div><strong>Customer:</strong> {n.orderedName}</div>
+                <div>
+                  <strong>Item(s):</strong>
+                  <ul className="notification-item-list">
+                    {n.itemName.split(',').map((item, idx) => (
+                      <li key={idx}>{item.trim()}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div><strong>Address:</strong> {n.address}</div>
+                <div><strong>Phone:</strong> {n.phoneNo}</div>
+              </div>
+            </div>
+            <button
+              className="dismiss-btn"
+              onClick={() =>
+                setNotifications((prev) =>
+                  prev.filter((notif) => notif.id !== n.id)
+                )
+              }
+            >
+              ×
+            </button>
+          </div>
+        ))
+      )}
+    </div>
+  )}
+</div>
+
 
   
       <h2>Delivery Orders Dashboard</h2>

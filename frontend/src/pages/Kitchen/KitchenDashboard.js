@@ -3,12 +3,15 @@ import api from "../../services/api";
 import "../../styles/kitchen/KitchenDashboard.css";
 import config from "../../config";
 import SockJS from 'sockjs-client';
+import { FaBell } from "react-icons/fa"; // Bell icon
+
 
 const KitchenDashboard = () => {
   const [allOrders, setAllOrders] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [newOrderAlert, setNewOrderAlert] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);  
   const [filters, setFilters] = useState({
     orderId: "",
     orderedName: "",
@@ -19,6 +22,7 @@ const KitchenDashboard = () => {
     address: "",
     orderStatus: "",
   });
+
 
   const fetchOrders = async () => {
     try {
@@ -51,15 +55,19 @@ const KitchenDashboard = () => {
             order.orderId === newOrder.orderId ? newOrder : order
           );
         } else if (message.type === "ORDER_CREATED") {
-          setNewOrderAlert({
+          const newNotification = {
+            id: Date.now(),
             orderId: newOrder.orderId,
             orderedName: newOrder.orderedName,
             itemName: newOrder.itemName,
             quantity: newOrder.quantity,
-          });
-          setTimeout(() => setNewOrderAlert(null), 5000);
+          };
+        
+          setNotifications((prev) => [newNotification, ...prev]);
+        
           return [newOrder, ...prevOrders];
         }
+        
         return prevOrders;
       });
     };
@@ -110,7 +118,7 @@ const KitchenDashboard = () => {
 
   return (
     <div className="kitchen-dashboard-container">
-      {newOrderAlert && (
+      {/* {newOrderAlert && (
         <div className="order-toast">
           <strong>New Order Received!</strong><br />
           <strong>Order ID:</strong> {newOrderAlert.orderId}<br />
@@ -118,8 +126,51 @@ const KitchenDashboard = () => {
           <strong>Item:</strong> {newOrderAlert.itemName}<br />
           <strong>Quantity:</strong> {newOrderAlert.quantity}<br />
         </div>
-      )}
+      )} */}
   
+  <div className="notification-bell">
+  <button className="bell-btn" onClick={() => setShowNotifications(!showNotifications)}>
+    <FaBell style={{color:"green"}} size={24} />
+    {notifications.length > 0 && <span className="badge">{notifications.length}</span>}
+  </button>
+
+  {showNotifications && (
+  <div className="notifications-panel">
+    {notifications.length === 0 ? (
+      <p style={{paddingLeft:"10px"}}>No notifications</p>
+    ) : (
+      notifications.map((n) => (
+        <div key={n.id} className="notification-item">
+          <div className="notification-content">
+            <div className="notification-details">
+              <div><strong>Order ID:</strong> {n.orderId}</div>
+              <div><strong>Name:</strong> {n.orderedName}</div>
+              <div>
+              <strong>Item:</strong>
+              <ul className="notification-item-list">
+                {n.itemName.split(',').map((item, idx) => (
+                  <li key={idx}>{item.trim()}</li>
+                ))}
+              </ul>
+            </div>
+
+              <div><strong>Quantity:</strong> {n.quantity}</div>
+            </div>
+          </div>
+          <button
+            className="dismiss-btn"
+            onClick={() => setNotifications((prev) => prev.filter((notif) => notif.id !== n.id))}
+          >
+            ×
+          </button>
+        </div>
+      ))
+    )}
+  </div>
+)}
+
+</div>
+
       <h2>Kitchen Orders Dashboard</h2>
   
       <div className="orders-list">
