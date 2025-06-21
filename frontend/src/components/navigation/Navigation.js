@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { FaBars, FaTimes, FaHome, FaSignOutAlt  } from 'react-icons/fa'; // Icons
 import '../../styles/navigation/Navigation.css';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 
 const Navigation = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
+  useEffect(() => {
+    setIsCollapsed(true); // Collapse sidebar
+  }, [location.pathname]); // Run when route changes
+  
   const handleLogout = () => {
     logout(); // Call logout from context
     navigate('/'); // Redirect to login page
