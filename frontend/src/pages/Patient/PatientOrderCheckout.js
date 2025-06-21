@@ -15,6 +15,7 @@ const PatientOrderCheckout = () => {
     const [submittedAddress, setSubmittedAddress] = useState(''); // State to store submitted address
     const [isEditing, setIsEditing] = useState(false); // State to toggle between edit/view mode
     const [uhid, setUhid] = useState('');
+    const [mobileNumber, setMobileNumber] = useState('');
     const [showloginFrom, setshowloginFrom] = useState(false);
     const handlePatientLogin = async() => {
         try {
@@ -39,18 +40,20 @@ const PatientOrderCheckout = () => {
         setAddress(e.target.value);
     };
 
-    // Handle address submission
     const handleAddressSubmit = (e) => {
         e.preventDefault();
+        if (!/^\d{10}$/.test(mobileNumber)) {
+          alert("Please enter a valid 10-digit mobile number.");
+          return;
+        }
         setSubmittedAddress(address);
-        setIsEditing(false); // Switch to view mode after submission
-    };
-
-    // Handle address edit
-    const handleAddressEdit = () => {
-        setAddress(submittedAddress); // Set the address to the submitted one for editing
-        setIsEditing(true); // Switch to edit mode
-    };
+        setIsEditing(false);
+      };
+      
+      const handleAddressEdit = () => {
+        setIsEditing(true);
+      };
+      
 
     // Calculate item total
     const calculateItemTotal = (item, quantity) => {
@@ -135,7 +138,8 @@ const PatientOrderCheckout = () => {
             paymentStatus: null, // Initially null
             orderDateTime: new Date().toISOString(), // Current date and time
             address: submittedAddress, // Use the submitted address
-            paymentRecived: false
+            paymentRecived: false,
+            phoneNo : mobileNumber
         };
 
         try {
@@ -157,6 +161,10 @@ const PatientOrderCheckout = () => {
 
     // Handle Cash On Delivery (COD) payment
     const handleCOD = async () => {
+        if (!/^\d{10}$/.test(mobileNumber)) {
+            alert("Please enter a valid 10-digit mobile number.");
+            return;
+        }
         const orderDetails = {
             orderedRole: "Patient", // Since it's a patient order
             orderedName: username, // Use the logged-in username
@@ -173,6 +181,7 @@ const PatientOrderCheckout = () => {
             paymentStatus: null, // Initially null
             orderDateTime: new Date().toISOString(), // Current date and time
             address: submittedAddress, // Use the submitted address
+            phoneNo : mobileNumber
         };
 
         try {
@@ -233,24 +242,43 @@ const PatientOrderCheckout = () => {
             </div>
 
             <div className="delivery-details">
-                <h2>Delivery Details</h2>
-                {submittedAddress && !isEditing ? (
-                    <div>
-                        <p>{submittedAddress}</p>
-                        <button onClick={handleAddressEdit} className="edit-address">Edit Address</button>
-                    </div>
-                ) : (
-                    <form onSubmit={handleAddressSubmit}>
-                        <textarea 
-                            value={address} 
-                            onChange={handleAddressChange} 
-                            placeholder="Enter your delivery address" 
-                            className="address-input"
-                        />
-                        <button type="submit" className="address-submit">Submit</button>
-                    </form>
-                )}
-            </div>
+  <h2>Delivery Details</h2>
+
+  {!isEditing && submittedAddress && mobileNumber ? (
+    <div className="delivery-view">
+      <p><strong>Address:</strong> {submittedAddress}</p>
+      <p><strong>Mobile:</strong> {mobileNumber}</p>
+      <button onClick={handleAddressEdit} className="edit-delivery-btn">Edit</button>
+    </div>
+  ) : (
+    <form onSubmit={handleAddressSubmit} className="delivery-form">
+      <label htmlFor="address">Address</label>
+      <textarea
+        id="address"
+        value={address}
+        onChange={handleAddressChange}
+        placeholder="Enter your delivery address"
+        className="address-input"
+        required
+      />
+
+      <label htmlFor="mobileNumber">Mobile Number</label>
+      <input
+        type="tel"
+        id="mobileNumber"
+        value={mobileNumber}
+        onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, ''))}
+        placeholder="Enter 10-digit mobile number"
+        maxLength="10"
+        className="mobile-input"
+        required
+      />
+
+      <button type="submit" className="address-submit">Submit</button>
+    </form>
+  )}
+</div>
+
 
             <div className="order-summary">
                 <h2>Order Total:</h2>
@@ -287,7 +315,10 @@ const PatientOrderCheckout = () => {
 
                 <div className="payment-options">
                     <button onClick={handleCOD} className="cod">Cash On Delivery</button>
-                    <button onClick={()=>{setshowloginFrom(true)}} className="upi">UPI</button>
+                    <button onClick={()=>{if (!/^\d{10}$/.test(mobileNumber)) {
+                            alert("Please enter a valid 10-digit mobile number.");
+                            return;}
+                        setshowloginFrom(true)}} className="upi">UPI</button>
                 </div>
             </div>
         </div>

@@ -150,3 +150,50 @@
     font-size: 1rem;
     text-align: right;
 }
+.delivery-details {
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  
+  .delivery-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    margin-top: 14px;
+  }
+  
+  .address-input,
+  .mobile-input {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 10px;
+  }
+  
+  .address-submit,
+  .edit-delivery-btn {
+    margin-top: 10px;
+    padding: 10px 18px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .address-submit:hover,
+  .edit-delivery-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .delivery-view p {
+    margin: 6px 0;
+  }
+  
