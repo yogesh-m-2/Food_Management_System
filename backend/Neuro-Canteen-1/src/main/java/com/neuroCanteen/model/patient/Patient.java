@@ -23,6 +23,7 @@ public class Patient {
     private String uhid; // Unique Hospital ID
     private String ipId; // In-Patient ID
     private String name;
+    private String type;
     private int age;
     private String gender;
     private String primaryConsultant;
