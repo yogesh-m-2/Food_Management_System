@@ -48,6 +48,7 @@ public class PatientServiceImpl  implements PatientService {
         existingPatient.setCombo(patient.getCombo());
         existingPatient.setAllergies(patient.getAllergies());
         existingPatient.setDislikes(patient.getDislikes());
+        existingPatient.setType(patient.getType());
 
         return patientRepository.save(existingPatient);
     }
