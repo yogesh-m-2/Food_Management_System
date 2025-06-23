@@ -10,7 +10,7 @@ const CreateDiet = () => {
     const location = useLocation();
     const [filteredDietItems,setfilteredDietItems] = useState([])
     const [selectedCategory, setSelectedCategory] = useState("All");
-    const { orderedUserId: stateOrderedUserId, patientName, dietDetails,patientMobileNumber } = location.state || {};
+    const { orderedUserId: stateOrderedUserId, patientName, dietDetails,patientMobileNumber, patientdeliverydetails } = location.state || {};
     const navigate = useNavigate();
     const [uniqueCategories, setUniqueCategories] = useState([]);
 
@@ -21,8 +21,8 @@ const CreateDiet = () => {
                 setDietItems(response.data);
     
                 // Extract unique categories
-                const categories = Array.from(new Set(response.data.map(item => item.category)));
-                setUniqueCategories(["All", ...categories]); // Include 'All' option
+                // const categories = Array.from(new Set(response.data.map(item => item.category)));
+                setUniqueCategories(["All", ...dietDetails.combo]); // Include 'All' option
             } catch (error) {
                 console.error("Error fetching diet items:", error);
             }
@@ -38,7 +38,7 @@ const CreateDiet = () => {
             alert("No diet items selected!");
             return;
         }
-        navigate("/dietitian/checkout", { state: { selectedDiets, dietItems, itemDateTime, orderedUserId, patientName,patientMobileNumber } });
+        navigate("/dietitian/checkout", { state: { selectedDiets, dietItems, itemDateTime, orderedUserId, patientName,patientMobileNumber,patientdeliverydetails } });
     };
 
     const handleAddToDiet = (item) => {
@@ -90,21 +90,22 @@ const CreateDiet = () => {
         const isDisliked = dietDetails.dislikes.some(dislike => 
             item.name.toLowerCase().includes(dislike.toLowerCase())
         );
-        const iscatagoryselected = selectedCategory === "All" || 
-        item.category.toLowerCase() === selectedCategory.toLowerCase();    
-        const isComboMatch = dietDetails.combo.includes((item.combination||'').toLowerCase());
-        // const isAllergiesMatch = dietDetails.allergies.length === 0 ? true : dietDetails.allergies.includes((item.diet_type|| '').toLowerCase());
-        // const dietTypes = (item.diet_type || '')
-        //                     .toLowerCase()
-        //                     .split(',')
-        //                     .map(type => type.trim());
-        const isAllergiesMatch = dietDetails.allergies.length === 0 
-        ? true 
-        : dietDetails.allergies.some(allergy =>
-            (item.name || '').toLowerCase().includes(allergy.toLowerCase())
-          );      
 
-        return isComboMatch && !isDisliked && iscatagoryselected && isAllergiesMatch;
+        const iscatagoryselected = selectedCategory === "All" || 
+        item.category.toLowerCase() === selectedCategory; 
+
+        // const isComboMatch = dietDetails.combo.includes((item.categories||'').toLowerCase());
+        const isAllergiesMatch = dietDetails.allergies.length === 0
+        ? true
+        : dietDetails.allergies.some(allowed =>
+            (item.diet_type || '')
+              .split(',')
+              .map(type => type.trim().toLowerCase())
+              .includes(allowed.toLowerCase())
+          );
+
+        
+        return  !isDisliked && iscatagoryselected && isAllergiesMatch;
     })
     setfilteredDietItems(filteredDietItems)
     },[dietItems,dietDetails.dislikes,dietDetails.combo,selectedCategory])

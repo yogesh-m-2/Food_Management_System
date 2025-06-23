@@ -5,10 +5,10 @@ import '../../styles/staff/OrderCheckout.css'; // Import CSS
 import '../../styles/dietitian/diettablecheckout.css'; // Import CSS
 const DietitianOrderCheckout = () => {
     const location = useLocation();
-    const { selectedDiets = {}, dietItems = [], itemDateTime = {}, orderedUserId,patientName,patientMobileNumber } = location.state || {};
+    const { selectedDiets = {}, dietItems = [], itemDateTime = {}, orderedUserId,patientName,patientMobileNumber,patientdeliverydetails } = location.state || {};
     const navigate = useNavigate();
     const [tip, setTip] = useState(0);
-    const [address, setAddress] = useState('');
+    const [address, setAddress] = useState(patientdeliverydetails);
     const [isEditing, setIsEditing] = useState(true);
 
     // Calculate total price for each item
