@@ -15,6 +15,7 @@ const PatientOrderCheckout = () => {
     const [submittedAddress, setSubmittedAddress] = useState(''); // State to store submitted address
     const [isEditing, setIsEditing] = useState(false); // State to toggle between edit/view mode
     const [uhid, setUhid] = useState('');
+    const [orderedusername, setorderedusername] = useState('');
     const [mobileNumber, setMobileNumber] = useState('');
     const [showloginFrom, setshowloginFrom] = useState(false);
     const handlePatientLogin = async() => {
@@ -123,8 +124,8 @@ const PatientOrderCheckout = () => {
         };
         console.log(response)
         const orderDetails = {
-            orderedRole: "Patient", // Since it's a patient order
-            orderedName: username, // Use the logged-in username
+            orderedRole: "Out_Patient", // Since it's a patient order
+            orderedName: orderedusername, // Use the logged-in username
             orderedUserId: username, // Same as the username if no user id
             itemName: Object.keys(cartItems).map(itemId => {
                 const item = menuItems.find(menuItem => menuItem.id === parseInt(itemId));
@@ -166,8 +167,8 @@ const PatientOrderCheckout = () => {
             return;
         }
         const orderDetails = {
-            orderedRole: "Patient", // Since it's a patient order
-            orderedName: username, // Use the logged-in username
+            orderedRole: "Out_Patient", // Since it's a patient order
+            orderedName: orderedusername, // Use the logged-in username
             orderedUserId: username, // Same as the username if no user id
             itemName: Object.keys(cartItems).map(itemId => {
                 const item = menuItems.find(menuItem => menuItem.id === parseInt(itemId));
@@ -252,13 +253,15 @@ const PatientOrderCheckout = () => {
     </div>
   ) : (
     <form onSubmit={handleAddressSubmit} className="delivery-form">
-      <label htmlFor="address">Address</label>
-      <textarea
-        id="address"
-        value={address}
-        onChange={handleAddressChange}
-        placeholder="Enter your delivery address"
-        className="address-input"
+
+<label htmlFor="name">Name</label>
+      <input
+        type="name"
+        id="name"
+        value={orderedusername}
+        onChange={(e) => setorderedusername(e.target.value)}
+        placeholder="Enter your Name"
+        className="mobile-input"
         required
       />
 
@@ -274,6 +277,15 @@ const PatientOrderCheckout = () => {
         required
       />
 
+      <label htmlFor="address">Address</label>
+      <textarea
+        id="address"
+        value={address}
+        onChange={handleAddressChange}
+        placeholder="Enter your delivery address"
+        className="address-input"
+        required
+      />
       <button type="submit" className="address-submit">Submit</button>
     </form>
   )}
