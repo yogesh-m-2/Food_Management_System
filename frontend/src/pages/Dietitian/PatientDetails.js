@@ -15,12 +15,45 @@ const PatientDetails = () => {
   const [newAllergy, setNewAllergy] = useState("");
   const [newDislike, setNewDislike] = useState("");
   const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
+  const [roomDetails, setRoomDetails] = useState("");
+
+  
+
+  useEffect(() => {
+    const fetchMenuCategories = async () => {
+      try {
+        const response = await api.get("/menu-items");
+        const items = response.data;
+  
+        // Extract unique categories
+        const uniqueCategories = [...new Set(items.map(item => item.category?.toLowerCase()))];
+  
+        setCategories(uniqueCategories);
+  
+        // Initialize combo checkboxes dynamically
+        const initialCombo = {};
+        uniqueCategories.forEach(cat => {
+          initialCombo[cat] = false;
+        });
+        setCombo(initialCombo);
+      } catch (error) {
+        console.error("Error fetching menu items:", error);
+      }
+    };
+  
+    fetchMenuCategories();
+  }, []);
+  
 
   useEffect(() => {
     const fetchPatient = async () => {
       try {
         const response = await api.get(`/patient/patients/${floor}/${ward}/${room}/${bed}`);
         setPatient(response.data[0]);
+        const roomMsg = `Room No: ${response.data[0]?.roomNo || "N/A"}, Floor: ${response.data[0]?.floor || "N/A"}, Ward: ${response.data[0]?.ward || "N/A"}, Bed: ${response.data[0]?.bedNo || "N/A"}`;
+        setRoomDetails(roomMsg);
+
       } catch (error) {
         console.error("Error fetching patient details:", error);
       }
@@ -31,7 +64,7 @@ const PatientDetails = () => {
   const handleComboChange = (e) => {
     setCombo({ ...combo, [e.target.name]: e.target.checked });
   };
-
+  
   const handleAddAllergy = () => {
     if (newAllergy.trim()) {
       setAllergies([...allergies, newAllergy.trim()]);
@@ -65,7 +98,7 @@ const PatientDetails = () => {
     console.log(dietDetails); // Replace with actual submission logic
     setShowPopup(false);
     navigate("/dietitian/create-diet", { 
-      state: { orderedUserId: patient.uhid, patientName: patient.name, dietDetails,patientMobileNumber : patient.patientMobileNo }});
+      state: { orderedUserId: patient.uhid, patientName: patient.name, dietDetails,patientMobileNumber : patient.patientMobileNo , patientdeliverydetails : roomDetails}});
   };
 
   if (!patient) {
@@ -75,6 +108,7 @@ const PatientDetails = () => {
       </div>
     );
   }
+  
 
   return (
     <div>
@@ -106,6 +140,7 @@ const PatientDetails = () => {
           <p><span className="label">Room No:</span> {patient.roomNo || "N/A"}</p>
           <p><span className="label">Floor:</span> {patient.floor || "N/A"}</p>
           <p><span className="label">Ward:</span> {patient.ward || "N/A"}</p>
+          <p><span className="label">Bed:</span> {patient.bedNo || "N/A"}</p>
           <p><span className="label">Patient Mobile Number:</span> {patient.patientMobileNo || "N/A"}</p>
           <p><span className="label">Attender Mobile Number:</span> {patient.attendantContact || "N/A"}</p>
         </div>
@@ -137,18 +172,17 @@ const PatientDetails = () => {
             <div className="form-group">
               <label>Combo:</label>
               <div className="checkbox-group">
-                <div className="checkbox-item">
-                  <p>Solid</p>
-                  <input type="checkbox" name="solid" checked={combo.solid} onChange={handleComboChange} />
-                </div>
-                <div className="checkbox-item">
-                  <p>Semi Solid</p>
-                  <input type="checkbox" name="semi solid" checked={combo["semi solid"]} onChange={handleComboChange} />
-                </div>
-                <div className="checkbox-item">
-                  <p>Liquid</p>
-                  <input type="checkbox" name="liquid" checked={combo.liquid} onChange={handleComboChange} />
-                </div>
+                {categories.map((category) => (
+                  <div className="checkbox-item" key={category}>
+                    <p>{category.charAt(0).toUpperCase() + category.slice(1)}</p>
+                    <input
+                      type="checkbox"
+                      name={category}
+                      checked={combo[category] || false}
+                      onChange={handleComboChange}
+                    />
+                  </div>
+                ))}
               </div>
             </div>
             <div className="form-group">
