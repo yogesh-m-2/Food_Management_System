@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../../services/api";
 import "../../styles/dietitian/PatientDetatils.css";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight,ArrowLeft } from "lucide-react";
 
 
 const PatientDetails = () => {
@@ -78,56 +78,57 @@ const PatientDetails = () => {
 
   return (
     <div>
-    <div className="wonder-nav">
-        <Link to="/dietitian/dietitian-dashboard" className="wonder-link">Floor</Link>
-        <ArrowRight className="nav-icon" />
-        <Link to={`/dietitian/wards/${floor}`} className="wonder-link">Ward</Link>
-        <ArrowRight className="nav-icon" />
-        <Link to={`/dietitian/rooms/${floor}/${ward}`} className="wonder-link">Rooms</Link>
-        <ArrowRight className="nav-icon" />
-        <Link to={`/dietitian/beds/${floor}/${ward}/${room}`} className="wonder-link">Beds</Link>
-        <ArrowRight className="nav-icon" />
-        <Link to={`/dietitian/patient/${floor}/${ward}/${room}/${bed}`} className="wonder-link">Patient</Link>
-      </div>
     <div className="patient-details-container">
-      <div className="patient-info-wrapper">
-        {/* Profile Image */}
-        <div className="patient-profile-image">
-          <div className="profile-placeholder">
-            <svg className="profile-icon"></svg>
-          </div>
+    <div className="patient-info-wrapper">
+  <button className="btn-back" onClick={() => navigate(-1)}>← Back</button>
+  <div className="patient-info-grid">
+    {/* Left: Profile Image */}
+    <div className="patient-profile-image">
+      <div className="profile-placeholder">
+        <svg className="profile-icon" /* your SVG icon here */ />
+      </div>
+    </div>
+
+    {/* Right: Patient Info Card */}
+    <div className="patient-info-card">
+      <div className="patient-info-section">
+        <div className="patient-info-details">
+          {/* Patient details */}
+          <p><span className="label">Name:</span> {patient.name || "N/A"}</p>
+          <p><span className="label">UHID:</span> {patient.uhid || "N/A"}</p>
+          <p><span className="label">Age:</span> {patient.age || "N/A"}</p>
+          <p><span className="label">Gender:</span> {patient.gender || "N/A"}</p>
+          <p><span className="label">Primary Consultant:</span> {patient.primaryConsultant || "N/A"}</p>
+          <p><span className="label">Diagnosis Description:</span> {patient.diagnosisDescription || "N/A"}</p>
+          <p><span className="label">Admission Date/Time:</span> {patient.admissionDateTime || "N/A"}</p>
+          <p><span className="label">Discharge Date/Time:</span> {patient.dischargeDateTime || "N/A"}</p>
+          <p><span className="label">Patient Status:</span> {patient.patientStatus || "N/A"}</p>
+          <p><span className="label">Room No:</span> {patient.roomNo || "N/A"}</p>
+          <p><span className="label">Floor:</span> {patient.floor || "N/A"}</p>
+          <p><span className="label">Ward:</span> {patient.ward || "N/A"}</p>
+          <p><span className="label">Patient Mobile Number:</span> {patient.patientMobileNo || "N/A"}</p>
+          <p><span className="label">Attender Mobile Number:</span> {patient.attendantContact || "N/A"}</p>
         </div>
 
-        {/* Patient Information */}
-        <div className="patient-info-card">
-          <div className="patient-info-grid">
-            <div className="patient-info-section">
-              <div className="patient-info-details">
-                <p><span className="label">Name:</span> {patient.name || "N/A"}</p>
-                <p><span className="label">UHID:</span> {patient.uhid || "N/A"}</p>
-                <p><span className="label">Age:</span> {patient.age || "N/A"}</p>
-                <p><span className="label">Gender:</span> {patient.gender || "N/A"}</p>
-                <p><span className="label">Primary Consultant:</span> {patient.primaryConsultant || "N/A"}</p>
-                <p><span className="label">Diagnosis Description:</span> {patient.diagnosisDescription || "N/A"}</p>
-                <p><span className="label">Admission Date/Time:</span> {patient.admissionDateTime || "N/A"}</p>
-                <p><span className="label">Discharge Date/Time:</span> {patient.dischargeDateTime || "N/A"}</p>
-                <p><span className="label">Patient Status:</span> {patient.patientStatus || "N/A"}</p>
-                <p><span className="label">Room No:</span> {patient.roomNo || "N/A"}</p>
-                <p><span className="label">Floor:</span> {patient.floor || "N/A"}</p>
-                <p><span className="label">Ward:</span> {patient.ward || "N/A"}</p>
-                <p><span className="label">Patient Mobile Number:</span> {patient.patientMobileNo || "N/A"}</p>
-                <p><span className="label">Attender Mobile Number:</span> {patient.attendantContact || "N/A"}</p>
-              </div>
-              <div className="patient-actions">
-                <button className="btn-primary" onClick={() => setShowPopup(true)}>Create Diet</button>
-                <button className="btn-primary" onClick={() => navigate("/dietitian/order-history", { 
-                    state: { orderedUserId: patient.uhid, orderedRole: "Patient" }
-                  })}>Check Diet History</button>
-              </div>
-            </div>
-          </div>
+        {/* Actions */}
+        <div className="patient-actions">
+          <button className="btn-primary" onClick={() => setShowPopup(true)}>Create Diet</button>
+          <button
+            className="btn-primary"
+            onClick={() =>
+              navigate("/dietitian/order-history", {
+                state: { orderedUserId: patient.uhid, orderedRole: "Patient" },
+              })
+            }
+          >
+            Check Diet History
+          </button>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
 
       {showPopup && (
         <div className="popup-overlay">
