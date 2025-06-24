@@ -112,9 +112,4 @@ public class OrderController {
     public Order updatePaymentReceived(@PathVariable Long id, @RequestParam boolean paymentReceived) {
         return orderService.updatePaymentReceived(id, paymentReceived);
     }
-
-    @GetMapping("/by-phone")
-    public List<Order> getOrdersByPhoneNoForOutPatient(@RequestParam String phoneNo) {
-        return orderService.getOrdersByPhoneNoAndRole(phoneNo, "Out_Patient");
-    }
 }
