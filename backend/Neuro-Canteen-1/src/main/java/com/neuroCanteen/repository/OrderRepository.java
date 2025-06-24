@@ -22,8 +22,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         String paymentType,
         PaymentStatus paymentStatus
     );
-
-    List<Order> findByPhoneNo(String phoneNo);
-
-    List<Order> findByPhoneNoAndOrderedRole(String phoneNo, String orderedRole);
+    @Query("SELECT o FROM Order o WHERE o.PhoneNo = :PhoneNo AND o.orderedRole = :orderedRole")
+    List<Order> findByPhoneNoAndOrderedRole(@Param("PhoneNo") String PhoneNo, @Param("orderedRole") String orderedRole);
 }

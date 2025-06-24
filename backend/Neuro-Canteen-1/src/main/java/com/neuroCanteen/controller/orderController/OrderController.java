@@ -114,7 +114,7 @@ public class OrderController {
     }
 
     @GetMapping("/by-phone")
-    public List<Order> getOrdersByPhoneNo(@RequestParam String phoneNo) {
+    public List<Order> getOrdersByPhoneNoForOutPatient(@RequestParam String phoneNo) {
         return orderService.getOrdersByPhoneNoAndRole(phoneNo, "Out_Patient");
     }
 }
