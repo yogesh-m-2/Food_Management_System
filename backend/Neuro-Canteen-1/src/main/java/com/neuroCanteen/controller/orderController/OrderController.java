@@ -3,8 +3,6 @@ package com.neuroCanteen.controller.orderController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -117,15 +115,6 @@ public class OrderController {
 
     @GetMapping("/by-phone")
     public List<Order> getOrdersByPhoneNo(@RequestParam String phoneNo) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String role = auth != null && auth.getName() != null ? auth.getName() : "Public";
-        
-        if ("Public".equals(role)) {
-            // Only allow Out_Patient orders for public access
-            return orderService.getOrdersByPhoneNoAndRole(phoneNo, "Out_Patient");
-        } else {
-            // For authenticated users, allow access based on their role
-            return orderService.getOrdersByPhoneNo(phoneNo);
-        }
+        return orderService.getOrdersByPhoneNoAndRole(phoneNo, "Out_Patient");
     }
 }
