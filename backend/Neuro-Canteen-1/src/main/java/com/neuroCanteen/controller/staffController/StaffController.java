@@ -14,7 +14,7 @@ import com.neuroCanteen.dto.StaffDTO;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+// import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/staff")
@@ -24,10 +24,8 @@ public class StaffController {
     private StaffService staffService;
 
     @GetMapping
-    public List<StaffDTO> getAllStaff() {
-        return staffService.getAllStaff().stream()
-                .map(StaffDTO::fromStaff)
-                .collect(Collectors.toList());
+    public List<Staff> getAllStaff() {
+        return staffService.getAllStaff();
     }
 
     @GetMapping("/{id}")

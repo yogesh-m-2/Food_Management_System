@@ -253,6 +253,7 @@ const DeliveryDashboard = () => {
                       value={order.deliveryStatus || "OrderReceived"}
                       onChange={(e) => updateDeliveryStatus(order.orderId, e.target.value)}
                       style={{ margin: 0, whiteSpace: "pre-wrap", width : "auto" }}
+                      disabled={["Cancelled", "Delivered"].includes(order.deliveryStatus)}
                     >
                       <option value="OrderReceived">Order Received</option>
                       <option value="OutForDelivery">Out for Delivery</option>
