@@ -1,528 +1,184 @@
 import React, { useState, useEffect } from "react";
-import api from "../../services/api"; // Assuming you have an 'api' instance setup for Axios
+import api from "../../services/api"; // Replace with your actual API instance
+
+const initialPatientState = {
+  name: "",
+  uhid: "",
+  ipId: "",
+  age: 0,
+  gender: "",
+  primaryConsultant: "",
+  diagnosisDescription: "",
+  admissionDateTime: null,
+  dischargeDateTime: null,
+  patientStatus: "",
+  roomNo: "",
+  bedNo: "",
+  floor: "",
+  ward: "",
+  patientMobileNo: "",
+  attendantContact: "",
+};
 
 const PatientManagement = () => {
   const [patients, setPatients] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newPatient, setNewPatient] = useState({
-    name: "",
-    uhid: "",
-    ipId: "",
-    age: 0,
-    gender: "",
-    primaryConsultant: "",
-    diagnosisDescription: "",
-    admissionDateTime: null,
-    dischargeDateTime: null,
-    patientStatus: "",
-    roomNo: "",
-    bedNo: "",
-    floor: "",
-    ward: "",
-    patientMobileNo: "",
-    attendantContact: "",
-    type : ""
-  });
-  const [editingPatient, setEditingPatient] = useState(null); // For storing the patient being edited
+  const [newPatient, setNewPatient] = useState(initialPatientState);
+  const [editingPatient, setEditingPatient] = useState(null);
 
   useEffect(() => {
     fetchPatients();
   }, []);
 
-  // Fetching patients from the API
   const fetchPatients = async () => {
     try {
-      const response = await api.get("/patient/all"); // Updated API endpoint
+      const response = await api.get("/patient/all");
       setPatients(response.data);
     } catch (error) {
       console.error("Error fetching patients:", error);
     }
   };
 
-  // Handle patient deletion
+  const validatePatient = (patient) => {
+    const requiredFields = [
+      "name",
+      "uhid",
+      "age",
+      "gender",
+      "primaryConsultant",
+      "diagnosisDescription",
+      "admissionDateTime",
+      "patientStatus",
+      "roomNo",
+      "bedNo",
+      "floor",
+      "ward",
+      "patientMobileNo",
+    ];
+
+    for (let field of requiredFields) {
+      if (!patient[field]) {
+        alert(`Field "${field}" is required.`);
+        return false;
+      }
+    }
+
+    if (!/^\d{10}$/.test(patient.patientMobileNo)) {
+      alert("Patient Mobile Number must be exactly 10 digits.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleAdd = async () => {
+    if (!validatePatient(newPatient)) return;
+
+    try {
+      const response = await api.post("/patient/add", newPatient);
+      setPatients([...patients, response.data.data]);
+      setNewPatient(initialPatientState);
+      setShowAddForm(false);
+    } catch (error) {
+      console.error("Error adding patient:", error);
+    }
+  };
+
   const handleDelete = async (id) => {
     try {
-      await api.delete(`/patient/delete/${id}`); // Updated API endpoint
+      await api.delete(`/patient/delete/${id}`);
       setPatients(patients.filter(patient => patient.id !== id));
     } catch (error) {
       console.error("Error deleting patient:", error);
     }
   };
 
-  // Handle patient editing (show edit form)
   const handleEdit = (patient) => {
-    setEditingPatient(patient); // Set the selected patient for editing
+    setEditingPatient({ ...patient });
   };
 
-  // Handle updating the patient details
   const handleUpdate = async () => {
+    if (!validatePatient(editingPatient)) return;
+
     try {
-      console.log("Updating Patient:", editingPatient);
       const response = await api.put(`/patient/update/${editingPatient.id}`, editingPatient);
-      setPatients(patients.map((patient) => 
-        patient.id === editingPatient.id ? response.data.data : patient
-      ));
-      setEditingPatient(null); // Clear the editing state
+      setPatients(patients.map(p => (p.id === editingPatient.id ? response.data.data : p)));
+      setEditingPatient(null);
     } catch (error) {
-      if (error.response.status == 409) {
-        console.log(error.response.data.message);
-        alert(error.response.data.message);
-      } else if (error.response.status == 201) {
-        console.log('User Created');
-      } else if (error.response.status == 500) {
-        console.log('Server is Not Working');
-      } else {
-        console.log('Error:', error.message);
-      }
+      console.error("Error updating patient:", error);
     }
   };
 
-  // Handle adding a new patient
-  const handleAdd = async () => {
-    try {
-      const response = await api.post("/patient/add", newPatient); // Updated API endpoint
-      setPatients([...patients, response.data.data]);
-      setNewPatient({
-        name: "",
-        uhid: "",
-        ipId: "",
-        age: 0,
-        gender: "",
-        primaryConsultant: "",
-        diagnosisDescription: "",
-        admissionDateTime: null,
-        dischargeDateTime: null,
-        patientStatus: "",
-        roomNo: "",
-        bedNo: "",
-        floor: "",
-        ward: "",
-        patientMobileNo: "",
-        attendantContact: "",
-        type : ""
-      }); // Reset form
-      setShowAddForm(false); // Close the add form
-    }catch (error) {
-      if (error.response.status == 409) {
-        console.log(error.response.data.message);
-        alert(error.response.data.message);
-      } else if (error.response.status == 201) {
-        console.log('User Created');
-      } else if (error.response.status == 500) {
-        console.log('Server is Not Working');
-      } else {
-        console.log('Error:', error.message);
-      }
-    }
-  };
-
-  // Handle change in form fields for adding or editing
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    const updateState = (stateSetter, currentState) => {
+      const updatedValue = (name.includes("DateTime") && value) ? value + ":00" : value;
+      stateSetter({ ...currentState, [name]: updatedValue });
+    };
+
     if (editingPatient) {
-      if (name === "admissionDateTime" || name === "dischargeDateTime") {
-        setEditingPatient({ ...editingPatient, [name]: value + ":00" }); // Update editingPatient with time
-      } else {
-        setEditingPatient({ ...editingPatient, [name]: value }); // Update editingPatient
-      }
+      updateState(setEditingPatient, editingPatient);
     } else {
-      if (name === "admissionDateTime" || name === "dischargeDateTime") {
-        setNewPatient({ ...newPatient, [name]: value + ":00" }); // Update newPatient with time
-      } else {
-        setNewPatient({ ...newPatient, [name]: value }); // Update newPatient
-      }
+      updateState(setNewPatient, newPatient);
     }
   };
+
+  const renderForm = (patient, onChangeHandler, onSubmit, onCancel) => (
+    <div className="modal">
+      <div className="modal-content">
+        <h3>{editingPatient ? "Edit Patient" : "Add New Patient"}</h3>
+        <div className="form-columns">
+          {[
+            ["name", "Patient Name"],
+            ["uhid", "UHID"],
+            ["ipId", "In-Patient ID (Optional)"],
+            ["age", "Age", "number"],
+            ["gender", "Gender"],
+            ["primaryConsultant", "Primary Consultant"],
+            ["diagnosisDescription", "Diagnosis Description"],
+            ["patientStatus", "Patient Status"],
+            ["admissionDateTime", "Admission Time", "datetime-local"],
+            ["dischargeDateTime", "Discharge Time", "datetime-local"],
+            ["roomNo", "Room No"],
+            ["bedNo", "Bed No"],
+            ["floor", "Floor"],
+            ["ward", "Ward"],
+            ["patientMobileNo", "Mobile No"],
+            ["attendantContact", "Attendant Contact (Optional)"],
+          ].map(([name, placeholder, type = "text"]) => (
+            <input
+              key={name}
+              type={type}
+              name={name}
+              placeholder={placeholder}
+              value={
+                patient[name]
+                  ? type === "datetime-local"
+                    ? patient[name].slice(0, 16)
+                    : patient[name]
+                  : ""
+              }
+              onChange={onChangeHandler}
+            />
+          ))}
+        </div>
+        <button onClick={onSubmit}>Save</button>
+        <button onClick={onCancel}>Cancel</button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="patient-management">
-      <button
-        onClick={() => {
-          setNewPatient((prev) => ({ ...prev, type: "OPD" }));
-          setShowAddForm(true);
-        }}
-        className="add-btn"
-      >
+      <button onClick={() => { setShowAddForm(true); setEditingPatient(null); }} className="add-btn">
         Add Patient
       </button>
-  
-      {/* Add Patient Form */}
-      {showAddForm && (
-  <div className="modal">
-    <div className="modal-content">
-      <h3>Add New Patient</h3>
 
-      {/* Patient Type Selection */}
-      <div className="form-row">
-        <label>Patient Type</label>
-        <select
-          name="type"
-          value={newPatient.type}
-          onChange={handleChange}
-        >
-          <option value="In-Patient">In-Patient</option>
-          <option value="OPD">OPD (Outpatient)</option>
-        </select>
-      </div>
+      {showAddForm && renderForm(newPatient, handleChange, handleAdd, () => setShowAddForm(false))}
 
-      {/* Conditionally Render Fields */}
-      {newPatient.type === "OPD" ? (
-        <>
-          <input
-            type="text"
-            name="name"
-            placeholder="Patient Name"
-            value={newPatient.name}
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            name="uhid"
-            placeholder="OPD UHID"
-            value={newPatient.uhid}
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            name="gender"
-            placeholder="Gender"
-            value={newPatient.gender}
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            name="patientMobileNo"
-            placeholder="Contact Number"
-            value={newPatient.patientMobileNo}
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            name="attendantContact"
-            placeholder="Alternative Number"
-            value={newPatient.attendantContact}
-            onChange={handleChange}
-          />
-        </>
-      ) : (
-        <div className="form-columns">
-          <div className="form-column">
-            <input
-              type="text"
-              name="name"
-              placeholder="Patient Name"
-              value={newPatient.name}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="uhid"
-              placeholder="UHID"
-              value={newPatient.uhid}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="ipId"
-              placeholder="In-Patient ID"
-              value={newPatient.ipId}
-              onChange={handleChange}
-            />
-            <input
-              type="number"
-              name="age"
-              placeholder="Age"
-              value={newPatient.age}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-column">
-            <input
-              type="text"
-              name="gender"
-              placeholder="Gender"
-              value={newPatient.gender}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="primaryConsultant"
-              placeholder="Primary Consultant"
-              value={newPatient.primaryConsultant}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="diagnosisDescription"
-              placeholder="Diagnosis Description"
-              value={newPatient.diagnosisDescription}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="patientStatus"
-              placeholder="Patient Status"
-              value={newPatient.patientStatus}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-column">
-            <input
-              type="datetime-local"
-              name="admissionDateTime"
-              value={newPatient.admissionDateTime ? newPatient.admissionDateTime.slice(0, 16) : ""}
-              onChange={handleChange}
-            />
-            <input
-              type="datetime-local"
-              name="dischargeDateTime"
-              value={newPatient.dischargeDateTime ? newPatient.dischargeDateTime.slice(0, 16) : ""}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="roomNo"
-              placeholder="Room No"
-              value={newPatient.roomNo}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="bedNo"
-              placeholder="Bed No"
-              value={newPatient.bedNo}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-column">
-            <input
-              type="text"
-              name="floor"
-              placeholder="Floor"
-              value={newPatient.floor}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="ward"
-              placeholder="Ward"
-              value={newPatient.ward}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="patientMobileNo"
-              placeholder="Contact"
-              value={newPatient.patientMobileNo}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="attendantContact"
-              placeholder="Attendant Contact"
-              value={newPatient.attendantContact}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-      )}
+      {editingPatient && renderForm(editingPatient, handleChange, handleUpdate, () => setEditingPatient(null))}
 
-      <button style={{marginBottom:"5px"}} onClick={handleAdd}>Save</button>
-      <button  onClick={() => setShowAddForm(false)}>Cancel</button>
-    </div>
-  </div>
-)}
-
-  
-      {/* Edit Patient Form */}
-      {editingPatient && (
-  <div className="modal">
-    <div className="modal-content">
-      <h3>Edit Patient</h3>
-
-      {/* Patient Type Selection */}
-      <div className="form-row">
-        <label>Patient Type</label>
-        <select
-          name="type"
-          value={editingPatient.type || ""}
-          onChange={handleChange}
-        >
-          <option value="In-Patient">In-Patient</option>
-          <option value="OPD">OPD (Outpatient)</option>
-        </select>
-      </div>
-
-      {/* Conditionally Render Fields */}
-      {editingPatient.type === "OPD" ? (
-        <>
-          <input
-            type="text"
-            name="name"
-            placeholder="Patient Name"
-            value={editingPatient.name}
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            name="uhid"
-            placeholder="OPD UHID"
-            value={editingPatient.uhid}
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            name="gender"
-            placeholder="Gender"
-            value={editingPatient.gender}
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            name="patientMobileNo"
-            placeholder="Contact Number"
-            value={editingPatient.patientMobileNo}
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            name="attendantContact"
-            placeholder="Alternative Number"
-            value={editingPatient.attendantContact}
-            onChange={handleChange}
-          />
-        </>
-      ) : (
-        <div className="form-columns">
-          <div className="form-column">
-            <input
-              type="text"
-              name="name"
-              placeholder="Patient Name"
-              value={editingPatient.name}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="uhid"
-              placeholder="UHID"
-              value={editingPatient.uhid}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="ipId"
-              placeholder="In-Patient ID"
-              value={editingPatient.ipId}
-              onChange={handleChange}
-            />
-            <input
-              type="number"
-              name="age"
-              placeholder="Age"
-              value={editingPatient.age}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-column">
-            <input
-              type="text"
-              name="gender"
-              placeholder="Gender"
-              value={editingPatient.gender}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="primaryConsultant"
-              placeholder="Primary Consultant"
-              value={editingPatient.primaryConsultant}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="diagnosisDescription"
-              placeholder="Diagnosis Description"
-              value={editingPatient.diagnosisDescription}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="patientStatus"
-              placeholder="Patient Status"
-              value={editingPatient.patientStatus}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-column">
-            <input
-              type="datetime-local"
-              name="admissionDateTime"
-              value={editingPatient.admissionDateTime ? editingPatient.admissionDateTime.slice(0, 16) : ""}
-              onChange={handleChange}
-            />
-            <input
-              type="datetime-local"
-              name="dischargeDateTime"
-              value={editingPatient.dischargeDateTime ? editingPatient.dischargeDateTime.slice(0, 16) : ""}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="roomNo"
-              placeholder="Room No"
-              value={editingPatient.roomNo}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="bedNo"
-              placeholder="Bed No"
-              value={editingPatient.bedNo}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-column">
-            <input
-              type="text"
-              name="floor"
-              placeholder="Floor"
-              value={editingPatient.floor}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="ward"
-              placeholder="Ward"
-              value={editingPatient.ward}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="patientMobileNo"
-              placeholder="Contact"
-              value={editingPatient.patientMobileNo}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="attendantContact"
-              placeholder="Attendant Contact"
-              value={editingPatient.attendantContact}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-      )}
-
-      <button style={{marginBottom:"5px"}} onClick={handleUpdate}>Update</button>
-      <button onClick={() => setEditingPatient(null)}>Cancel</button>
-    </div>
-  </div>
-)}
-
-  
-      {/* Patient Table */}
       <table>
         <thead>
           <tr>
@@ -551,7 +207,6 @@ const PatientManagement = () => {
       </table>
     </div>
   );
-  
 };
 
 export default PatientManagement;

@@ -5,21 +5,17 @@ import "../../styles/orderstatus/OrderSuccess.css";
 const OrderSuccess = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { orderHistoryRedirect, orderedUserId, orderedRole } = location.state || { 
-        orderHistoryRedirect: "/",
-        orderedUserId: "",
-        orderedRole: ""
-    };
+    const { orderHistoryRedirect = "/", orderedUserId = "", orderedRole = "" } = location.state || {};
 
     useEffect(() => {
-        // Redirect after 5 seconds, passing state instead of query parameters
-        console.log(orderHistoryRedirect, { 
-            state: { orderedUserId, orderedRole } 
-        })
         const timer = setTimeout(() => {
-            navigate(orderHistoryRedirect, { 
-                state: { orderedUserId, orderedRole } 
-            });
+            if (orderedUserId === "Public") {
+                // Redirect to a different route if orderedUserId is "Public"
+                navigate("/patient/order");
+            } else {
+                // Otherwise, redirect to the normal orderHistoryRedirect route
+                navigate(orderHistoryRedirect, { state: { orderedUserId, orderedRole } });
+            }
         }, 5000);
 
         return () => clearTimeout(timer);

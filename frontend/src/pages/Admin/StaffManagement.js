@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import api from "../../services/api"; // Assuming you have an 'api' instance setup for Axios
+import api from "../../services/api"; // Replace with your Axios instance
 
-const StaffManagement = () => {
-  const [staffList, setStaffList] = useState([]);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newStaff, setNewStaff] = useState({
+// ✅ Moved this function ABOVE useState to prevent reference error
+function initialStaffState() {
+  return {
     employeeId: "",
     name: "",
     department: "",
@@ -12,7 +11,13 @@ const StaffManagement = () => {
     mobileNumber: "",
     password: "",
     paymentDetails: "",
-  });
+  };
+}
+
+const StaffManagement = () => {
+  const [staffList, setStaffList] = useState([]);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newStaff, setNewStaff] = useState(initialStaffState());
   const [editStaff, setEditStaff] = useState(null);
 
   useEffect(() => {
@@ -28,53 +33,46 @@ const StaffManagement = () => {
     }
   };
 
+  const validateStaff = (staff) => {
+    const { employeeId, name, department, role, mobileNumber, password } = staff;
+
+    if (!employeeId || !name || !department || !role || !mobileNumber || !password) {
+      alert("All fields except Payment Details are required.");
+      return false;
+    }
+
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(mobileNumber)) {
+      alert("Mobile number must be exactly 10 digits.");
+      return false;
+    }
+
+    return true;
+  };
+
   const handleAdd = async () => {
-    if (newStaff.name && newStaff.employeeId) {
-      try {
-        const response = await api.post("/staff", newStaff);
-        setStaffList([...staffList, response.data.data]);
-        setNewStaff({
-          employeeId: "",
-          name: "",
-          department: "",
-          role: "",
-          mobileNumber: "",
-          password: "",
-          paymentDetails: "",
-        });
-        setShowAddForm(false);
-      } catch (error) {
-        if (error.response.status == 409) {
-          console.log(error.response.data.message);
-          alert(error.response.data.message);
-        } else if (error.response.status == 201) {
-          console.log('User Created');
-        } else if (error.response.status == 500) {
-          console.log('Server is Not Working');
-        } else {
-          console.log('Error:', error.message);
-        }
-      }
+    if (!validateStaff(newStaff)) return;
+
+    try {
+      const response = await api.post("/staff", newStaff);
+      setStaffList([...staffList, response.data.data]);
+      setNewStaff(initialStaffState());
+      setShowAddForm(false);
+    } catch (error) {
+      handleError(error);
     }
   };
 
   const handleEdit = async (id) => {
+    if (!validateStaff(editStaff)) return;
+
     try {
       const response = await api.put(`/staff/${id}`, editStaff);
       setStaffList(staffList.map(staff => (staff.id === id ? response.data.data : staff)));
       setEditStaff(null);
-      setShowAddForm(false)
-    }catch (error) {
-      if (error.response.status == 409) {
-        console.log(error.response.data.message);
-        alert(error.response.data.message);
-      } else if (error.response.status == 201) {
-        console.log('User Created');
-      } else if (error.response.status == 500) {
-        console.log('Server is Not Working');
-      } else {
-        console.log('Error:', error.message);
-      }
+      setShowAddForm(false);
+    } catch (error) {
+      handleError(error);
     }
   };
 
@@ -101,9 +99,23 @@ const StaffManagement = () => {
     setShowAddForm(true);
   };
 
+  const handleError = (error) => {
+    if (error.response?.status === 409) {
+      alert(error.response.data.message);
+    } else if (error.response?.status === 500) {
+      alert("Server error occurred.");
+    } else {
+      alert("An unexpected error occurred.");
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <div className="staff-management">
-      <button onClick={() => {setShowAddForm(true);setEditStaff(null)}}>Add New Staff</button>
+      <button onClick={() => { setShowAddForm(true); setEditStaff(null); }}>
+        Add New Staff
+      </button>
+
       <table>
         <thead>
           <tr>
@@ -135,59 +147,63 @@ const StaffManagement = () => {
         <div className="modal">
           <div className="modal-content">
             <h3>{editStaff ? "Edit Staff" : "Add New Staff"}</h3>
+
             <input
               type="text"
               name="employeeId"
-              placeholder="Employee ID"
+              placeholder="Employee ID *"
               value={editStaff ? editStaff.employeeId : newStaff.employeeId}
               onChange={handleChange}
             />
             <input
               type="text"
               name="name"
-              placeholder="Name"
+              placeholder="Name *"
               value={editStaff ? editStaff.name : newStaff.name}
               onChange={handleChange}
             />
             <input
               type="text"
               name="role"
-              placeholder="Role"
+              placeholder="Role *"
               value={editStaff ? editStaff.role : newStaff.role}
               onChange={handleChange}
             />
             <input
               type="text"
               name="department"
-              placeholder="Department"
+              placeholder="Department *"
               value={editStaff ? editStaff.department : newStaff.department}
               onChange={handleChange}
             />
             <input
               type="text"
               name="mobileNumber"
-              placeholder="Mobile Number"
+              placeholder="Mobile Number *"
               value={editStaff ? editStaff.mobileNumber : newStaff.mobileNumber}
               onChange={handleChange}
             />
             <input
               type="password"
               name="password"
-              placeholder="Password"
+              placeholder="Password *"
               value={editStaff ? editStaff.password : newStaff.password}
               onChange={handleChange}
             />
             <input
               type="text"
               name="paymentDetails"
-              placeholder="Payment Details"
+              placeholder="Payment Details (optional)"
               value={editStaff ? editStaff.paymentDetails : newStaff.paymentDetails}
               onChange={handleChange}
             />
+
             <button onClick={() => (editStaff ? handleEdit(editStaff.id) : handleAdd())}>
               Save
             </button>
-            <button onClick={() => setShowAddForm(false)}>Cancel</button>
+            <button onClick={() => { setShowAddForm(false); setEditStaff(null); }}>
+              Cancel
+            </button>
           </div>
         </div>
       )}

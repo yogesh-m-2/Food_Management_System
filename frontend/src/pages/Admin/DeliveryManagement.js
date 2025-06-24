@@ -26,6 +26,32 @@ const DeliveryManagement = () => {
   };
 
   const handleAddOrUpdate = async () => {
+    // Select which user object to validate: edit or new
+    const user = editDeliverUser || newDeliverUser;
+
+    // Validation for all mandatory fields
+    if (!user.name.trim()) {
+      alert("Name is required.");
+      return;
+    }
+    if (!user.username.trim()) {
+      alert("Username is required.");
+      return;
+    }
+    if (!user.password.trim()) {
+      alert("Password is required.");
+      return;
+    }
+    if (!user.contact.trim()) {
+      alert("Contact is required.");
+      return;
+    }
+    // Validate phone number is exactly 10 digits
+    if (!/^\d{10}$/.test(user.contact)) {
+      alert("Contact must be a 10 digit number.");
+      return;
+    }
+
     try {
       if (editDeliverUser) {
         // Update existing delivery user
@@ -41,18 +67,15 @@ const DeliveryManagement = () => {
         setDeliverUsers([...deliverUsers, response.data.data]);
       }
       resetForm();
-    }catch (error) {
-        if (error.response.status == 409) {
-          console.log(error.response.data.message);
-          alert(error.response.data.message);
-        } else if (error.response.status == 201) {
-          console.log('User Created');
-        } else if (error.response.status == 500) {
-          console.log('Server is Not Working');
-        } else {
-          console.log('Error:', error.message);
-        }
+    } catch (error) {
+      if (error.response?.status === 409) {
+        alert(error.response.data.message);
+      } else if (error.response?.status === 500) {
+        alert("Server is not working.");
+      } else {
+        alert("Error: " + error.message);
       }
+    }
   };
 
   const handleDelete = async (id) => {
@@ -150,7 +173,7 @@ const DeliveryManagement = () => {
             <input
               type="text"
               name="contact"
-              placeholder="Contact"
+              placeholder="Contact (10 digit number)"
               value={editDeliverUser ? editDeliverUser.contact : newDeliverUser.contact}
               onChange={handleChange}
             />
