@@ -24,25 +24,35 @@ const KitchenManagement = () => {
   };
 
   const handleAddOrUpdate = async () => {
+    // Select which user to validate (edit or new)
+    const user = editUser || newUser;
+
+    // Validation: all fields mandatory
+    if (!user.userId.trim()) {
+      alert("User ID is required.");
+      return;
+    }
+    if (!user.password.trim()) {
+      alert("Password is required.");
+      return;
+    }
+
     try {
       if (editUser) {
         const response = await api.put(`/kitchen-users/${editUser.id}`, editUser);
-        setKitchenUsers(kitchenUsers.map((user) => (user.id === editUser.id ? response.data.data : user)));
+        setKitchenUsers(kitchenUsers.map((u) => (u.id === editUser.id ? response.data.data : u)));
       } else {
         const response = await api.post("/kitchen-users", newUser);
         setKitchenUsers([...kitchenUsers, response.data.data]);
       }
       resetForm();
-    }catch (error) {
-      if (error.response.status == 409) {
-        console.log(error.response.data.message);
+    } catch (error) {
+      if (error.response?.status === 409) {
         alert(error.response.data.message);
-      } else if (error.response.status == 201) {
-        console.log('User Created');
-      } else if (error.response.status == 500) {
-        console.log('Server is Not Working');
+      } else if (error.response?.status === 500) {
+        alert("Server is not working.");
       } else {
-        console.log('Error:', error.message);
+        alert("Error: " + error.message);
       }
     }
   };

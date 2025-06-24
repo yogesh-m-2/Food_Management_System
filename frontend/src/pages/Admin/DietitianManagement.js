@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../../services/api"; // Assuming Axios instance is set up
+import api from "../../services/api"; // Axios instance assumed
 
 const DietitianManagement = () => {
   const [dietitians, setDietitians] = useState([]);
@@ -26,6 +26,21 @@ const DietitianManagement = () => {
   };
 
   const handleAddOrUpdate = async () => {
+    const data = editDietitian || newDietitian;
+    const { name, username, password, specialization } = data;
+
+    // Validation - collect missing fields
+    const missingFields = [];
+    if (!name.trim()) missingFields.push("Name");
+    if (!username.trim()) missingFields.push("Username");
+    if (!password.trim()) missingFields.push("Password");
+    if (!specialization.trim()) missingFields.push("Specialization");
+
+    if (missingFields.length > 0) {
+      alert(`Please fill in the following field(s):\n- ${missingFields.join("\n- ")}`);
+      return;
+    }
+
     try {
       if (editDietitian) {
         const response = await api.put(`/dietitian/${editDietitian.id}`, editDietitian);
@@ -35,20 +50,17 @@ const DietitianManagement = () => {
         setDietitians([...dietitians, response.data.data]);
       }
       resetForm();
-    }catch (error) {
-      if (error.response.status == 409) {
-        console.log(error.response.data.message);
+    } catch (error) {
+      if (error.response?.status === 409) {
         alert(error.response.data.message);
-      } else if (error.response.status == 201) {
-        console.log('User Created');
-      } else if (error.response.status == 500) {
-        console.log('Server is Not Working');
+      } else if (error.response?.status === 500) {
+        alert("Server is not working.");
       } else {
-        console.log('Error:', error.message);
+        alert("An unexpected error occurred.");
+        console.error(error);
       }
     }
   };
-  
 
   const handleDelete = async (id) => {
     try {
@@ -69,7 +81,7 @@ const DietitianManagement = () => {
   };
 
   const openEditForm = (dietitian) => {
-    setEditDietitian(dietitian);
+    setEditDietitian({ ...dietitian, password: "" }); // Clear password for security
     setShowForm(true);
   };
 
@@ -79,9 +91,12 @@ const DietitianManagement = () => {
     setShowForm(false);
   };
 
+  const currentData = editDietitian || newDietitian;
+
   return (
     <div className="dietitian-management">
       <button onClick={() => setShowForm(true)}>Add New Dietitian</button>
+
       <table>
         <thead>
           <tr>
@@ -113,10 +128,40 @@ const DietitianManagement = () => {
         <div className="modal">
           <div className="modal-content">
             <h3>{editDietitian ? "Edit Dietitian" : "Add New Dietitian"}</h3>
-            <input type="text" name="name" placeholder="Name" value={editDietitian ? editDietitian.name : newDietitian.name} onChange={handleChange} />
-            <input type="text" name="username" placeholder="Username" value={editDietitian ? editDietitian.username : newDietitian.username} onChange={handleChange} />
-            <input type="password" name="password" placeholder="Password" value={editDietitian ? editDietitian.password : newDietitian.password} onChange={handleChange} />
-            <input type="text" name="specialization" placeholder="Specialization" value={editDietitian ? editDietitian.specialization : newDietitian.specialization} onChange={handleChange} />
+
+            <input
+              type="text"
+              name="name"
+              placeholder="Name"
+              value={currentData.name}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="text"
+              name="username"
+              placeholder="Username"
+              value={currentData.username}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={currentData.password}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="text"
+              name="specialization"
+              placeholder="Specialization"
+              value={currentData.specialization}
+              onChange={handleChange}
+              required
+            />
+
             <button onClick={handleAddOrUpdate}>Save</button>
             <button onClick={resetForm}>Cancel</button>
           </div>
