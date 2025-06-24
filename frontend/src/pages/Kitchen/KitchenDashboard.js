@@ -46,7 +46,8 @@ const KitchenDashboard = () => {
 
 
     socket.onmessage = (event) => {
-      const message = JSON.parse(event.data);
+      const cleaned = event.data.replace(/[\u0000-\u0019]+/g, '');
+      const message = JSON.parse(cleaned);
       const newOrder = message.payload;
 
       setAllOrders((prevOrders) => {
@@ -64,8 +65,12 @@ const KitchenDashboard = () => {
           };
         
           setNotifications((prev) => [newNotification, ...prev]);
+          const fixedOrder = {
+            ...newOrder,
+            orderStatus: newOrder.orderStatus == "null" ? null : "", 
+          };
         
-          return [newOrder, ...prevOrders];
+          return [fixedOrder, ...prevOrders];
         }
         
         return prevOrders;
@@ -77,6 +82,7 @@ const KitchenDashboard = () => {
 
   useEffect(() => {
     const filtered = allOrders.filter((order) => {
+      console.log(filters.orderStatus)
       return (
         (filters.orderId === "" || order.orderId.toString().includes(filters.orderId)) &&
         (filters.orderedName === "" || (order.orderedName || " ").toLowerCase().includes(filters.orderedName.toLowerCase())) &&
@@ -85,7 +91,7 @@ const KitchenDashboard = () => {
         (filters.price === "" || order.price.toString().startsWith(filters.price)) &&
         (filters.paymentType === "" || order.paymentType.toLowerCase().includes(filters.paymentType.toLowerCase())) &&
         (filters.address === "" || order.address.toLowerCase().includes(filters.address.toLowerCase())) &&
-        (filters.orderStatus === "" || order.orderStatus === filters.orderStatus)
+        (filters.orderStatus === "" || order.orderStatus === (filters.orderStatus === "New Order" ? null : filters.orderStatus))
       );
     });
 
@@ -93,6 +99,7 @@ const KitchenDashboard = () => {
   }, [filters, allOrders]);
 
   const handleStatusChange = async (orderId, newStatus) => {
+    if (newStatus === "New Order") return;
     try {
       await api.patch(`/orders/${orderId}/status?orderStatus=${newStatus}`);
       setAllOrders((prevOrders) =>
@@ -115,7 +122,7 @@ const KitchenDashboard = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
-
+  console.log(orders)
   return (
     <div className="kitchen-dashboard-container">
       {/* {newOrderAlert && (
@@ -198,12 +205,14 @@ const KitchenDashboard = () => {
               <th className = "table-serach"><input placeholder="Payment" value={filters.paymentType} onChange={(e) => handleFilterChange("paymentType", e.target.value)} /></th>
               <th className = "table-serach"><input placeholder="Address" value={filters.address} onChange={(e) => handleFilterChange("address", e.target.value)} /></th>
               <th className = "table-serach">
-                <select value={filters.orderStatus} onChange={(e) => handleFilterChange("orderStatus", e.target.value)}>
-                  <option value="">All</option>
-                  <option value="RECEIVED">Received</option>
-                  <option value="PREPARED">Prepared</option>
-                  <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
-                </select>
+              <select value={filters.orderStatus ?? "null"} onChange={(e) => handleFilterChange("orderStatus", e.target.value)}>
+              <option value="">All</option>
+              <option value="New Order">New Order</option>
+              <option value="RECEIVED">Received</option>
+              <option value="PREPARED">Prepared</option>
+              <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
+            </select>
+
               </th>
             </tr>
           </thead>
@@ -234,11 +243,13 @@ const KitchenDashboard = () => {
                   <td>{order.address}</td>
                   <td>
                     <select
-                      value={order.orderStatus || "RECEIVED"}
+                      value={order.orderStatus || "New Order"}
                       onChange={(e) => handleStatusChange(order.orderId, e.target.value)}
                       style={{ margin: 0, width : "auto" }}
+                      disabled={["OUT_FOR_DELIVERY"].includes(order.orderStatus) || order.orderStatus === "OUT_FOR_DELIVERY"}
                     >
                       <option value="RECEIVED">Order Received</option>
+                      <option value="New Order">New Order</option>
                       <option value="PREPARED">Prepared</option>
                       <option value="OUT_FOR_DELIVERY">Sent for Delivery</option>
                     </select>

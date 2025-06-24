@@ -40,7 +40,6 @@ const OrderCheckout = () => {
 
     //     fetchStaffDetails();
     // }, []);
-
     const handleAddressSubmit = (e) => {
         e.preventDefault();
         if (!address.trim()) {
@@ -80,6 +79,10 @@ const OrderCheckout = () => {
             alert("Please enter a valid 10-digit mobile number.");
             return;
         }
+        if((address.length <= 10)){
+            alert("Fill the address Properly atleast 10 Character")
+            return
+        }
         const payment_metadata = await api.post("/payment/createOrder", { price: grandTotal });
         const { orderId, amount } = payment_metadata.data;
 
@@ -100,7 +103,7 @@ const OrderCheckout = () => {
                     contact: "1234567890",
                 },
                 notes: {
-                    address: submittedAddress,
+                    address: address,
                 },
             };
 
@@ -133,7 +136,7 @@ const OrderCheckout = () => {
             paymentType: "UPI",
             paymentStatus: null,
             orderDateTime: new Date().toISOString(),
-            address: submittedAddress,
+            address: address,
             paymentRecived: false,
             phoneNo : mobileNumber
         };
@@ -169,6 +172,10 @@ const OrderCheckout = () => {
             alert("Please enter a valid 10-digit mobile number.");
             return;
         }
+        if((address.length <= 10)){
+            alert("Fill the address Properly atleast 10 Character")
+            return
+        }
         const orderDetails = {
             orderedRole: "Staff",
             orderedName: username,
@@ -184,7 +191,7 @@ const OrderCheckout = () => {
             paymentType: "COD",
             paymentStatus: null,
             orderDateTime: new Date().toISOString(),
-            address: submittedAddress,
+            address: address,
             phoneNo : mobileNumber
         };
 
@@ -211,6 +218,11 @@ const OrderCheckout = () => {
             alert("Please enter a valid 10-digit mobile number.");
             return;
         }
+        if((address.length <= 10)){
+            alert("Fill the address Properly atleast 10 Character")
+            return
+        }
+        
         const orderDetails = {
             orderedRole: "Staff",
             orderedName: username,
@@ -226,7 +238,7 @@ const OrderCheckout = () => {
             paymentType: "CREDIT",
             paymentStatus: null,
             orderDateTime: new Date().toISOString(),
-            address: submittedAddress,
+            address: address,
             phoneNo : mobileNumber
 
         };
@@ -271,7 +283,7 @@ const OrderCheckout = () => {
 
             {submittedAddress && mobileNumber && !isEditing ? (
                 <div className="delivery-view">
-                <p><strong>Address:</strong> {submittedAddress}</p>
+                <p><strong>Address:</strong> {address}</p>
                 <p><strong>Mobile:</strong> {mobileNumber}</p>
                 <button onClick={handleAddressEdit} className="edit-delivery-btn">Edit</button>
                 </div>
@@ -337,10 +349,6 @@ const OrderCheckout = () => {
                     <span>TO PAY</span>
                     <span>₹{grandTotal.toFixed(2)}</span>
                 </div>
-                <div className="summary-item">
-                    <span>CREDIT BALANCE</span>
-                    <span>₹{grandTotal.toFixed(2)}</span>
-                </div>
 
                 <div className="payment-options">
                     <button onClick={handleCOD} className="cod">Cash On Delivery</button>
@@ -348,7 +356,7 @@ const OrderCheckout = () => {
                 </div>
 
                 <div className="payment-options">
-                    <button onClick={handlecredit} className="cod">Credit</button>
+                    <button onClick={handlecredit} className="cod">Pay Later</button>
                 </div>
                 {/* <div className="payment-options">
                     <button style={{backgroundColor:"blue"}} onClick={handleorderhistory} className="cod">Order History</button>
