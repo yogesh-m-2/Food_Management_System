@@ -22,4 +22,5 @@ public interface OrderService {
     List<Order> getOrdersOutForDelivery();
     List<Order> getFilteredOrders(String orderedRole, String paymentType, PaymentStatus paymentStatus);
     void markOrdersAsPaid(List<Long> orderIds);
+    List<Order> getOrdersByPhoneNoAndRole(String phoneNo, String orderedRole);
 }
