@@ -30,7 +30,7 @@ public class Order {
     private OrderStatus orderStatus; // Received, Prepared, Out for Delivery
 
     private String paymentType; // Cash, Card, UPI, etc.
-    private String PhoneNo;
+    private String phoneNo;
     private boolean paymentRecived;
     
     @Enumerated(EnumType.STRING)
