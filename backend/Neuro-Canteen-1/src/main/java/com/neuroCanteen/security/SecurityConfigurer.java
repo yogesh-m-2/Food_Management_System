@@ -51,7 +51,6 @@ public class SecurityConfigurer {
             .csrf(csrf -> csrf.disable())  // Disable CSRF for APIs and WebSockets
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/authenticate/**").permitAll()
-                .requestMatchers("/orders/by-phone").permitAll()
                 .requestMatchers("/order-updates/**").permitAll() // Allow WebSocket connections
                 .requestMatchers("/delivery-update/**").permitAll() // Allow WebSocket connections
                 .requestMatchers("/ws/**").permitAll() // Allow WebSocket connections
