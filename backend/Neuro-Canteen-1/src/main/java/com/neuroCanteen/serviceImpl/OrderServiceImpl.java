@@ -171,4 +171,9 @@ public class OrderServiceImpl implements OrderService {
         }).orElseThrow(() -> new RuntimeException("Order not found"));
         
     }
+
+    @Override
+    public List<Order> getOrdersByPhoneNoAndRole(String phoneNo, String orderedRole) {
+        return orderRepository.findByPhoneNoAndOrderedRole(phoneNo, orderedRole);
+    }
 }
