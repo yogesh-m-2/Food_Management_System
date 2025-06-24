@@ -176,4 +176,9 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> getOrdersByPhoneNoAndRole(String phoneNo, String orderedRole) {
         return orderRepository.findByPhoneNoAndOrderedRole(phoneNo, orderedRole);
     }
+
+    @Override
+    public List<Order> getOrdersByPhoneNo(String phoneNo) {
+        return orderRepository.findByPhoneNo(phoneNo);
+    }
 }
