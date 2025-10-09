@@ -42,7 +42,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./backend/Neuro-Canteen-1/Dockerfile
+          context: ./backend/Neuro-Canteen-1
           file: Dockerfile         # relative to context
           push: true
           tags: praveen181/neuro-canteen-backend:latest
