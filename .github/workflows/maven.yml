@@ -45,7 +45,7 @@ jobs:
           context: ./backend/Neuro-Canteen-1
           file: ./backend/Neuro-Canteen-1/Dockerfile
           push: true
-          tags: ./neuro-canteen-backend:latest
+          tags: neuro-canteen-backend:latest
 
       # (Optional) Step 7: Clean up Maven cache
       - name: Clean Maven cache
