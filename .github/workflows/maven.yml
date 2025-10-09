@@ -43,9 +43,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./backend/Neuro-Canteen-1
-          file: ./backend/Neuro-Canteen-1/Dockerfile
+          file: Dockerfile         # relative to context
           push: true
-          tags: neuro-canteen-backend:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/neuro-canteen-backend:latest
 
       # (Optional) Step 7: Clean up Maven cache
       - name: Clean Maven cache
