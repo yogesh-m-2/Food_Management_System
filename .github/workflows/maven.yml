@@ -45,7 +45,7 @@ jobs:
           context: ./backend/Neuro-Canteen-1
           file: Dockerfile         # relative to context
           push: true
-          tags: praveen/neuro-canteen-backend:latest
+          tags: praveen181/neuro-canteen-backend:latest
 
       # (Optional) Step 7: Clean up Maven cache
       - name: Clean Maven cache
